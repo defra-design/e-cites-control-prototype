@@ -1,5 +1,5 @@
 {
-  "serviceName": "E-cites Control Prototype",
+  "serviceName": "E-cites control prototype",
   "useServiceNavigation": true,
   "plugins": {
     "govuk-frontend": {
