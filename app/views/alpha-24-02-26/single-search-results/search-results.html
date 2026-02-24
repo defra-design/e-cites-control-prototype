@@ -1,0 +1,66 @@
+{% extends "layouts/main.html" %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageName = "Search for CITES permits" %}
+{% set title = "Search for CITES permits" %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    items: [
+      { text: "Search" }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {% if data.errorList %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: data.errorList
+      }) }}
+    {% endif %}
+
+    <h1 class="govuk-heading-xl">
+      Search for CITES permits
+    </h1>
+
+    {% set hasError = data.errors and data.errors.permitReferences %}
+    {% set errorMessage = { text: data.errors.permitReferences } if hasError else null %}
+    {% set formGroupClasses = "govuk-form-group--error" if hasError else "" %}
+
+    <form method="post" action="">
+      {{ govukTextarea({
+        name: "permitReferences",
+        id: "permitReferences",
+        label: {
+          text: "Enter permit references",
+          classes: "govuk-label--m"
+        },
+        hint: {
+          text: "If you want to search for more than one, enter each reference on a new line."
+        },
+        rows: 5,
+        value: data.permitReferences,
+        errorMessage: errorMessage,
+        formGroup: {
+          classes: formGroupClasses
+        }
+      }) }}
+
+      {{ govukButton({
+        text: "Search permits",
+        name: "search"
+      }) }}
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

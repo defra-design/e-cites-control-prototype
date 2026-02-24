@@ -6,4 +6,5 @@
 const govukPrototypeKit = require('govuk-prototype-kit')
 const router = govukPrototypeKit.requests.setupRouter()
 
-// Add your routes here
+// Alpha 24-02-26 – single and combined search results journeys
+require('./views/alpha-24-02-26/routes')(router)
