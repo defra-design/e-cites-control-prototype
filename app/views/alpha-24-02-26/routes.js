@@ -120,5 +120,138 @@ module.exports = (router) => {
     }
   })
 
-  // Add more routes here as you add pages
+  // Combined search – add/remove permit inputs (form posts to itself)
+  router.get(`${BASE}/combined-search-results/search-results`, (req, res) => {
+    res.render('alpha-24-02-26/combined-search-results/search-results')
+  })
+
+  router.post(`${BASE}/combined-search-results/search-results`, (req, res) => {
+    const data = req.session.data || {}
+    const refs = []
+    let i = 0
+    while (req.body[`permit-${i}`] !== undefined) {
+      const v = (req.body[`permit-${i}`] || '').trim()
+      if (v) refs.push(v)
+      i++
+    }
+
+    delete data.errors
+    delete data.errorList
+
+    if (refs.length === 0) {
+      data.errors = { permitReferences: 'Enter at least one permit reference' }
+      data.errorList = [
+        { text: 'Enter at least one permit reference', href: '#permit-0' }
+      ]
+      return res.redirect(`${BASE}/combined-search-results/search-results`)
+    }
+
+    data.combinedPermitReferences = refs
+    delete data.errors
+    delete data.errorList
+    res.redirect(`${BASE}/combined-search-results/check-permit-details`)
+  })
+
+  const PERMIT_ITEMS_DATA = {
+    '26GBIMP1234A': { species: 'Acanthastrea maxima', identifyingMark: '360V Falcon House UK', exportPermit: 'FR2509511031-R', quantity: '1' },
+    '26GBIMP6GT534': { species: 'Acanthastrea maxima', identifyingMark: '360V Falcon House UK', exportPermit: 'FR2509511031-R', quantity: '1' },
+    '26GBIMP7GH45R': { species: 'Acropora austera', identifyingMark: '29DEFENDERFALCONS 23 UK', exportPermit: 'FR2509513118-R', quantity: '1' },
+    '26GBIMP9XYZ12': { species: 'Pocillopora damicornis', identifyingMark: '45B Coral Reef UK', exportPermit: 'FR2509514522-R', quantity: '2' }
+  }
+
+  router.get(`${BASE}/combined-search-results/check-permit-details`, (req, res) => {
+    const data = req.session.data || {}
+    let refs = data.combinedPermitReferences || []
+    if (refs.length < 2) {
+      refs = refs.length === 0 ? ['26GBIMP6GT534', '26GBIMP7GH45R'] : [...refs, '26GBIMP7GH45R']
+    }
+    data.combinedPermitItems = refs.map(ref => {
+      const item = PERMIT_ITEMS_DATA[ref] || { species: 'Species', identifyingMark: '–', exportPermit: '–', quantity: '1' }
+      return { ref, ...item }
+    })
+    res.render('alpha-24-02-26/combined-search-results/check-permit-details')
+  })
+
+  router.get(`${BASE}/combined-search-results/endorsement-confirmation`, (req, res) => {
+    res.render('alpha-24-02-26/combined-search-results/endorsement-confirmation')
+  })
+
+  router.get(`${BASE}/combined-search-results/refusal-confirmation`, (req, res) => {
+    res.render('alpha-24-02-26/combined-search-results/refusal-confirmation')
+  })
+
+  router.post(`${BASE}/combined-search-results/check-permit-details`, (req, res) => {
+    const data = req.session.data || {}
+    const isRefuse = !!req.body.refuse
+
+    if (isRefuse) {
+      let refs = data.combinedPermitReferences || []
+      if (refs.length < 2) {
+        refs = refs.length === 0 ? ['26GBIMP6GT534', '26GBIMP7GH45R'] : [...refs, '26GBIMP7GH45R']
+      }
+      data.combinedPermitCount = refs.length
+      return res.redirect(`${BASE}/combined-search-results/refusal-confirmation`)
+    }
+
+    const mrnReference = (req.body.mrnReference || '').trim()
+    const awbReference = (req.body.awbReference || '').trim()
+
+    let refs = data.combinedPermitReferences || []
+    if (refs.length < 2) {
+      refs = refs.length === 0 ? ['26GBIMP6GT534', '26GBIMP7GH45R'] : [...refs, '26GBIMP7GH45R']
+    }
+
+    const errors = {}
+    const errorList = []
+
+    if (!mrnReference) {
+      errors.mrnReference = 'Enter the CDS MRN reference'
+      errorList.push({ text: 'Enter the CDS MRN reference', href: '#mrnReference' })
+    }
+    if (!awbReference) {
+      errors.awbReference = 'Enter the Bill of Lading or Air waybill (AWB) reference'
+      errorList.push({ text: 'Enter the Bill of Lading or Air waybill (AWB) reference', href: '#awbReference' })
+    }
+
+    for (let i = 0; i < refs.length; i++) {
+      const deadOnArrival = (req.body[`deadOnArrival-${i}`] || '').trim()
+      const actualQuantity = (req.body[`actualQuantity-${i}`] || '').trim()
+
+      if (!deadOnArrival) {
+        errors[`deadOnArrival-${i}`] = 'Enter the number of animals dead on arrival'
+        errorList.push({ text: `Permit ${refs[i]}: Enter the number of animals dead on arrival`, href: `#deadOnArrival-${i}` })
+      } else if (!/^\d+$/.test(deadOnArrival) || parseInt(deadOnArrival, 10) < 0) {
+        errors[`deadOnArrival-${i}`] = 'Number must be 0 or more'
+        errorList.push({ text: `Permit ${refs[i]}: Number must be 0 or more`, href: `#deadOnArrival-${i}` })
+      }
+
+      if (!actualQuantity) {
+        errors[`actualQuantity-${i}`] = 'Enter the actual quantity'
+        errorList.push({ text: `Permit ${refs[i]}: Enter the actual quantity`, href: `#actualQuantity-${i}` })
+      } else if (!/^\d+$/.test(actualQuantity) || parseInt(actualQuantity, 10) < 1) {
+        errors[`actualQuantity-${i}`] = 'Actual quantity must be a whole number of 1 or more'
+        errorList.push({ text: `Permit ${refs[i]}: Actual quantity must be a whole number of 1 or more`, href: `#actualQuantity-${i}` })
+      }
+    }
+
+    data.combinedMrnReference = mrnReference
+    data.combinedAwbReference = awbReference
+    data.combinedDeadOnArrival = {}
+    data.combinedActualQuantity = {}
+    for (let i = 0; i < refs.length; i++) {
+      data.combinedDeadOnArrival[i] = (req.body[`deadOnArrival-${i}`] || '').trim()
+      data.combinedActualQuantity[i] = (req.body[`actualQuantity-${i}`] || '').trim()
+    }
+
+    if (errorList.length > 0) {
+      data.errors = errors
+      data.errorList = errorList
+      return res.redirect(`${BASE}/combined-search-results/check-permit-details`)
+    }
+
+    delete data.errors
+    delete data.errorList
+    data.combinedPermitCount = refs.length
+    res.redirect(`${BASE}/combined-search-results/endorsement-confirmation`)
+  })
 }
