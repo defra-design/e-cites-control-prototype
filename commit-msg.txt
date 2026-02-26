@@ -1,0 +1,13 @@
+Fix single search results and improve search UX
+
+- Fix empty table on permit search results: set res.locals.data.permitSearchRows
+  so template receives data (autoStoreData runs before route, so session updates
+  were not visible to the template)
+- Add req.session.save() before redirects so session persists before browser
+  follows redirect (fixes need to refresh to see updated results)
+- Dynamic permit search results: show 1 row for single permit, 3 rows for
+  all three based on searched terms (26GBIMP12344X, 26GBIMP7GH45R, 26GBIMPHG453Y)
+- Paste handler: auto-format pasted permit refs onto new lines (split by spaces
+  or commas) so pasting "A B C" becomes one per line
+- Add search terms to index page in ordered lists for both single and combined flows
+- Add cache-control headers to prevent browser caching of results pages
