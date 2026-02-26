@@ -198,26 +198,10 @@ module.exports = (router) => {
     })
   })
 
-  const PERMIT_ITEMS_DATA = {
-    '26GBIMP1234A': { species: 'Acanthastrea maxima', identifyingMark: '360V Falcon House UK', exportPermit: 'FR2509511031-R', quantity: '1' },
-    '26GBIMP6GT534': { species: 'Acanthastrea maxima', identifyingMark: '360V Falcon House UK', exportPermit: 'FR2509511031-R', quantity: '1' },
-    '26GBIMP7GH45R': { species: 'Acropora austera', identifyingMark: '29DEFENDERFALCONS 23 UK', exportPermit: 'FR2509513118-R', quantity: '1' },
-    '26GBIMP9XYZ12': { species: 'Pocillopora damicornis', identifyingMark: '45B Coral Reef UK', exportPermit: 'FR2509514522-R', quantity: '2' }
-  }
-
   router.get(`${BASE}/combined-search-results/check-permit-details`, (req, res) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
     res.set('Pragma', 'no-cache')
     res.set('Expires', '0')
-    const data = req.session.data || {}
-    let refs = data.combinedPermitReferences || []
-    if (refs.length < 2) {
-      refs = refs.length === 0 ? ['26GBIMP6GT534', '26GBIMP7GH45R'] : [...refs, '26GBIMP7GH45R']
-    }
-    data.combinedPermitItems = refs.map(ref => {
-      const item = PERMIT_ITEMS_DATA[ref] || { species: 'Species', identifyingMark: '–', exportPermit: '–', quantity: '1' }
-      return { ref, ...item }
-    })
     res.render('alpha-24-02-26/combined-search-results/check-permit-details')
   })
 
@@ -234,21 +218,12 @@ module.exports = (router) => {
     const isRefuse = !!req.body.refuse
 
     if (isRefuse) {
-      let refs = data.combinedPermitReferences || []
-      if (refs.length < 2) {
-        refs = refs.length === 0 ? ['26GBIMP6GT534', '26GBIMP7GH45R'] : [...refs, '26GBIMP7GH45R']
-      }
-      data.combinedPermitCount = refs.length
+      data.combinedPermitCount = 2
       return res.redirect(`${BASE}/combined-search-results/refusal-confirmation`)
     }
 
     const mrnReference = (req.body.mrnReference || '').trim()
     const awbReference = (req.body.awbReference || '').trim()
-
-    let refs = data.combinedPermitReferences || []
-    if (refs.length < 2) {
-      refs = refs.length === 0 ? ['26GBIMP6GT534', '26GBIMP7GH45R'] : [...refs, '26GBIMP7GH45R']
-    }
 
     const errors = {}
     const errorList = []
@@ -262,34 +237,36 @@ module.exports = (router) => {
       errorList.push({ text: 'Enter the Bill of Lading or Air waybill (AWB) reference', href: '#awbReference' })
     }
 
-    for (let i = 0; i < refs.length; i++) {
+    for (let i = 0; i < 2; i++) {
       const deadOnArrival = (req.body[`deadOnArrival-${i}`] || '').trim()
       const actualQuantity = (req.body[`actualQuantity-${i}`] || '').trim()
 
       if (!deadOnArrival) {
         errors[`deadOnArrival-${i}`] = 'Enter the number of animals dead on arrival'
-        errorList.push({ text: `Permit ${refs[i]}: Enter the number of animals dead on arrival`, href: `#deadOnArrival-${i}` })
+        errorList.push({ text: `Permit ${i + 1}: Enter the number of animals dead on arrival`, href: `#deadOnArrival-${i}` })
       } else if (!/^\d+$/.test(deadOnArrival) || parseInt(deadOnArrival, 10) < 0) {
         errors[`deadOnArrival-${i}`] = 'Number must be 0 or more'
-        errorList.push({ text: `Permit ${refs[i]}: Number must be 0 or more`, href: `#deadOnArrival-${i}` })
+        errorList.push({ text: `Permit ${i + 1}: Number must be 0 or more`, href: `#deadOnArrival-${i}` })
       }
 
       if (!actualQuantity) {
         errors[`actualQuantity-${i}`] = 'Enter the actual quantity'
-        errorList.push({ text: `Permit ${refs[i]}: Enter the actual quantity`, href: `#actualQuantity-${i}` })
+        errorList.push({ text: `Permit ${i + 1}: Enter the actual quantity`, href: `#actualQuantity-${i}` })
       } else if (!/^\d+$/.test(actualQuantity) || parseInt(actualQuantity, 10) < 1) {
         errors[`actualQuantity-${i}`] = 'Actual quantity must be a whole number of 1 or more'
-        errorList.push({ text: `Permit ${refs[i]}: Actual quantity must be a whole number of 1 or more`, href: `#actualQuantity-${i}` })
+        errorList.push({ text: `Permit ${i + 1}: Actual quantity must be a whole number of 1 or more`, href: `#actualQuantity-${i}` })
       }
     }
 
     data.combinedMrnReference = mrnReference
     data.combinedAwbReference = awbReference
-    data.combinedDeadOnArrival = {}
-    data.combinedActualQuantity = {}
-    for (let i = 0; i < refs.length; i++) {
-      data.combinedDeadOnArrival[i] = (req.body[`deadOnArrival-${i}`] || '').trim()
-      data.combinedActualQuantity[i] = (req.body[`actualQuantity-${i}`] || '').trim()
+    data.combinedDeadOnArrival = {
+      0: (req.body['deadOnArrival-0'] || '').trim(),
+      1: (req.body['deadOnArrival-1'] || '').trim()
+    }
+    data.combinedActualQuantity = {
+      0: (req.body['actualQuantity-0'] || '').trim(),
+      1: (req.body['actualQuantity-1'] || '').trim()
     }
 
     if (errorList.length > 0) {
@@ -300,7 +277,7 @@ module.exports = (router) => {
 
     delete data.errors
     delete data.errorList
-    data.combinedPermitCount = refs.length
+    data.combinedPermitCount = 2
     res.redirect(`${BASE}/combined-search-results/endorsement-confirmation`)
   })
 }

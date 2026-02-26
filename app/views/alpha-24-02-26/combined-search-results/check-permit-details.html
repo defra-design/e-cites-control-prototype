@@ -75,32 +75,28 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-      {% set permitItems = data.combinedPermitItems or [
-        { ref: "26GBIMP6GT534", species: "Acanthastrea maxima", identifyingMark: "360V Falcon House UK", exportPermit: "FR2509511031-R", quantity: "1" },
-        { ref: "26GBIMP7GH45R", species: "Acropora austera", identifyingMark: "29DEFENDERFALCONS 23 UK", exportPermit: "FR2509513118-R", quantity: "1" }
-      ] %}
-      {% for item in permitItems %}
+      {# Hardcoded for prototype – both permit summaries, fixed content #}
       <div class="permit-summary-box govuk-!-margin-top-6" style="border: 1px solid #b1b4b6; border-radius: 0;">
         <div class="permit-summary-box__header" style="background: #f3f2f1; padding: 15px 20px; border-bottom: 1px solid #b1b4b6;">
-          <p class="govuk-body govuk-!-margin-0">Permit number <strong>{{ item.ref }}</strong></p>
+          <p class="govuk-body govuk-!-margin-0">Permit number <strong>26GBIMP6GT534</strong></p>
         </div>
         <div class="permit-summary-box__content" style="padding: 20px; background: #fff;">
           <div class="govuk-grid-row govuk-!-margin-bottom-0">
             <div class="govuk-grid-column-one-quarter">
               <p class="govuk-body govuk-!-margin-bottom-1"><strong class="govuk-!-font-weight-bold">Species</strong></p>
-              <p class="govuk-body govuk-!-margin-bottom-0">{{ item.species }}</p>
+              <p class="govuk-body govuk-!-margin-bottom-0">Acanthastrea maxima</p>
             </div>
             <div class="govuk-grid-column-one-quarter">
               <p class="govuk-body govuk-!-margin-bottom-1"><strong class="govuk-!-font-weight-bold">Identifying mark</strong></p>
-              <p class="govuk-body govuk-!-margin-bottom-0">{{ item.identifyingMark }}</p>
+              <p class="govuk-body govuk-!-margin-bottom-0">360V Falcon House UK</p>
             </div>
             <div class="govuk-grid-column-one-quarter">
               <p class="govuk-body govuk-!-margin-bottom-1"><strong class="govuk-!-font-weight-bold">Export permit number</strong></p>
-              <p class="govuk-body govuk-!-margin-bottom-0">{{ item.exportPermit }}</p>
+              <p class="govuk-body govuk-!-margin-bottom-0">FR2509511031-R</p>
             </div>
             <div class="govuk-grid-column-one-quarter">
               <p class="govuk-body govuk-!-margin-bottom-1"><strong class="govuk-!-font-weight-bold">Quantity</strong></p>
-              <p class="govuk-body govuk-!-margin-bottom-0">{{ item.quantity }}</p>
+              <p class="govuk-body govuk-!-margin-bottom-0">1</p>
             </div>
           </div>
           <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-top-4 govuk-!-margin-bottom-4">
@@ -108,23 +104,23 @@
             <div class="govuk-grid-column-one-half">
               {{ govukInput({
                 label: { text: "Number of animals dead on arrival" },
-                id: "deadOnArrival-" ~ loop.index0,
-                name: "deadOnArrival-" ~ loop.index0,
-                value: data.combinedDeadOnArrival and data.combinedDeadOnArrival[loop.index0] or "",
+                id: "deadOnArrival-0",
+                name: "deadOnArrival-0",
+                value: data.combinedDeadOnArrival and data.combinedDeadOnArrival[0] or "",
                 classes: "govuk-input--width-5",
-                errorMessage: data.errors and data.errors["deadOnArrival-" ~ loop.index0] and { text: data.errors["deadOnArrival-" ~ loop.index0] } or null,
-                formGroup: { classes: data.errors and data.errors["deadOnArrival-" ~ loop.index0] and "govuk-form-group--error" or "" }
+                errorMessage: data.errors and data.errors["deadOnArrival-0"] and { text: data.errors["deadOnArrival-0"] } or null,
+                formGroup: { classes: data.errors and data.errors["deadOnArrival-0"] and "govuk-form-group--error" or "" }
               }) }}
             </div>
             <div class="govuk-grid-column-one-half">
               {{ govukInput({
                 label: { text: "Actual quantity" },
-                id: "actualQuantity-" ~ loop.index0,
-                name: "actualQuantity-" ~ loop.index0,
-                value: data.combinedActualQuantity and data.combinedActualQuantity[loop.index0] or "",
+                id: "actualQuantity-0",
+                name: "actualQuantity-0",
+                value: data.combinedActualQuantity and data.combinedActualQuantity[0] or "",
                 classes: "govuk-input--width-5",
-                errorMessage: data.errors and data.errors["actualQuantity-" ~ loop.index0] and { text: data.errors["actualQuantity-" ~ loop.index0] } or null,
-                formGroup: { classes: data.errors and data.errors["actualQuantity-" ~ loop.index0] and "govuk-form-group--error" or "" }
+                errorMessage: data.errors and data.errors["actualQuantity-0"] and { text: data.errors["actualQuantity-0"] } or null,
+                formGroup: { classes: data.errors and data.errors["actualQuantity-0"] and "govuk-form-group--error" or "" }
               }) }}
             </div>
           </div>
@@ -133,7 +129,60 @@
           </p>
         </div>
       </div>
-      {% endfor %}
+
+      <div class="permit-summary-box govuk-!-margin-top-6" style="border: 1px solid #b1b4b6; border-radius: 0;">
+        <div class="permit-summary-box__header" style="background: #f3f2f1; padding: 15px 20px; border-bottom: 1px solid #b1b4b6;">
+          <p class="govuk-body govuk-!-margin-0">Permit number <strong>26GBIMP7GH45R</strong></p>
+        </div>
+        <div class="permit-summary-box__content" style="padding: 20px; background: #fff;">
+          <div class="govuk-grid-row govuk-!-margin-bottom-0">
+            <div class="govuk-grid-column-one-quarter">
+              <p class="govuk-body govuk-!-margin-bottom-1"><strong class="govuk-!-font-weight-bold">Species</strong></p>
+              <p class="govuk-body govuk-!-margin-bottom-0">Acropora austera</p>
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+              <p class="govuk-body govuk-!-margin-bottom-1"><strong class="govuk-!-font-weight-bold">Identifying mark</strong></p>
+              <p class="govuk-body govuk-!-margin-bottom-0">29DEFENDERFALCONS 23 UK</p>
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+              <p class="govuk-body govuk-!-margin-bottom-1"><strong class="govuk-!-font-weight-bold">Export permit number</strong></p>
+              <p class="govuk-body govuk-!-margin-bottom-0">FR2509513118-R</p>
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+              <p class="govuk-body govuk-!-margin-bottom-1"><strong class="govuk-!-font-weight-bold">Quantity</strong></p>
+              <p class="govuk-body govuk-!-margin-bottom-0">1</p>
+            </div>
+          </div>
+          <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-top-4 govuk-!-margin-bottom-4">
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+              {{ govukInput({
+                label: { text: "Number of animals dead on arrival" },
+                id: "deadOnArrival-1",
+                name: "deadOnArrival-1",
+                value: data.combinedDeadOnArrival and data.combinedDeadOnArrival[1] or "",
+                classes: "govuk-input--width-5",
+                errorMessage: data.errors and data.errors["deadOnArrival-1"] and { text: data.errors["deadOnArrival-1"] } or null,
+                formGroup: { classes: data.errors and data.errors["deadOnArrival-1"] and "govuk-form-group--error" or "" }
+              }) }}
+            </div>
+            <div class="govuk-grid-column-one-half">
+              {{ govukInput({
+                label: { text: "Actual quantity" },
+                id: "actualQuantity-1",
+                name: "actualQuantity-1",
+                value: data.combinedActualQuantity and data.combinedActualQuantity[1] or "",
+                classes: "govuk-input--width-5",
+                errorMessage: data.errors and data.errors["actualQuantity-1"] and { text: data.errors["actualQuantity-1"] } or null,
+                formGroup: { classes: data.errors and data.errors["actualQuantity-1"] and "govuk-form-group--error" or "" }
+              }) }}
+            </div>
+          </div>
+          <p class="govuk-body govuk-!-margin-bottom-0">
+            <a href="#" class="govuk-link">View permit PDF</a>
+          </p>
+        </div>
+      </div>
 
       <div class="govuk-!-margin-top-6 govuk-!-margin-bottom-6">
         <div class="govuk-button-group">
