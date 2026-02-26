@@ -9,6 +9,12 @@ module.exports = (router) => {
     res.render('alpha-24-02-26/single-search-results/search-results')
   })
 
+  const PERMIT_SEARCH_DATA = {
+    '26GBIMP12344X': { species: 'Falco peregrinus', expires: '28 February 2026' },
+    '26GBIMP7GH45R': { species: 'Milvus milvus', expires: '28 February 2026' },
+    '26GBIMPHG453Y': { species: 'Aquila chrysaetos', expires: '22 February 2026' }
+  }
+
   router.post(`${BASE}/single-search-results/search-results`, (req, res) => {
     const data = req.session.data || {}
     const permitReferences = (req.body.permitReferences || '').trim()
@@ -24,13 +30,50 @@ module.exports = (router) => {
       return res.redirect(`${BASE}/single-search-results/search-results`)
     }
 
+    const refs = permitReferences
+      .split(/[\n,]+/)
+      .map(r => r.trim())
+      .filter(r => r)
+
     data.permitReferences = permitReferences
+    data.searchedPermits = refs
     delete data.errors
     delete data.errorList
-    res.redirect(`${BASE}/single-search-results/permit-search-results`)
+    req.session.save((err) => {
+      if (err) return res.redirect(`${BASE}/single-search-results/search-results`)
+      res.redirect(`${BASE}/single-search-results/permit-search-results`)
+    })
   })
 
   router.get(`${BASE}/single-search-results/permit-search-results`, (req, res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
+    res.set('Pragma', 'no-cache')
+    res.set('Expires', '0')
+    const data = req.session.data || {}
+    let refs = data.searchedPermits || ['26GBIMP12344X', '26GBIMP7GH45R', '26GBIMPHG453Y']
+    if (refs.length === 0) refs = ['26GBIMP12344X', '26GBIMP7GH45R', '26GBIMPHG453Y']
+    const permitStatuses = data.permitStatuses || {}
+    const items = refs.map(ref => {
+      const item = PERMIT_SEARCH_DATA[ref] || { species: '–', expires: '–' }
+      return { ref, ...item }
+    })
+    data.permitSearchResults = items
+    data.permitSearchRows = items.map(item => {
+      const status = permitStatuses[item.ref]
+      let tag = '<strong class="govuk-tag govuk-tag--green">Valid</strong>'
+      if (status === 'endorsed') tag = '<strong class="govuk-tag govuk-tag--green">Endorsed</strong>'
+      else if (status === 'refused') tag = '<strong class="govuk-tag govuk-tag--red">Refused</strong>'
+      else if (item.ref === '26GBIMPHG453Y') tag = '<strong class="govuk-tag govuk-tag--red">Expired</strong>'
+      return [
+        { text: item.ref },
+        { text: item.species },
+        { text: item.expires },
+        { html: tag },
+        { html: `<a href="${BASE}/single-search-results/check-permit-details?permit=${encodeURIComponent(item.ref)}">Check permit</a>` }
+      ]
+    })
+    res.locals.data.permitSearchResults = data.permitSearchResults
+    res.locals.data.permitSearchRows = data.permitSearchRows
     res.render('alpha-24-02-26/single-search-results/permit-search-results')
   })
 
@@ -149,7 +192,10 @@ module.exports = (router) => {
     data.combinedPermitReferences = refs
     delete data.errors
     delete data.errorList
-    res.redirect(`${BASE}/combined-search-results/check-permit-details`)
+    req.session.save((err) => {
+      if (err) return res.redirect(`${BASE}/combined-search-results/search-results`)
+      res.redirect(`${BASE}/combined-search-results/check-permit-details`)
+    })
   })
 
   const PERMIT_ITEMS_DATA = {
@@ -160,6 +206,9 @@ module.exports = (router) => {
   }
 
   router.get(`${BASE}/combined-search-results/check-permit-details`, (req, res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
+    res.set('Pragma', 'no-cache')
+    res.set('Expires', '0')
     const data = req.session.data || {}
     let refs = data.combinedPermitReferences || []
     if (refs.length < 2) {

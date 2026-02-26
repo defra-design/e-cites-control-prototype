@@ -64,3 +64,27 @@
 </div>
 
 {% endblock %}
+
+{% block pageScripts %}
+<script>
+(function () {
+  'use strict'
+  var textarea = document.getElementById('permitReferences')
+  if (!textarea) return
+
+  textarea.addEventListener('paste', function (e) {
+    e.preventDefault()
+    var pasted = (e.clipboardData || window.clipboardData).getData('text')
+    var refs = pasted.split(/[\s,]+/).map(function (r) { return r.trim() }).filter(Boolean)
+    var formatted = refs.join('\n')
+    var start = textarea.selectionStart
+    var end = textarea.selectionEnd
+    var value = textarea.value
+    var before = value.substring(0, start)
+    var after = value.substring(end)
+    textarea.value = before + formatted + after
+    textarea.selectionStart = textarea.selectionEnd = start + formatted.length
+  })
+})()
+</script>
+{% endblock %}

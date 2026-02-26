@@ -23,15 +23,13 @@
       Permit search results
     </h1>
 
-    <p class="govuk-body">Showing 3 results.</p>
-
-    {% set permitStatuses = data.permitStatuses or {} %}
-    {% set status1 = permitStatuses["26GBIMP12344X"] %}
-    {% set status2 = permitStatuses["26GBIMP7GH45R"] %}
-    {% set status3 = permitStatuses["26GBIMPHG453Y"] %}
-    {% set tag1 = '<strong class="govuk-tag govuk-tag--green">Endorsed</strong>' if status1 == 'endorsed' else ('<strong class="govuk-tag govuk-tag--red">Refused</strong>' if status1 == 'refused' else '<strong class="govuk-tag govuk-tag--green">Valid</strong>') %}
-    {% set tag2 = '<strong class="govuk-tag govuk-tag--green">Endorsed</strong>' if status2 == 'endorsed' else ('<strong class="govuk-tag govuk-tag--red">Refused</strong>' if status2 == 'refused' else '<strong class="govuk-tag govuk-tag--green">Valid</strong>') %}
-    {% set tag3 = '<strong class="govuk-tag govuk-tag--green">Endorsed</strong>' if status3 == 'endorsed' else ('<strong class="govuk-tag govuk-tag--red">Refused</strong>' if status3 == 'refused' else '<strong class="govuk-tag govuk-tag--red">Expired</strong>') %}
+    {% set permitSearchResults = data.permitSearchResults or [
+      { ref: "26GBIMP12344X", species: "Falco peregrinus", expires: "28 February 2026" },
+      { ref: "26GBIMP7GH45R", species: "Milvus milvus", expires: "28 February 2026" },
+      { ref: "26GBIMPHG453Y", species: "Aquila chrysaetos", expires: "22 February 2026" }
+    ] %}
+    {% set permitSearchRows = data.permitSearchRows or [] %}
+    <p class="govuk-body">Showing {{ permitSearchResults.length }} result{% if permitSearchResults.length != 1 %}s{% endif %}.</p>
 
     {{ govukTable({
       head: [
@@ -41,29 +39,7 @@
         { text: "Status" },
         { text: "Action" }
       ],
-      rows: [
-        [
-          { text: "26GBIMP12344X" },
-          { text: "Falco peregrinus" },
-          { text: "28 February 2026" },
-          { html: tag1 },
-          { html: '<a href="/alpha-24-02-26/single-search-results/check-permit-details?permit=26GBIMP12344X">Check permit</a>' }
-        ],
-        [
-          { text: "26GBIMP7GH45R" },
-          { text: "Milvus milvus" },
-          { text: "28 February 2026" },
-          { html: tag2 },
-          { html: '<a href="/alpha-24-02-26/single-search-results/check-permit-details?permit=26GBIMP7GH45R">Check permit</a>' }
-        ],
-        [
-          { text: "26GBIMPHG453Y" },
-          { text: "Aquila chrysaetos" },
-          { text: "22 February 2026" },
-          { html: tag3 },
-          { html: '<a href="/alpha-24-02-26/single-search-results/check-permit-details?permit=26GBIMPHG453Y">Check permit</a>' }
-        ]
-      ]
+      rows: permitSearchRows
     }) }}
 
     <p class="govuk-body">
