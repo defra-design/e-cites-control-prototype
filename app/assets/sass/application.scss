@@ -10,8 +10,104 @@
   display: none;
 }
 
+// Customs reference – feedback and link in one block, link always on its own line
+.customs-reference-actions span:empty + a {
+  margin-top: 0;
+}
+
 // Refusal panel – red styling for endorsement refused
 .govuk-panel--refusal {
   color: #ffffff;
   background-color: #d4351c;
+}
+
+// Permit details – 16px summary list text (alpha-02-03-26)
+.permit-summary-16px .govuk-summary-list__key,
+.permit-summary-16px .govuk-summary-list__value {
+  font-size: 16px;
+}
+.permit-summary-16px .govuk-tag {
+  font-size: 16px;
+}
+
+// Summary lists – value sits underneath key instead of side-by-side (all permit detail sections)
+.summary-list-stacked .govuk-summary-list {
+  display: block;
+}
+
+.summary-list-stacked .govuk-summary-list__row {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.summary-list-stacked .govuk-summary-list__key,
+.summary-list-stacked .govuk-summary-list__value {
+  display: block;
+  width: auto;
+  padding-right: 0;
+  padding-top: 0;
+}
+
+.summary-list-stacked .govuk-summary-list__key {
+  margin-bottom: 2px;
+  padding-bottom: 0;
+}
+
+.summary-list-stacked .govuk-summary-list__value {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-bottom: 10px;
+  padding-top: 0;
+}
+
+// Permit pagination – grouped layout with subtle panel (compact height)
+.permit-pagination-inline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: govuk-spacing(2);
+  padding: govuk-spacing(2) govuk-spacing(4);
+  margin-top: govuk-spacing(6);
+  margin-bottom: govuk-spacing(6);
+  background: govuk-colour("light-grey");
+  border: 1px solid govuk-colour("mid-grey");
+  border-radius: 4px;
+
+  .permit-pagination-inline__nav.govuk-pagination--block {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+
+    .govuk-pagination__prev,
+    .govuk-pagination__next {
+      float: none;
+      border-top: none;
+    }
+
+    .govuk-pagination__next {
+      margin-left: auto;
+    }
+
+    .govuk-pagination__prev + .govuk-pagination__next {
+      border-top: none;
+    }
+  }
+
+  .permit-pagination-inline__position {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: govuk-spacing(1) govuk-spacing(3);
+    background: govuk-colour("white");
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
 }

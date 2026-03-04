@@ -1,0 +1,343 @@
+{% extends "layouts/main.html" %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
+
+{% set pageName = "Check permit details" %}
+{% set title = "Check permit details" %}
+{% set permit = data.permit or "25GBIMPABS719" %}
+{% set currentPermit = data.currentPermit or {} %}
+{% set currentIndex = data.checkPermitIndex or 1 %}
+{% set totalCount = data.checkPermitTotal or 10 %}
+{% set endorsedDetails = data.endorsedDetails and data.endorsedDetails[permit] or {} %}
+{% set validityTag = "Valid" %}
+{% set validityTagClass = "govuk-tag--blue" %}
+{% if data.permitStatuses and data.permitStatuses[permit] %}
+  {% set validityTag = "Endorsed" if data.permitStatuses[permit] === "endorsed" else "Refused" %}
+  {% set validityTagClass = "govuk-tag--red" if data.permitStatuses[permit] === "refused" else "govuk-tag--green" %}
+{% endif %}
+
+{% block beforeContent %}
+  <p class="govuk-body govuk-!-margin-top-4 govuk-!-margin-bottom-4">
+    <a href="/alpha-02-03-26/single-search-results/permit-search-results" class="govuk-link">Back to search results</a>
+  </p>
+{% endblock %}
+
+{% block content %}
+
+{% if data.errorList %}
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: data.errorList
+  }) }}
+{% endif %}
+
+{% set permitList = data.checkPermitList or data.permitSearchResults or [] %}
+{% set hasNextPermit = totalCount > 1 and currentIndex < totalCount %}
+{% set nextPermitRef = permitList[currentIndex].ref if hasNextPermit else '' %}
+
+{% if data.endorsed %}
+  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+    <div class="govuk-notification-banner__header">
+      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+        Permit endorsed
+      </h2>
+    </div>
+    <div class="govuk-notification-banner__content">
+      <p class="govuk-body">Permit number: {{ permit }} has been endorsed</p>
+      <p class="govuk-body">
+        {% if hasNextPermit %}
+        <a href="/alpha-02-03-26/single-search-results/check-permit-details?permit={{ nextPermitRef }}" class="govuk-link">View next permit</a>
+        {% else %}
+        <a href="/alpha-02-03-26/single-search-results/permit-search-results" class="govuk-link">Back to search results</a>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+{% endif %}
+
+{% if data.updated %}
+  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title-updated" data-module="govuk-notification-banner">
+    <div class="govuk-notification-banner__header">
+      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-updated">
+        Changes saved
+      </h2>
+    </div>
+    <div class="govuk-notification-banner__content">
+      <p class="govuk-body">Endorsement details for permit {{ permit }} have been updated</p>
+      <p class="govuk-body">
+        {% if hasNextPermit %}
+        <a href="/alpha-02-03-26/single-search-results/check-permit-details?permit={{ nextPermitRef }}#endorsement-section" class="govuk-link">View next permit</a>
+        {% else %}
+        <a href="/alpha-02-03-26/single-search-results/permit-search-results" class="govuk-link">Back to search results</a>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+{% endif %}
+
+{% if data.refused %}
+  <div class="govuk-notification-banner" role="alert" aria-labelledby="govuk-notification-banner-title-refused" data-module="govuk-notification-banner">
+    <div class="govuk-notification-banner__header">
+      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-refused">
+        Permit refused
+      </h2>
+    </div>
+    <div class="govuk-notification-banner__content">
+      <p class="govuk-body">Permit number: {{ permit }} has been refused</p>
+      <p class="govuk-body">
+        {% if hasNextPermit %}
+        <a href="/alpha-02-03-26/single-search-results/check-permit-details?permit={{ nextPermitRef }}#endorsement-section" class="govuk-link">View next permit</a>
+        {% else %}
+        <a href="/alpha-02-03-26/single-search-results/permit-search-results" class="govuk-link">Back to search results</a>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+{% endif %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+
+    {% if not data.editEndorsement %}
+    <span class="govuk-caption-l">Check permit details</span>
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ permit }}</h1>
+    <p class="govuk-body-s govuk-!-margin-top-2 govuk-!-margin-bottom-4">Permit {{ currentIndex }} of {{ totalCount }}</p>
+
+    {{ govukButton({
+      text: "View permit PDF",
+      classes: "govuk-button--secondary govuk-!-margin-bottom-6"
+    }) }}
+
+    <h2 class="govuk-heading-m">Permit details</h2>
+    <div class="govuk-grid-row govuk-!-margin-bottom-1 permit-summary-16px permit-info-compare summary-list-stacked">
+      <div class="govuk-grid-column-one-half">
+        {{ govukSummaryList({
+          rows: [
+            { key: { text: "Permit status" }, value: { html: "<strong class=\"govuk-tag " ~ validityTagClass ~ "\">" ~ validityTag ~ "</strong>" } },
+            { key: { text: "Exporter/re-exporter" }, value: { html: "Montreval Cuir SA<br>Rue du Marché 18, 1204<br>Geneva,<br>Switzerland" } },
+            { key: { text: "Source" }, value: { text: "C: Animals bred in captivity" } },
+            { key: { text: "Appendix/Annex" }, value: { text: "I / A" } }
+          ]
+        }) }}
+      </div>
+      <div class="govuk-grid-column-one-half">
+        {{ govukSummaryList({
+          rows: [
+            { key: { text: "Type" }, value: { text: "Import" } },
+            { key: { text: "Importer" }, value: { html: "Stratford & Hale Watch Company Ltd<br>Unit 14, Hatton Garden Business Centre,<br>London,<br>EC1N 8DL" } },
+            { key: { text: "Purpose" }, value: { text: "T: Commercial" } },
+            { key: { text: "Last day of validity" }, value: { text: currentPermit.expires or "28 February 2026" } }
+          ]
+        }) }}
+      </div>
+    </div>
+
+    <h2 class="govuk-heading-m">Specimen details</h2>
+    <div class="govuk-grid-row govuk-!-margin-bottom-1 permit-summary-16px summary-list-stacked">
+      <div class="govuk-grid-column-one-half">
+        {{ govukSummaryList({
+          rows: [
+            { key: { text: "Scientific name" }, value: { text: currentPermit.species or "Alligator mississippiensis" } },
+            { key: { text: "Description" }, value: { text: currentPermit.description or "Watch straps made of Alligator skin" } }
+          ]
+        }) }}
+      </div>
+      <div class="govuk-grid-column-one-half">
+        {{ govukSummaryList({
+          rows: [
+            { key: { text: "Common name" }, value: { text: currentPermit.commonName or "American alligator" } },
+            { key: { text: "Quantity" }, value: { text: currentPermit.quantity or "80" } }
+          ]
+        }) }}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if (data.permitStatuses and data.permitStatuses[permit]) and not data.editEndorsement %}
+    <div id="endorsement-section">
+    {% if data.permitStatuses[permit] === "refused" %}
+    <h2 class="govuk-heading-m">Refusal details</h2>
+    <div class="govuk-grid-row govuk-!-margin-bottom-1 permit-summary-16px permit-info-compare summary-list-stacked">
+      <div class="govuk-grid-column-one-half">
+        {{ govukSummaryList({
+          rows: [
+            { key: { text: "Refusal reason" }, value: { text: endorsedDetails.refusalReason or "–" } },
+            { key: { text: "Date of refusal" }, value: { text: endorsedDetails.dateOfRefusal or "–" } },
+            { key: { text: "Port" }, value: { text: endorsedDetails.port or currentPermit.port or "Dover" } }
+          ]
+        }) }}
+      </div>
+      <div class="govuk-grid-column-one-half">
+        {{ govukSummaryList({
+          rows: [
+            { key: { text: "Additional details" }, value: { text: endorsedDetails.additionalDetails or "–" } },
+            { key: { text: "Officer ID" }, value: { text: endorsedDetails.officerId or "–" } }
+          ]
+        }) }}
+      </div>
+    </div>
+    {% else %}
+    <h2 class="govuk-heading-m">Endorsement details</h2>
+    <div class="govuk-grid-row govuk-!-margin-bottom-1 permit-summary-16px permit-info-compare summary-list-stacked">
+      <div class="govuk-grid-column-one-half">
+        {{ govukSummaryList({
+          rows: [
+            { key: { text: "Actual quantity" }, value: { text: endorsedDetails.actualQuantity or "–" } },
+            { key: { text: "Date of endorsement" }, value: { text: endorsedDetails.dateOfEndorsement or "–" } },
+            { key: { text: "Port" }, value: { text: endorsedDetails.port or currentPermit.port or "Dover" } }
+          ]
+        }) }}
+      </div>
+      <div class="govuk-grid-column-one-half">
+        {{ govukSummaryList({
+          rows: [
+            { key: { text: "Customs document reference" }, value: { text: endorsedDetails.mrnReference or "–" } },
+            { key: { text: "Officer ID" }, value: { text: endorsedDetails.officerId or "–" } }
+          ]
+        }) }}
+      </div>
+    </div>
+    {% endif %}
+    <div class="govuk-button-group govuk-!-margin-top-4">
+      <a href="/alpha-02-03-26/single-search-results/check-permit-details?permit={{ permit }}&edit=1#endorsement-section" class="govuk-button">Amend details</a>
+    </div>
+    </div>
+    {% elif data.editEndorsement %}
+    <div id="endorsement-section">
+    <span class="govuk-caption-l">Check permit details</span>
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ permit }}</h1>
+    <p class="govuk-body-s govuk-!-margin-top-2 govuk-!-margin-bottom-6">Permit {{ currentIndex }} of {{ totalCount }}</p>
+    <h2 class="govuk-heading-m">Amend endorsement or refusal</h2>
+    <p class="govuk-body">Change the endorsement details, switch to refusal, or cancel to revert with no changes.</p>
+
+    <form method="post" action="/alpha-02-03-26/single-search-results/check-permit-details" autocomplete="off">
+      <input type="hidden" name="permit" value="{{ permit }}" />
+      {% if data.permitStatuses and data.permitStatuses[permit] === "endorsed" %}<input type="hidden" name="update" value="1" />{% endif %}
+      <h3 class="govuk-heading-s govuk-!-margin-top-4">Endorse permit</h3>
+      {% set actualQuantityError = data.errors and data.errors.actualQuantity %}
+      {% set specimenQuantity = currentPermit.quantity or "80" %}
+      <div class="govuk-form-group{% if actualQuantityError %} govuk-form-group--error{% endif %}">
+        <label class="govuk-label" for="actualQuantity">Actual quantity</label>
+        {% if actualQuantityError %}
+        <p id="actualQuantity-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.actualQuantity }}</p>
+        {% endif %}
+        <input class="govuk-input govuk-input--width-5{% if actualQuantityError %} govuk-input--error{% endif %}" id="actualQuantity" name="actualQuantity" type="text" inputmode="numeric" value="{{ endorsedDetails.actualQuantity or '' }}" {% if actualQuantityError %}aria-describedby="actualQuantity-error"{% endif %}>
+        <p class="govuk-hint govuk-!-margin-top-1">
+          <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action" id="useSpecimenQuantityLink" data-quantity="{{ specimenQuantity }}">Use specimen quantity</a>
+        </p>
+      </div>
+      <div class="govuk-form-group{% if data.errors and data.errors.mrnReference %} govuk-form-group--error{% endif %}">
+        <label class="govuk-label" for="mrnReference">Customs document reference</label>
+        {% if data.errors and data.errors.mrnReference %}
+        <p id="mrnReference-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.mrnReference }}</p>
+        {% endif %}
+        <input class="govuk-input govuk-input--width-30{% if data.errors and data.errors.mrnReference %} govuk-input--error{% endif %}" id="mrnReference" name="mrnReference" type="text" value="{{ endorsedDetails.mrnReference or data.mrnReference or '' }}">
+      </div>
+      <div class="govuk-button-group govuk-!-margin-top-4">
+        {{ govukButton({
+          text: "Endorse permit",
+          name: "endorse",
+          value: "Endorse permit",
+          type: "submit"
+        }) }}
+        <a href="/alpha-02-03-26/single-search-results/refuse-permit?permit={{ permit }}" class="govuk-button govuk-button--secondary">Refuse endorsement</a>
+      </div>
+    </form>
+
+    <p class="govuk-body govuk-!-margin-top-6">
+      <a href="/alpha-02-03-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-link">Cancel amend</a>
+    </p>
+    </div>
+    {% else %}
+    <div id="endorsement-section">
+    <h2 class="govuk-heading-m">{% if data.editEndorsement %}Amend endorsement{% else %}Endorse permit{% endif %}</h2>
+
+    <form method="post" action="/alpha-02-03-26/single-search-results/check-permit-details" autocomplete="off">
+      <input type="hidden" name="permit" value="{{ permit }}" />
+      {% if data.editEndorsement %}<input type="hidden" name="update" value="1" />{% endif %}
+
+      {% set actualQuantityError = data.errors and data.errors.actualQuantity %}
+      {% set actualQuantityErrorMsg = { text: data.errors.actualQuantity } if actualQuantityError else null %}
+      {% set specimenQuantity = currentPermit.quantity or "80" %}
+      <div class="govuk-form-group{% if actualQuantityError %} govuk-form-group--error{% endif %}">
+        <label class="govuk-label" for="actualQuantity">Actual quantity</label>
+        {% if actualQuantityError %}
+        <p id="actualQuantity-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.actualQuantity }}</p>
+        {% endif %}
+        <input class="govuk-input govuk-input--width-5{% if actualQuantityError %} govuk-input--error{% endif %}" id="actualQuantity" name="actualQuantity" type="text" inputmode="numeric" value="{{ endorsedDetails.actualQuantity or '' }}" {% if actualQuantityError %}aria-describedby="actualQuantity-error"{% endif %}>
+        <p class="govuk-hint govuk-!-margin-top-1">
+          <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action" id="useSpecimenQuantityLink" data-quantity="{{ specimenQuantity }}">Use specimen quantity</a>
+        </p>
+      </div>
+
+      <div class="govuk-form-group{% if data.errors and data.errors.mrnReference %} govuk-form-group--error{% endif %}">
+        <label class="govuk-label" for="mrnReference">Customs document reference</label>
+        {% if data.errors and data.errors.mrnReference %}
+        <p id="mrnReference-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.mrnReference }}</p>
+        {% endif %}
+        <input class="govuk-input govuk-input--width-30{% if data.errors and data.errors.mrnReference %} govuk-input--error{% endif %}" id="mrnReference" name="mrnReference" type="text" value="{{ endorsedDetails.mrnReference or data.mrnReference or '' }}" aria-describedby="{% if data.errors and data.errors.mrnReference %}mrnReference-error {% endif %}mrnReference-apply-hint">
+        {% if totalCount > 1 %}
+        <p class="govuk-hint govuk-!-margin-top-2 customs-reference-actions">
+          <span id="mrnReference-apply-hint" aria-live="polite"></span>
+          <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action govuk-!-display-block govuk-!-margin-top-1" id="applyReferenceLink" data-permit="{{ permit }}">Apply reference to all permits</a>
+        </p>
+        {% else %}
+        <p id="mrnReference-apply-hint" class="govuk-hint govuk-!-margin-top-2" aria-live="polite"></p>
+        {% endif %}
+      </div>
+
+      <div class="govuk-button-group govuk-!-margin-top-4">
+        {% if data.editEndorsement %}
+        {{ govukButton({
+          text: "Save changes",
+          name: "update",
+          value: "Save changes",
+          type: "submit"
+        }) }}
+        <a href="/alpha-02-03-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-link govuk-!-margin-left-3 govuk-!-padding-top-2 govuk-!-padding-bottom-2">Cancel amend</a>
+        {% else %}
+        {{ govukButton({
+          text: "Endorse permit",
+          name: "endorse",
+          value: "Endorse permit",
+          type: "submit"
+        }) }}
+        <a href="/alpha-02-03-26/single-search-results/refuse-permit?permit={{ permit }}" class="govuk-button govuk-button--secondary">Refuse endorsement</a>
+        {% endif %}
+      </div>
+    </form>
+    </div>
+    {% endif %}
+
+    {% set permitList = data.checkPermitList or data.permitSearchResults or [] %}
+    {% if totalCount > 1 %}
+    <div class="permit-pagination-inline">
+      {{ govukPagination({
+        classes: "permit-pagination-inline__nav",
+        landmarkLabel: "Permit navigation",
+        previous: (currentIndex > 1) and {
+          text: "Previous permit",
+          labelText: permitList[currentIndex - 2].ref,
+          href: "/alpha-02-03-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex - 2].ref
+        },
+        next: (currentIndex < totalCount) and {
+          text: "Next permit",
+          labelText: permitList[currentIndex].ref,
+          href: "/alpha-02-03-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex].ref
+        }
+      }) }}
+      <span class="permit-pagination-inline__position govuk-body-s govuk-!-font-weight-bold">Permit {{ currentIndex }} of {{ totalCount }}</span>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block pageScripts %}
+  {% include "alpha-02-03-26/single-search-results/_customs-reference-script.njk" %}
+{% endblock %}

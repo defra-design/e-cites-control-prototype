@@ -1,0 +1,25 @@
+{% extends "layouts/main.html" %}
+{% set pageName = "Check permit details" %}
+{% set title = "Check permit details" %}
+{% set permit = "25GBIMPEFPJOB" %}
+{% set expires = "9 March 2026" %}
+{% set species = "Alligator mississippiensis" %}
+{% set commonName = "American alligator" %}
+{% set description = "Watch straps made of Alligator skin" %}
+{% set quantity = "30" %}
+{% set prevHref = "/alpha-02-03-26/single-search-results/check-permit-1" %}
+{% set prevRef = "25GBIMPABS719" %}
+{% set nextHref = "/alpha-02-03-26/single-search-results/check-permit-3" %}
+{% set nextRef = "25GBIMPSTYXH1" %}
+{% set currentIndex = 2 %}
+{% block beforeContent %}
+  <p class="govuk-body govuk-!-margin-top-4 govuk-!-margin-bottom-4">
+    <a href="/alpha-02-03-26/single-search-results/permit-search-results" class="govuk-link">Back to search results</a>
+  </p>
+{% endblock %}
+{% block content %}
+  {% include "alpha-02-03-26/single-search-results/_check-permit-page.njk" %}
+{% endblock %}
+{% block pageScripts %}
+  {% include "alpha-02-03-26/single-search-results/_customs-reference-script.njk" %}
+{% endblock %}
