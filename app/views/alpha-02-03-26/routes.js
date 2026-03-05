@@ -27,7 +27,10 @@ module.exports = (router) => {
   router.get(`${BASE}/single-search-results/search-results`, (req, res) => {
     const data = req.session.data || {}
     if (req.query.prefill === '1') {
-      const prefillValue = DEFAULT_PERMIT_REFS.join('\n')
+      const shuffled = [...DEFAULT_PERMIT_REFS].sort(() => Math.random() - 0.5)
+      const count = Math.floor(Math.random() * 6) + 4
+      const selected = shuffled.slice(0, count)
+      const prefillValue = selected.join('\n')
       data.permitReferences = prefillValue
       res.locals.data = res.locals.data || {}
       res.locals.data.permitReferences = prefillValue
@@ -102,13 +105,12 @@ module.exports = (router) => {
     const permitStatuses = data.permitStatuses || {}
     const items = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
     data.permitSearchResults = items
-    data.permitSearchRows = items.map((item, idx) => {
+    data.permitSearchRows = items.map((item) => {
       const status = permitStatuses[item.ref]
       let tag = '<strong class="govuk-tag govuk-tag--blue">Valid</strong>'
       if (status === 'endorsed') tag = '<strong class="govuk-tag govuk-tag--green">Endorsed</strong>'
       else if (status === 'refused') tag = '<strong class="govuk-tag govuk-tag--red">Refused</strong>'
-      const pageNum = Math.min(idx + 1, 10)
-      const checkHref = `${BASE}/single-search-results/check-permit-${pageNum}`
+      const checkHref = `${BASE}/single-search-results/check-permit-details?permit=${encodeURIComponent(item.ref)}`
       return [
         { text: item.ref },
         { text: item.species },

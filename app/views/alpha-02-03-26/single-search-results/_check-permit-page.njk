@@ -11,16 +11,15 @@
       {{ govukButton({ text: "View permit PDF", href: "#", classes: "govuk-button--secondary" }) }}
     </div>
 
-    <h2 class="govuk-heading-s">Permit information</h2>
+    <h2 class="govuk-heading-s">Permit details</h2>
     <div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px permit-info-compare summary-list-stacked">
       <div class="govuk-grid-column-one-half">
         {{ govukSummaryList({
           rows: [
             { key: { text: "Permit status" }, value: { html: "<strong class=\"govuk-tag govuk-tag--blue\">Valid</strong>" } },
-            { key: { text: "Exporter/re-exporter" }, value: { html: "Montreval Cuir SA, Rue du Marché 18, 1204 Geneva,<br>Switzerland" } },
+            { key: { text: "Exporter/re-exporter" }, value: { html: "Montreval Cuir SA<br>Rue du Marché 18 1204<br>Geneva<br>Switzerland" } },
             { key: { text: "Source" }, value: { text: "C: Animals bred in captivity" } },
-            { key: { text: "Appendix/Annex" }, value: { text: "I/A" } },
-            { key: { text: "Last day of validity" }, value: { text: expires } }
+            { key: { text: "Appendix/Annex" }, value: { text: "I / A" } }
           ]
         }) }}
       </div>
@@ -28,9 +27,9 @@
         {{ govukSummaryList({
           rows: [
             { key: { text: "Type" }, value: { text: "Import" } },
-            { key: { text: "Importer" }, value: { text: "Stratford & Hale Watch Company Ltd, Unit 14, Hatton Garden Business Centre, London, EC1N 8DL" } },
+            { key: { text: "Importer" }, value: { html: "Stratford & Hale Watch Company Ltd<br>Unit 14 Hatton Garden Business Centre<br>London<br>EC1N 8DL" } },
             { key: { text: "Purpose" }, value: { text: "T: Commercial" } },
-            { key: { text: "Port" }, value: { text: "Dover" } }
+            { key: { text: "Last day of validity" }, value: { text: expires } }
           ]
         }) }}
       </div>

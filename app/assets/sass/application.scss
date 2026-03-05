@@ -10,6 +10,27 @@
   display: none;
 }
 
+// Refuse permit – permit inset: aligned labels (bold, fixed width) and values for easier scanning
+.permit-inset-summary__row {
+  display: flex;
+  margin-bottom: govuk-spacing(1);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.permit-inset-summary dt {
+  font-weight: bold;
+  flex: 0 0 4.5em;
+  margin: 0;
+}
+
+.permit-inset-summary dd {
+  margin: 0;
+  padding-left: govuk-spacing(1);
+}
+
 // Customs reference – feedback and link in one block, link always on its own line
 .customs-reference-actions span:empty + a {
   margin-top: 0;
@@ -19,6 +40,21 @@
 .govuk-panel--refusal {
   color: #ffffff;
   background-color: #d4351c;
+}
+
+// Permit search results table – custom padding, border and typography
+.permit-search-results-table .govuk-table__header,
+.permit-search-results-table .govuk-table__cell {
+  padding: 10px 20px 10px 0;
+  border-bottom: 1px solid;
+  border-bottom-color: var(--govuk-border-colour, #cecece);
+  text-align: left;
+  font-size: 16px;
+  vertical-align: top;
+}
+
+.permit-search-results-table .govuk-tag {
+  font-size: 16px;
 }
 
 // Permit header – title and View PDF action on same row, right-aligned

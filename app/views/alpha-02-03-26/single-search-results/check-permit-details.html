@@ -118,7 +118,7 @@
         {{ govukSummaryList({
           rows: [
             { key: { text: "Permit status" }, value: { html: "<strong class=\"govuk-tag " ~ validityTagClass ~ "\">" ~ validityTag ~ "</strong>" } },
-            { key: { text: "Exporter/re-exporter" }, value: { html: "Montreval Cuir SA<br>Rue du Marché 18, 1204<br>Geneva,<br>Switzerland" } },
+            { key: { text: "Exporter/re-exporter" }, value: { html: "Montreval Cuir SA<br>Rue du Marché 18 1204<br>Geneva<br>Switzerland" } },
             { key: { text: "Source" }, value: { text: "C: Animals bred in captivity" } },
             { key: { text: "Appendix/Annex" }, value: { text: "I / A" } }
           ]
@@ -128,7 +128,7 @@
         {{ govukSummaryList({
           rows: [
             { key: { text: "Type" }, value: { text: "Import" } },
-            { key: { text: "Importer" }, value: { html: "Stratford & Hale Watch Company Ltd<br>Unit 14, Hatton Garden Business Centre,<br>London,<br>EC1N 8DL" } },
+            { key: { text: "Importer" }, value: { html: "Stratford & Hale Watch Company Ltd<br>Unit 14 Hatton Garden Business Centre<br>London<br>EC1N 8DL" } },
             { key: { text: "Purpose" }, value: { text: "T: Commercial" } },
             { key: { text: "Last day of validity" }, value: { text: currentPermit.expires or "28 February 2026" } }
           ]

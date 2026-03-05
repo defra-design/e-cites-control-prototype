@@ -3,9 +3,8 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
-
 {% set pageName = "Why are you refusing this permit?" %}
 {% set title = "Why are you refusing this permit?" %}
 {% set permit = data.permit or "25GBIMPABS719" %}
@@ -31,36 +30,51 @@
 
 <h1 class="govuk-heading-l">{{ title }}</h1>
 
-<div class="govuk-inset-text govuk-!-margin-top-0">
-  <p class="govuk-body-s govuk-!-margin-bottom-1"><strong>Permit</strong> {{ permit }}</p>
-  <p class="govuk-body-s govuk-!-margin-bottom-1"><strong>Quantity</strong> {{ permitQuantity }}</p>
-  <p class="govuk-body-s govuk-!-margin-bottom-0"><strong>Details</strong> {{ permitDetails }}</p>
+<div class="govuk-inset-text govuk-!-margin-top-0 permit-inset-summary">
+  <dl class="govuk-body-s govuk-!-margin-bottom-0">
+    <div class="permit-inset-summary__row">
+      <dt>Permit</dt>
+      <dd>{{ permit }}</dd>
+    </div>
+    <div class="permit-inset-summary__row">
+      <dt>Quantity</dt>
+      <dd>{{ permitQuantity }}</dd>
+    </div>
+    <div class="permit-inset-summary__row">
+      <dt>Details</dt>
+      <dd>{{ permitDetails }}</dd>
+    </div>
+  </dl>
 </div>
 
 <form method="post" action="/alpha-02-03-26/single-search-results/refuse-permit" autocomplete="off">
   <input type="hidden" name="permit" value="{{ permit }}" />
 
   {% set refusalReasonError = data.errors and data.errors.refusalReason %}
-  {% set additionalDetailsDetained %}
-  {{ govukCharacterCount({
-    name: "additionalDetails",
-    id: "additionalDetailsDetained",
-    maxlength: 200,
-    label: { text: "Provide additional details (optional)", classes: "govuk-label--s" },
-    hint: { text: "You can enter up to 200 characters" },
-    value: data.additionalDetails or "",
-    rows: 5
+  {% set refusalReasonSelectDetained %}
+  {{ govukSelect({
+    id: "refusalReasonSelectDetained",
+    name: "refusalReasonSelect",
+    label: {
+      text: "Select a reason",
+      classes: "govuk-label--s"
+    },
+    items: [
+      { value: "", text: "Select", selected: true }
+    ]
   }) }}
   {% endset %}
-  {% set additionalDetailsSeized %}
-  {{ govukCharacterCount({
-    name: "additionalDetailsAlt",
-    id: "additionalDetailsSeized",
-    maxlength: 200,
-    label: { text: "Provide additional details (optional)", classes: "govuk-label--s" },
-    hint: { text: "You can enter up to 200 characters" },
-    value: data.additionalDetails or "",
-    rows: 5
+  {% set refusalReasonSelectSeized %}
+  {{ govukSelect({
+    id: "refusalReasonSelectSeized",
+    name: "refusalReasonSelect",
+    label: {
+      text: "Select a reason",
+      classes: "govuk-label--s"
+    },
+    items: [
+      { value: "", text: "Select", selected: true }
+    ]
   }) }}
   {% endset %}
   {{ govukRadios({
@@ -80,14 +94,14 @@
         value: "Goods detained",
         text: "Goods detained",
         conditional: {
-          html: additionalDetailsDetained
+          html: refusalReasonSelectDetained
         }
       },
       {
         value: "Goods seized",
         text: "Goods seized",
         conditional: {
-          html: additionalDetailsSeized
+          html: refusalReasonSelectSeized
         }
       }
     ]
