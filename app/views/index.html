@@ -1,4 +1,5 @@
 {% extends "layouts/main.html" %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% set pageName="Home" %}
 
@@ -13,22 +14,13 @@
       {{ serviceName }}
     </h1>
 
-    <h2 class="govuk-heading-m">Test round 2 - Alpha 02-03-2026</h2>
+    <h2 class="govuk-heading-m">Test round 2 - Alpha 09-03-2026</h2>
     <p class="govuk-heading-s">Single permit view</p>
-    <p class="govuk-body govuk-!-margin-bottom-1">Permit references (10 results):</p>
-    <ol class="govuk-list govuk-list--number govuk-!-margin-bottom-4">
-      <li><code>25GBIMPABS719</code></li>
-      <li><code>25GBIMPSTYXH1</code></li>
-      <li><code>25GBIMPSTYHNO</code></li>
-      <li><code>25GBIMPUVWOFM</code></li>
-      <li><code>25GBIMPWX0N12</code></li>
-      <li><code>25GBIMPYZOPGY</code></li>
-      <li><code>25GBIMPABZPMT</code></li>
-      <li><code>25GBIMPCDO2DA</code></li>
-      <li><code>25GBIMPEFPJOB</code></li>
-      <li><code>25GBIMPGHAQTG</code></li>
-    </ol>
-    <ul class="govuk-list govuk-list--bullet">
+    {{ govukDetails({
+      summaryText: "Permit references",
+      html: '<div class="govuk-body-s"><code>25GBIMPABS719</code><br><code>25GBIMPSTYXH1</code><br><code>25GBIMPSTYHNO</code><br><code>25GBIMPUVWOFM</code><br><code>25GBIMPWX0N12</code><br><code>25GBIMPYZOPGY</code><br><code>25GBIMPABZPMT</code><br><code>25GBIMPCDO2DA</code><br><code>25GBIMPEFPJOB</code><br><code>25GBIMPGHAQTG</code></div>'
+    }) }}
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
       <li><a href="/alpha-02-03-26/single-search-results/search-results?prefill=1">Search for CITES permits</a></li>
       <li><a href="/alpha-02-03-26/single-search-results/permit-search-results">Permit search results</a></li>
       <li><a href="/alpha-02-03-26/single-search-results/check-permit-details?permit=25GBIMPABS719">Check permit details (dynamic)</a></li>
@@ -38,24 +30,22 @@
 
     <h2 class="govuk-heading-m govuk-!-margin-top-6">Test round 1 - Alpha 25-02-2026</h2>
     <p class="govuk-heading-s">Alpha 24-02-26 – Single permit view inc search results</p>
-    <p class="govuk-body govuk-!-margin-bottom-1">Search terms:</p>
-    <ol class="govuk-list govuk-list--number govuk-!-margin-bottom-4">
-      <li><code>26GBIMP12344X</code> (1 result)</li>
-      <li><code>26GBIMP12344X</code> <code>26GBIMP7GH45R</code> <code>26GBIMPHG453Y</code> (3 results)</li>
-    </ol>
-    <ul class="govuk-list govuk-list--bullet">
+    {{ govukDetails({
+      summaryText: "Search terms",
+      html: '<div class="govuk-body-s"><code>26GBIMP12344X</code> (1 result)<br><code>26GBIMP12344X</code> <code>26GBIMP7GH45R</code> <code>26GBIMPHG453Y</code> (3 results)</div>'
+    }) }}
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
       <li><a href="/alpha-24-02-26/single-search-results/search-results">Search for CITES permits</a></li>
       <li><a href="/alpha-24-02-26/single-search-results/permit-search-results">Permit search results</a></li>
       <li><a href="/alpha-24-02-26/single-search-results/check-permit-details?permit=26GBIMP12344X">Check permit details</a></li>
     </ul>
 
-    <p class="govuk-heading-s">Alpha 24-02-26 – Combined permit view</p>
-    <p class="govuk-body govuk-!-margin-bottom-1">Search terms:</p>
-    <ol class="govuk-list govuk-list--number govuk-!-margin-bottom-4">
-      <li><code>26GBIMP6GT534</code></li>
-      <li><code>26GBIMP7GH45R</code></li>
-    </ol>
-    <ul class="govuk-list govuk-list--bullet">
+    <p class="govuk-heading-s govuk-!-margin-top-4">Alpha 24-02-26 – Combined permit view</p>
+    {{ govukDetails({
+      summaryText: "Search terms",
+      html: '<div class="govuk-body-s"><code>26GBIMP6GT534</code><br><code>26GBIMP7GH45R</code></div>'
+    }) }}
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
       <li><a href="/alpha-24-02-26/combined-search-results/search-results">Search for a CITES permit</a></li>
       <li><a href="/alpha-24-02-26/combined-search-results/check-permit-details">Check permit details (combined)</a></li>
       <li><a href="/alpha-24-02-26/combined-search-results/endorsement-confirmation">Endorsement confirmation</a></li>
