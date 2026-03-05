@@ -102,7 +102,6 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
 
-    {% if not data.editEndorsement %}
     <span class="govuk-caption-l">Check permit details</span>
     <div class="govuk-!-margin-bottom-1 permit-header-actions">
       <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ permit }}</h1>
@@ -156,7 +155,6 @@
         }) }}
       </div>
     </div>
-    {% endif %}
 
     {% if (data.permitStatuses and data.permitStatuses[permit]) and not data.editEndorsement %}
     <div id="endorsement-section">
@@ -209,15 +207,11 @@
     </div>
     {% elif data.editEndorsement %}
     <div id="endorsement-section">
-    <span class="govuk-caption-l">Check permit details</span>
-    <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ permit }}</h1>
-    <h2 class="govuk-heading-s govuk-!-margin-top-4">Amend endorsement or refusal</h2>
-    <p class="govuk-body">Change the endorsement details, switch to refusal, or cancel to revert with no changes.</p>
+    <h2 class="govuk-heading-s">Endorse permit</h2>
 
     <form method="post" action="/alpha-02-03-26/single-search-results/check-permit-details" autocomplete="off">
       <input type="hidden" name="permit" value="{{ permit }}" />
       {% if data.permitStatuses and data.permitStatuses[permit] === "endorsed" %}<input type="hidden" name="update" value="1" />{% endif %}
-      <h3 class="govuk-heading-s govuk-!-margin-top-4">Endorse permit</h3>
       {% set actualQuantityError = data.errors and data.errors.actualQuantity %}
       {% set specimenQuantity = currentPermit.quantity or "80" %}
       <div class="govuk-form-group{% if actualQuantityError %} govuk-form-group--error{% endif %}">
@@ -248,7 +242,7 @@
       </div>
     </form>
 
-    <p class="govuk-body govuk-!-margin-top-6">
+    <p class="govuk-body govuk-!-margin-top-4">
       <a href="/alpha-02-03-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-link">Cancel amend</a>
     </p>
     </div>
