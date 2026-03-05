@@ -84,7 +84,11 @@ module.exports = (router) => {
     delete data.errorList
     req.session.save((err) => {
       if (err) return res.redirect(`${BASE}/single-search-results/search-results`)
-      res.redirect(`${BASE}/single-search-results/permit-search-results`)
+      if (refs.length === 1) {
+        res.redirect(`${BASE}/single-search-results/check-permit-details?permit=${encodeURIComponent(refs[0])}`)
+      } else {
+        res.redirect(`${BASE}/single-search-results/permit-search-results`)
+      }
     })
   })
 
