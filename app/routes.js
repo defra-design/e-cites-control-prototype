@@ -6,6 +6,12 @@
 const govukPrototypeKit = require('govuk-prototype-kit')
 const router = govukPrototypeKit.requests.setupRouter()
 
+// Set active nav state for header (Search menu item – active only on search form page)
+router.use((req, res, next) => {
+  res.locals.activeNavSearch = req.path.endsWith('/single-search-results/search-results')
+  next()
+})
+
 // Clear data and redirect back to current page
 router.get('/clear-data', (req, res) => {
   req.session.data = {}

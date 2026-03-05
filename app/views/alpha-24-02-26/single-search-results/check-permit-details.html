@@ -75,6 +75,7 @@
     </p>
 
     <h2 class="govuk-heading-m">Permit details</h2>
+    <div class="summary-list-stacked">
     {{ govukSummaryList({
       rows: [
         { key: { text: "Permit number" }, value: { text: data.permit or "26GBIMP12344X" } },
@@ -88,8 +89,10 @@
         { key: { text: "Last day of validity" }, value: { html: "28 February 2026 <strong class=\"govuk-tag " ~ validityTagClass ~ "\">" ~ validityTag ~ "</strong>" } }
       ]
     }) }}
+    </div>
 
     <h2 class="govuk-heading-m">Specimen details</h2>
+    <div class="summary-list-stacked">
     {{ govukSummaryList({
       rows: [
         { key: { text: "Scientific name" }, value: { text: "Falco peregrinus" } },
@@ -99,9 +102,11 @@
         { key: { text: "Quantity" }, value: { text: "1" } }
       ]
     }) }}
+    </div>
 
     {% if data.endorsed or data.refused %}
     <h2 class="govuk-heading-m">Endorse permit</h2>
+    <div class="summary-list-stacked">
     {{ govukSummaryList({
       rows: [
         { key: { text: "Actual quantity" }, value: { text: data.actualQuantity or "1" } },
@@ -110,6 +115,7 @@
         { key: { text: "Bill of Lading or Air waybill (AWB) reference" }, value: { text: data.awbReference or "932-87654321" } }
       ]
     }) }}
+    </div>
     <p class="govuk-body">
       <a href="/alpha-24-02-26/single-search-results/permit-search-results">Back to results</a>
     </p>

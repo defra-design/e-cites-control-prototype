@@ -5,7 +5,27 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 
 {% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
 
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 {% from 'govuk/components/footer/macro.njk' import govukFooter %}
+
+{% block header %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    containerClasses: "govuk-width-container"
+  }) }}
+  {{ govukServiceNavigation({
+    serviceName: serviceName,
+    serviceUrl: serviceUrl | default("/"),
+    navigation: [
+      {
+        text: "Search",
+        href: "/alpha-02-03-26/single-search-results/search-results",
+        current: activeNavSearch | default(false)
+      }
+    ]
+  }) }}
+{% endblock %}
 
 {% block footer %}
   {% if (GOVUKPrototypeKit.isDevelopment) %}

@@ -1,4 +1,5 @@
 {% extends "layouts/main.html" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -11,6 +12,7 @@
 {% set currentPermit = data.currentPermit or {} %}
 {% set currentIndex = data.checkPermitIndex or 1 %}
 {% set totalCount = data.checkPermitTotal or 10 %}
+{% set permitList = data.checkPermitList or data.permitSearchResults or [] %}
 {% set endorsedDetails = data.endorsedDetails and data.endorsedDetails[permit] or {} %}
 {% set validityTag = "Valid" %}
 {% set validityTagClass = "govuk-tag--blue" %}
@@ -20,9 +22,31 @@
 {% endif %}
 
 {% block beforeContent %}
-  <p class="govuk-body govuk-!-margin-top-4 govuk-!-margin-bottom-4">
-    <a href="/alpha-02-03-26/single-search-results/permit-search-results" class="govuk-link">Back to search results</a>
-  </p>
+  <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+    {{ govukBackLink({
+      text: "Back to search results",
+      href: "/alpha-02-03-26/single-search-results/permit-search-results"
+    }) }}
+    {% if totalCount > 1 %}
+    <div class="permit-pagination-inline">
+      {{ govukPagination({
+        classes: "permit-pagination-inline__nav",
+        landmarkLabel: "Permit navigation",
+        previous: (currentIndex > 1) and {
+          text: "Previous permit",
+          labelText: permitList[currentIndex - 2].ref,
+          href: "/alpha-02-03-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex - 2].ref
+        },
+        next: (currentIndex < totalCount) and {
+          text: "Next permit",
+          labelText: permitList[currentIndex].ref,
+          href: "/alpha-02-03-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex].ref
+        }
+      }) }}
+      <span class="permit-pagination-inline__position govuk-body-s govuk-!-font-weight-bold">Permit {{ currentIndex }} of {{ totalCount }}</span>
+    </div>
+    {% endif %}
+  </div>
 {% endblock %}
 
 {% block content %}
@@ -35,8 +59,6 @@
 {% endif %}
 
 {% set permitList = data.checkPermitList or data.permitSearchResults or [] %}
-{% set hasNextPermit = totalCount > 1 and currentIndex < totalCount %}
-{% set nextPermitRef = permitList[currentIndex].ref if hasNextPermit else '' %}
 
 {% if data.endorsed %}
   <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
@@ -47,13 +69,6 @@
     </div>
     <div class="govuk-notification-banner__content">
       <p class="govuk-body">Permit number: {{ permit }} has been endorsed</p>
-      <p class="govuk-body">
-        {% if hasNextPermit %}
-        <a href="/alpha-02-03-26/single-search-results/check-permit-details?permit={{ nextPermitRef }}" class="govuk-link">View next permit</a>
-        {% else %}
-        <a href="/alpha-02-03-26/single-search-results/permit-search-results" class="govuk-link">Back to search results</a>
-        {% endif %}
-      </p>
     </div>
   </div>
 {% endif %}
@@ -67,13 +82,6 @@
     </div>
     <div class="govuk-notification-banner__content">
       <p class="govuk-body">Endorsement details for permit {{ permit }} have been updated</p>
-      <p class="govuk-body">
-        {% if hasNextPermit %}
-        <a href="/alpha-02-03-26/single-search-results/check-permit-details?permit={{ nextPermitRef }}#endorsement-section" class="govuk-link">View next permit</a>
-        {% else %}
-        <a href="/alpha-02-03-26/single-search-results/permit-search-results" class="govuk-link">Back to search results</a>
-        {% endif %}
-      </p>
     </div>
   </div>
 {% endif %}
@@ -87,13 +95,6 @@
     </div>
     <div class="govuk-notification-banner__content">
       <p class="govuk-body">Permit number: {{ permit }} has been refused</p>
-      <p class="govuk-body">
-        {% if hasNextPermit %}
-        <a href="/alpha-02-03-26/single-search-results/check-permit-details?permit={{ nextPermitRef }}#endorsement-section" class="govuk-link">View next permit</a>
-        {% else %}
-        <a href="/alpha-02-03-26/single-search-results/permit-search-results" class="govuk-link">Back to search results</a>
-        {% endif %}
-      </p>
     </div>
   </div>
 {% endif %}
@@ -103,16 +104,17 @@
 
     {% if not data.editEndorsement %}
     <span class="govuk-caption-l">Check permit details</span>
-    <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ permit }}</h1>
-    <p class="govuk-body-s govuk-!-margin-top-2 govuk-!-margin-bottom-4">Permit {{ currentIndex }} of {{ totalCount }}</p>
+    <div class="govuk-!-margin-bottom-1 permit-header-actions">
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ permit }}</h1>
+      {{ govukButton({
+        text: "View permit PDF",
+        href: "#",
+        classes: "govuk-button--secondary"
+      }) }}
+    </div>
 
-    {{ govukButton({
-      text: "View permit PDF",
-      classes: "govuk-button--secondary govuk-!-margin-bottom-6"
-    }) }}
-
-    <h2 class="govuk-heading-m">Permit details</h2>
-    <div class="govuk-grid-row govuk-!-margin-bottom-1 permit-summary-16px permit-info-compare summary-list-stacked">
+    <h2 class="govuk-heading-s">Permit details</h2>
+    <div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px permit-info-compare summary-list-stacked">
       <div class="govuk-grid-column-one-half">
         {{ govukSummaryList({
           rows: [
@@ -135,8 +137,8 @@
       </div>
     </div>
 
-    <h2 class="govuk-heading-m">Specimen details</h2>
-    <div class="govuk-grid-row govuk-!-margin-bottom-1 permit-summary-16px summary-list-stacked">
+    <h2 class="govuk-heading-s">Specimen details</h2>
+    <div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px summary-list-stacked">
       <div class="govuk-grid-column-one-half">
         {{ govukSummaryList({
           rows: [
@@ -159,8 +161,8 @@
     {% if (data.permitStatuses and data.permitStatuses[permit]) and not data.editEndorsement %}
     <div id="endorsement-section">
     {% if data.permitStatuses[permit] === "refused" %}
-    <h2 class="govuk-heading-m">Refusal details</h2>
-    <div class="govuk-grid-row govuk-!-margin-bottom-1 permit-summary-16px permit-info-compare summary-list-stacked">
+    <h2 class="govuk-heading-s">Refusal details</h2>
+    <div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px permit-info-compare summary-list-stacked">
       <div class="govuk-grid-column-one-half">
         {{ govukSummaryList({
           rows: [
@@ -180,8 +182,8 @@
       </div>
     </div>
     {% else %}
-    <h2 class="govuk-heading-m">Endorsement details</h2>
-    <div class="govuk-grid-row govuk-!-margin-bottom-1 permit-summary-16px permit-info-compare summary-list-stacked">
+    <h2 class="govuk-heading-s">Endorsement details</h2>
+    <div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px permit-info-compare summary-list-stacked">
       <div class="govuk-grid-column-one-half">
         {{ govukSummaryList({
           rows: [
@@ -209,8 +211,7 @@
     <div id="endorsement-section">
     <span class="govuk-caption-l">Check permit details</span>
     <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ permit }}</h1>
-    <p class="govuk-body-s govuk-!-margin-top-2 govuk-!-margin-bottom-6">Permit {{ currentIndex }} of {{ totalCount }}</p>
-    <h2 class="govuk-heading-m">Amend endorsement or refusal</h2>
+    <h2 class="govuk-heading-s govuk-!-margin-top-4">Amend endorsement or refusal</h2>
     <p class="govuk-body">Change the endorsement details, switch to refusal, or cancel to revert with no changes.</p>
 
     <form method="post" action="/alpha-02-03-26/single-search-results/check-permit-details" autocomplete="off">
@@ -234,7 +235,7 @@
         {% if data.errors and data.errors.mrnReference %}
         <p id="mrnReference-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.mrnReference }}</p>
         {% endif %}
-        <input class="govuk-input govuk-input--width-30{% if data.errors and data.errors.mrnReference %} govuk-input--error{% endif %}" id="mrnReference" name="mrnReference" type="text" value="{{ endorsedDetails.mrnReference or data.mrnReference or '' }}">
+        <input class="govuk-input govuk-input--width-20{% if data.errors and data.errors.mrnReference %} govuk-input--error{% endif %}" id="mrnReference" name="mrnReference" type="text" value="{{ endorsedDetails.mrnReference or data.mrnReference or '' }}">
       </div>
       <div class="govuk-button-group govuk-!-margin-top-4">
         {{ govukButton({
@@ -253,7 +254,7 @@
     </div>
     {% else %}
     <div id="endorsement-section">
-    <h2 class="govuk-heading-m">{% if data.editEndorsement %}Amend endorsement{% else %}Endorse permit{% endif %}</h2>
+    <h2 class="govuk-heading-s">{% if data.editEndorsement %}Amend endorsement{% else %}Endorse permit{% endif %}</h2>
 
     <form method="post" action="/alpha-02-03-26/single-search-results/check-permit-details" autocomplete="off">
       <input type="hidden" name="permit" value="{{ permit }}" />
@@ -278,7 +279,7 @@
         {% if data.errors and data.errors.mrnReference %}
         <p id="mrnReference-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.mrnReference }}</p>
         {% endif %}
-        <input class="govuk-input govuk-input--width-30{% if data.errors and data.errors.mrnReference %} govuk-input--error{% endif %}" id="mrnReference" name="mrnReference" type="text" value="{{ endorsedDetails.mrnReference or data.mrnReference or '' }}" aria-describedby="{% if data.errors and data.errors.mrnReference %}mrnReference-error {% endif %}mrnReference-apply-hint">
+        <input class="govuk-input govuk-input--width-20{% if data.errors and data.errors.mrnReference %} govuk-input--error{% endif %}" id="mrnReference" name="mrnReference" type="text" value="{{ endorsedDetails.mrnReference or data.mrnReference or '' }}" aria-describedby="{% if data.errors and data.errors.mrnReference %}mrnReference-error {% endif %}mrnReference-apply-hint">
         {% if totalCount > 1 %}
         <p class="govuk-hint govuk-!-margin-top-2 customs-reference-actions">
           <span id="mrnReference-apply-hint" aria-live="polite"></span>
@@ -309,27 +310,6 @@
         {% endif %}
       </div>
     </form>
-    </div>
-    {% endif %}
-
-    {% set permitList = data.checkPermitList or data.permitSearchResults or [] %}
-    {% if totalCount > 1 %}
-    <div class="permit-pagination-inline">
-      {{ govukPagination({
-        classes: "permit-pagination-inline__nav",
-        landmarkLabel: "Permit navigation",
-        previous: (currentIndex > 1) and {
-          text: "Previous permit",
-          labelText: permitList[currentIndex - 2].ref,
-          href: "/alpha-02-03-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex - 2].ref
-        },
-        next: (currentIndex < totalCount) and {
-          text: "Next permit",
-          labelText: permitList[currentIndex].ref,
-          href: "/alpha-02-03-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex].ref
-        }
-      }) }}
-      <span class="permit-pagination-inline__position govuk-body-s govuk-!-font-weight-bold">Permit {{ currentIndex }} of {{ totalCount }}</span>
     </div>
     {% endif %}
 

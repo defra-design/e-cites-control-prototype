@@ -1,4 +1,6 @@
 {% extends "layouts/main.html" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% set pageName = "Check permit details" %}
 {% set title = "Check permit details" %}
 {% set permit = "25GBIMPABS719" %}
@@ -12,10 +14,23 @@
 {% set nextHref = "/alpha-02-03-26/single-search-results/check-permit-2" %}
 {% set nextRef = "25GBIMPEFPJOB" %}
 {% set currentIndex = 1 %}
+{% set totalCount = 10 %}
 {% block beforeContent %}
-  <p class="govuk-body govuk-!-margin-top-4 govuk-!-margin-bottom-4">
-    <a href="/alpha-02-03-26/single-search-results/permit-search-results" class="govuk-link">Back to search results</a>
-  </p>
+  <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+    {{ govukBackLink({
+      text: "Back to search results",
+      href: "/alpha-02-03-26/single-search-results/permit-search-results"
+    }) }}
+    <div class="permit-pagination-inline">
+      {{ govukPagination({
+        classes: "permit-pagination-inline__nav",
+        landmarkLabel: "Permit navigation",
+        previous: prevHref and { text: "Previous permit", labelText: prevRef, href: prevHref },
+        next: nextHref and { text: "Next permit", labelText: nextRef, href: nextHref }
+      }) }}
+      <span class="permit-pagination-inline__position govuk-body-s govuk-!-font-weight-bold">Permit {{ currentIndex }} of {{ totalCount }}</span>
+    </div>
+  </div>
 {% endblock %}
 {% block content %}
   {% include "alpha-02-03-26/single-search-results/_check-permit-page.njk" %}

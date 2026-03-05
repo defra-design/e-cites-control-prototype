@@ -2,17 +2,17 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
-{% from "govuk/components/pagination/macro.njk" import govukPagination %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <span class="govuk-caption-l">Check permit details</span>
-    <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ permit }}</h1>
-    <p class="govuk-body-s govuk-!-margin-top-2 govuk-!-margin-bottom-4">Permit {{ currentIndex }} of {{ totalCount | default(10) }}</p>
-    {{ govukButton({ text: "View permit PDF", classes: "govuk-button--secondary govuk-!-margin-bottom-6" }) }}
+    <div class="govuk-!-margin-bottom-3 permit-header-actions">
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ permit }}</h1>
+      {{ govukButton({ text: "View permit PDF", href: "#", classes: "govuk-button--secondary" }) }}
+    </div>
 
-    <h2 class="govuk-heading-m">Permit information</h2>
-    <div class="govuk-grid-row govuk-!-margin-bottom-6 permit-summary-16px permit-info-compare">
+    <h2 class="govuk-heading-s">Permit information</h2>
+    <div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px permit-info-compare summary-list-stacked">
       <div class="govuk-grid-column-one-half">
         {{ govukSummaryList({
           rows: [
@@ -36,8 +36,8 @@
       </div>
     </div>
 
-    <h2 class="govuk-heading-m">Specimen details</h2>
-    <div class="govuk-grid-row govuk-!-margin-bottom-6 permit-summary-16px">
+    <h2 class="govuk-heading-s">Specimen details</h2>
+    <div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px summary-list-stacked">
       <div class="govuk-grid-column-one-half">
         {{ govukSummaryList({
           rows: [
@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <h2 class="govuk-heading-m">Endorse permit</h2>
+    <h2 class="govuk-heading-s">Endorse permit</h2>
     <form method="post" action="/alpha-02-03-26/single-search-results/check-permit-details" autocomplete="off">
       <input type="hidden" name="permit" value="{{ permit }}" />
       <div class="govuk-form-group">
@@ -68,7 +68,7 @@
       </div>
       <div class="govuk-form-group">
         <label class="govuk-label" for="mrnReference">Customs document reference</label>
-        <input class="govuk-input govuk-input--width-30" id="mrnReference" name="mrnReference" type="text" value="{{ (data and data.endorsedDetails and data.endorsedDetails[permit] and data.endorsedDetails[permit].mrnReference) or (data and data.mrnReference) or '' }}" aria-describedby="mrnReference-apply-hint">
+        <input class="govuk-input govuk-input--width-20" id="mrnReference" name="mrnReference" type="text" value="{{ (data and data.endorsedDetails and data.endorsedDetails[permit] and data.endorsedDetails[permit].mrnReference) or (data and data.mrnReference) or '' }}" aria-describedby="mrnReference-apply-hint">
         <p class="govuk-hint govuk-!-margin-top-2 customs-reference-actions">
           <span id="mrnReference-apply-hint" aria-live="polite"></span>
           <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action govuk-!-display-block govuk-!-margin-top-1" id="applyReferenceLink" data-permit="{{ permit }}">Apply reference to all permits</a>
@@ -79,15 +79,5 @@
         {{ govukButton({ text: "Refuse endorsement", name: "refuse", value: "Refuse endorsement", type: "submit", classes: "govuk-button--secondary" }) }}
       </div>
     </form>
-
-    <div class="permit-pagination-inline">
-      {{ govukPagination({
-        classes: "permit-pagination-inline__nav",
-        landmarkLabel: "Permit navigation",
-        previous: prevHref and { text: "Previous permit", labelText: prevRef, href: prevHref },
-        next: nextHref and { text: "Next permit", labelText: nextRef, href: nextHref }
-      }) }}
-      <span class="permit-pagination-inline__position govuk-body-s govuk-!-font-weight-bold">Permit {{ currentIndex }} of {{ totalCount | default(10) }}</span>
-    </div>
   </div>
 </div>

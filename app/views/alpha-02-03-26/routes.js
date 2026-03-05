@@ -27,7 +27,10 @@ module.exports = (router) => {
   router.get(`${BASE}/single-search-results/search-results`, (req, res) => {
     const data = req.session.data || {}
     if (req.query.prefill === '1') {
-      data.permitReferences = DEFAULT_PERMIT_REFS.join('\n')
+      const prefillValue = DEFAULT_PERMIT_REFS.join('\n')
+      data.permitReferences = prefillValue
+      res.locals.data = res.locals.data || {}
+      res.locals.data.permitReferences = prefillValue
     }
     res.render('alpha-02-03-26/single-search-results/search-results')
   })
