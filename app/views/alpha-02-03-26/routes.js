@@ -37,10 +37,7 @@ module.exports = (router) => {
   router.get(`${BASE}/single-search-results/search-results`, (req, res) => {
     const data = req.session.data || {}
     if (req.query.prefill === '1') {
-      const shuffled = [...DEFAULT_PERMIT_REFS].sort(() => Math.random() - 0.5)
-      const count = Math.floor(Math.random() * 6) + 4
-      const selected = shuffled.slice(0, count)
-      const prefillValue = selected.join('\n')
+      const prefillValue = DEFAULT_PERMIT_REFS.join('\n')
       data.permitReferences = prefillValue
       res.locals.data = res.locals.data || {}
       res.locals.data.permitReferences = prefillValue
@@ -49,26 +46,26 @@ module.exports = (router) => {
   })
 
   const PERMIT_SEARCH_DATA = {
-    '25GBIMPABS719': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Eighty watch straps made of Alligator skin', expires: '9 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
-    '25GBIMPSTYXH1': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '9 March 2026', quantity: '100', citesAppendix: 'II', gbAnnex: 'B' },
-    '25GBIMPSTYHNO': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
-    '25GBIMPUVWOFM': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
-    '25GBIMPWX0N12': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
-    '25GBIMPYZOPGY': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '11 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
-    '25GBIMPABZPMT': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '11 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
-    '25GBIMPCDO2DA': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '11 March 2026', quantity: '50', citesAppendix: 'II', gbAnnex: 'B' },
-    '25GBIMPEFPJOB': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '9 March 2026', quantity: '30', citesAppendix: 'II', gbAnnex: 'B' },
-    '25GBIMPGHAQTG': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '11 March 2026', quantity: '10', citesAppendix: 'II', gbAnnex: 'B' },
-    '26GBIMP12344X': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '9 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
-    '26GBIMP7GH45R': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '9 March 2026', quantity: '100', citesAppendix: 'II', gbAnnex: 'B' },
-    '26GBIMPHG453Y': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
-    '26GBIMP4AB123': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
-    '26GBIMP5CD456': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
-    '26GBIMP6EF789': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '11 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
-    '26GBIMP7GH012': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '11 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
-    '26GBIMP8IJ345': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '11 March 2026', quantity: '50', citesAppendix: 'II', gbAnnex: 'B' },
-    '26GBIMP9KL678': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '9 March 2026', quantity: '30', citesAppendix: 'II', gbAnnex: 'B' },
-    '26GBIMP0MN901': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of Alligator skin', expires: '11 March 2026', quantity: '10', citesAppendix: 'II', gbAnnex: 'B' }
+    '25GBIMPABS719': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '8 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
+    '25GBIMPSTYXH1': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '9 March 2026', quantity: '100', citesAppendix: 'II', gbAnnex: 'B' },
+    '25GBIMPSTYHNO': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
+    '25GBIMPUVWOFM': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
+    '25GBIMPWX0N12': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
+    '25GBIMPYZOPGY': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '11 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
+    '25GBIMPABZPMT': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '11 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
+    '25GBIMPCDO2DA': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '11 March 2026', quantity: '50', citesAppendix: 'II', gbAnnex: 'B' },
+    '25GBIMPEFPJOB': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '9 March 2026', quantity: '30', citesAppendix: 'II', gbAnnex: 'B' },
+    '25GBIMPGHAQTG': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '11 March 2026', quantity: '10', citesAppendix: 'II', gbAnnex: 'B' },
+    '26GBIMP12344X': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '9 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
+    '26GBIMP7GH45R': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '9 March 2026', quantity: '100', citesAppendix: 'II', gbAnnex: 'B' },
+    '26GBIMPHG453Y': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
+    '26GBIMP4AB123': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
+    '26GBIMP5CD456': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
+    '26GBIMP6EF789': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '11 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
+    '26GBIMP7GH012': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '11 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
+    '26GBIMP8IJ345': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '11 March 2026', quantity: '50', citesAppendix: 'II', gbAnnex: 'B' },
+    '26GBIMP9KL678': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '9 March 2026', quantity: '30', citesAppendix: 'II', gbAnnex: 'B' },
+    '26GBIMP0MN901': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '11 March 2026', quantity: '10', citesAppendix: 'II', gbAnnex: 'B' }
   }
 
   router.post(`${BASE}/single-search-results/search-results`, (req, res) => {
@@ -105,6 +102,8 @@ module.exports = (router) => {
     })
   })
 
+  const DEFAULT_PERMIT_STATUSES = { '25GBIMPABS719': 'expired' }
+
   router.get(`${BASE}/single-search-results/permit-search-results`, (req, res) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
     res.set('Pragma', 'no-cache')
@@ -112,7 +111,8 @@ module.exports = (router) => {
     const data = req.session.data || {}
     let refs = data.searchedPermits || DEFAULT_PERMIT_REFS
     if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
-    const permitStatuses = data.permitStatuses || {}
+    const permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
+    data.permitStatuses = permitStatuses
     const items = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
     data.permitSearchResults = items
     data.permitSearchRows = items.map((item) => {
@@ -120,6 +120,7 @@ module.exports = (router) => {
       let tag = '<strong class="govuk-tag govuk-tag--blue">Valid</strong>'
       if (status === 'endorsed') tag = '<strong class="govuk-tag govuk-tag--green">Endorsed</strong>'
       else if (status === 'refused') tag = '<strong class="govuk-tag govuk-tag--red">Refused</strong>'
+      else if (status === 'expired') tag = '<strong class="govuk-tag govuk-tag--red">Expired</strong>'
       const checkHref = `${BASE}/single-search-results/check-permit-details?permit=${encodeURIComponent(item.ref)}`
       return [
         { text: item.ref },
@@ -218,6 +219,7 @@ module.exports = (router) => {
 
   router.get(`${BASE}/single-search-results/check-permit-details`, (req, res) => {
     const data = req.session.data || {}
+    data.permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
     let refs = data.searchedPermits || DEFAULT_PERMIT_REFS
     if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
     const permitList = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
@@ -365,8 +367,7 @@ module.exports = (router) => {
       data.endorsedDetails[permitId] = { actualQuantity, mrnReference }
       data.errors = errors
       data.errorList = errorList
-      const editParam = isUpdate ? '&edit=1' : ''
-      return res.redirect(`${BASE}/single-search-results/check-permit-details?permit=${encodeURIComponent(permitId)}${editParam}`)
+      return res.redirect(`${BASE}/single-search-results/check-permit-details?permit=${encodeURIComponent(permitId)}`)
     }
 
     delete data.errors

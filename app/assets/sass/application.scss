@@ -32,8 +32,13 @@
 }
 
 // Customs reference – feedback and link in one block, link always on its own line
-.customs-reference-actions span:empty + a {
+.customs-reference-actions span:empty + .customs-reference-link-wrap {
   margin-top: 0;
+}
+
+.customs-reference-link-wrap {
+  display: block;
+  margin-top: govuk-spacing(1);
 }
 
 // Refusal panel – red styling for endorsement refused

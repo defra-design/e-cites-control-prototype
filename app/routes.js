@@ -13,9 +13,18 @@ router.use((req, res, next) => {
   next()
 })
 
-// Serve sample permit PDF (for View permit PDF button)
-router.get('/public/documents/sample-permit.pdf', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets', 'documents', 'sample-permit.pdf'))
+// Serve permit PDFs by reference (for View permit PDF button)
+const PERMIT_PDF_REFS = [
+  '25GBIMPABS719', '25GBIMPABZPMT', '25GBIMPCDO2DA', '25GBIMPEFPJOB',
+  '25GBIMPGHAQTG', '25GBIMPSTYHNO', '25GBIMPSTYXH1', '25GBIMPUVWOFM',
+  '25GBIMPWX0N12', '25GBIMPYZOPGY'
+]
+router.get('/public/documents/:permitRef.pdf', (req, res) => {
+  const ref = req.params.permitRef
+  if (!PERMIT_PDF_REFS.includes(ref)) {
+    return res.status(404).send('Permit PDF not found')
+  }
+  res.sendFile(path.join(__dirname, 'assets', 'documents', `${ref}.pdf`))
 })
 
 // Clear data and redirect back to current page

@@ -8,7 +8,7 @@
     <span class="govuk-caption-l">Permit reference {{ permit }}</span>
     <div class="govuk-!-margin-bottom-3 permit-header-actions">
       <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Check permit details</h1>
-      {{ govukButton({ text: "View permit PDF", href: "/public/documents/sample-permit.pdf", classes: "govuk-button--secondary", attributes: { target: "_blank", rel: "noopener noreferrer" } }) }}
+      {{ govukButton({ text: "View permit PDF", href: "/public/documents/" ~ permit ~ ".pdf", classes: "govuk-button--secondary", attributes: { target: "_blank", rel: "noopener noreferrer" } }) }}
     </div>
 
     <h2 class="govuk-heading-s">Permit details</h2>
@@ -72,7 +72,9 @@
         <input class="govuk-input govuk-input--width-20" id="mrnReference" name="mrnReference" type="text" value="{{ (data and data.endorsedDetails and data.endorsedDetails[permit] and data.endorsedDetails[permit].mrnReference) or (data and data.mrnReference) or '' }}" aria-describedby="mrnReference-apply-hint">
         <p class="govuk-hint govuk-!-margin-top-2 customs-reference-actions">
           <span id="mrnReference-apply-hint" aria-live="polite"></span>
-          <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action govuk-!-display-block govuk-!-margin-top-1" id="applyReferenceLink" data-permit="{{ permit }}">Apply this reference to all permits in this consignment</a>
+          <span class="customs-reference-link-wrap">
+            <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action" id="applyReferenceLink" data-permit="{{ permit }}">Apply this reference to all permits in this consignment</a>
+          </span>
         </p>
       </div>
       <div class="govuk-button-group govuk-!-margin-top-4">

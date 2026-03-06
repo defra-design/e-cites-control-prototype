@@ -28,18 +28,12 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 {% endblock %}
 
 {% block footer %}
-  {% if (GOVUKPrototypeKit.isDevelopment) %}
-    {% set footerItems = [
-      { href: "/manage-prototype", text: "Manage your prototype" },
-      { href: "/alpha-02-03-26/single-search-results/search-results?prefill=1", text: "Load test permits" },
-      { href: "#", text: "Generate MRN", attributes: { "data-mrn-generator": "true" } },
-      { href: "/clear-data", text: "Clear data" }
-    ] %}
-  {% else %}
-    {% set footerItems = [
-      { href: "/clear-data", text: "Clear data" }
-    ] %}
-  {% endif %}
+  {% set footerItems = [
+    { href: "/manage-prototype", text: "Manage your prototype" },
+    { href: "/alpha-02-03-26/single-search-results/search-results?prefill=1", text: "Load test permits" },
+    { href: "#", text: "Generate MRN", attributes: { "data-mrn-generator": "true" } },
+    { href: "/clear-data", text: "Clear data" }
+  ] %}
   {{ govukFooter({
     meta: {
       items: footerItems,
