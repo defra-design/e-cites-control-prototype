@@ -1,14 +1,9 @@
-Make endorsement fields editable and fix permit details UX
+Add smooth notification banner close with no page jump
 
-- Replace read-only endorsement summary with editable form for endorsed/expired permits
-- Endorsement form mirrors valid permit: Quantity, Customs document reference, apply link
-- Add Expired status tag (govuk-tag--red) in addition to Endorsed and Refused
-- Fix customs reference link focus highlight spanning full width (use wrapper span)
-- Add customs-reference-link-wrap CSS for link on own line without full-width focus
-- Change View permit PDF to serve by permit reference (/public/documents/:ref.pdf)
-- Update PERMIT_SEARCH_DATA: lowercase alligator, expiry dates, first permit expired
-- Prefill search uses full permit list instead of random subset
-- Correct notification banners: endorsed success vs refused messages
-- Rename refusal field from Date of refusal to Refusal date
-- Show footer links (Load test permits, Generate MRN) in all environments
-- Update static check-permit pages with Expired status and description consistency
+- Add CSS transition for max-height, opacity, margin and padding on dismissable
+  banners so they collapse and fade out over 0.3s when Close is clicked
+- Add _notification-banner-close-script.njk: on Close click, animate banner out,
+  remove from DOM, and update URL via history.replaceState (no full reload)
+- Mark all three banners (endorsed, changes saved, permit not endorsed) with
+  data-dismissable and data-close-banner for consistent behaviour
+- Avoids previous jump caused by full reload and hash scroll to #endorsement-section
