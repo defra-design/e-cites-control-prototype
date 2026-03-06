@@ -1,13 +1,14 @@
-Fix single search results and improve search UX
+Make endorsement fields editable and fix permit details UX
 
-- Fix empty table on permit search results: set res.locals.data.permitSearchRows
-  so template receives data (autoStoreData runs before route, so session updates
-  were not visible to the template)
-- Add req.session.save() before redirects so session persists before browser
-  follows redirect (fixes need to refresh to see updated results)
-- Dynamic permit search results: show 1 row for single permit, 3 rows for
-  all three based on searched terms (26GBIMP12344X, 26GBIMP7GH45R, 26GBIMPHG453Y)
-- Paste handler: auto-format pasted permit refs onto new lines (split by spaces
-  or commas) so pasting "A B C" becomes one per line
-- Add search terms to index page in ordered lists for both single and combined flows
-- Add cache-control headers to prevent browser caching of results pages
+- Replace read-only endorsement summary with editable form for endorsed/expired permits
+- Endorsement form mirrors valid permit: Quantity, Customs document reference, apply link
+- Add Expired status tag (govuk-tag--red) in addition to Endorsed and Refused
+- Fix customs reference link focus highlight spanning full width (use wrapper span)
+- Add customs-reference-link-wrap CSS for link on own line without full-width focus
+- Change View permit PDF to serve by permit reference (/public/documents/:ref.pdf)
+- Update PERMIT_SEARCH_DATA: lowercase alligator, expiry dates, first permit expired
+- Prefill search uses full permit list instead of random subset
+- Correct notification banners: endorsed success vs refused messages
+- Rename refusal field from Date of refusal to Refusal date
+- Show footer links (Load test permits, Generate MRN) in all environments
+- Update static check-permit pages with Expired status and description consistency
