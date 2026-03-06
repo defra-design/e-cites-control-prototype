@@ -9,6 +9,8 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
 
+    <h1 class="govuk-heading-l">Permit search results</h1>
+
     {% set permitSearchResults = data.permitSearchResults or [] %}
     {% set permitSearchRows = data.permitSearchRows or [] %}
     <p class="govuk-body">Showing {{ permitSearchResults.length }} result{% if permitSearchResults.length != 1 %}s{% endif %}.</p>

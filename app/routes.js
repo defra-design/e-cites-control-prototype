@@ -3,6 +3,7 @@
 // https://prototype-kit.service.gov.uk/docs/create-routes
 //
 
+const path = require('path')
 const govukPrototypeKit = require('govuk-prototype-kit')
 const router = govukPrototypeKit.requests.setupRouter()
 
@@ -10,6 +11,11 @@ const router = govukPrototypeKit.requests.setupRouter()
 router.use((req, res, next) => {
   res.locals.activeNavSearch = req.path.endsWith('/single-search-results/search-results')
   next()
+})
+
+// Serve sample permit PDF (for View permit PDF button)
+router.get('/public/documents/sample-permit.pdf', (req, res) => {
+  res.sendFile(path.join(__dirname, 'assets', 'documents', 'sample-permit.pdf'))
 })
 
 // Clear data and redirect back to current page

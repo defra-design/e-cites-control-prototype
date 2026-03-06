@@ -5,10 +5,10 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <span class="govuk-caption-l">Check permit details</span>
+    <span class="govuk-caption-l">Permit reference {{ permit }}</span>
     <div class="govuk-!-margin-bottom-3 permit-header-actions">
-      <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ permit }}</h1>
-      {{ govukButton({ text: "View permit PDF", href: "#", classes: "govuk-button--secondary" }) }}
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Check permit details</h1>
+      {{ govukButton({ text: "View permit PDF", href: "/public/documents/sample-permit.pdf", classes: "govuk-button--secondary", attributes: { target: "_blank", rel: "noopener noreferrer" } }) }}
     </div>
 
     <h2 class="govuk-heading-s">Permit details</h2>
@@ -16,10 +16,11 @@
       <div class="govuk-grid-column-one-half">
         {{ govukSummaryList({
           rows: [
-            { key: { text: "Permit status" }, value: { html: "<strong class=\"govuk-tag govuk-tag--blue\">Valid</strong>" } },
-            { key: { text: "Exporter/re-exporter" }, value: { html: "Montreval Cuir SA<br>Rue du Marché 18 1204<br>Geneva<br>Switzerland" } },
+            { key: { text: "Status" }, value: { html: "<strong class=\"govuk-tag " ~ (validityTagClass | default("govuk-tag--blue")) ~ "\">" ~ (validityTag | default("Valid")) ~ "</strong>" } },
+            { key: { text: "Exporter/re-exporter" }, value: { html: "Montreval Cuir SA<br>Rue du Marché 18, 1204<br>Geneva<br>Switzerland" } },
             { key: { text: "Source" }, value: { text: "C: Animals bred in captivity" } },
-            { key: { text: "Appendix/Annex" }, value: { text: "I / A" } }
+            { key: { text: "Cites Appendix" }, value: { text: citesAppendix | default("II") } },
+            { key: { text: "Issue date" }, value: { text: expires | issueDate | default("28 August 2025") } }
           ]
         }) }}
       </div>
@@ -29,7 +30,8 @@
             { key: { text: "Type" }, value: { text: "Import" } },
             { key: { text: "Importer" }, value: { html: "Stratford & Hale Watch Company Ltd<br>Unit 14 Hatton Garden Business Centre<br>London<br>EC1N 8DL" } },
             { key: { text: "Purpose" }, value: { text: "T: Commercial" } },
-            { key: { text: "Last day of validity" }, value: { text: expires } }
+            { key: { text: "GB Annex" }, value: { text: gbAnnex | default("B") } },
+            { key: { text: "Expiry date" }, value: { text: expires } }
           ]
         }) }}
       </div>
@@ -59,10 +61,10 @@
     <form method="post" action="/alpha-02-03-26/single-search-results/check-permit-details" autocomplete="off">
       <input type="hidden" name="permit" value="{{ permit }}" />
       <div class="govuk-form-group">
-        <label class="govuk-label" for="actualQuantity">Actual quantity</label>
+        <label class="govuk-label" for="actualQuantity">Quantity</label>
         <input class="govuk-input govuk-input--width-5" id="actualQuantity" name="actualQuantity" type="text" inputmode="numeric" value="">
         <p class="govuk-hint govuk-!-margin-top-1">
-          <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action" id="useSpecimenQuantityLink" data-quantity="{{ quantity or '80' }}">Use specimen quantity</a>
+          <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action" id="useSpecimenQuantityLink" data-quantity="{{ quantity or '80' }}">Enter quantity shown on permit</a>
         </p>
       </div>
       <div class="govuk-form-group">
@@ -70,7 +72,7 @@
         <input class="govuk-input govuk-input--width-20" id="mrnReference" name="mrnReference" type="text" value="{{ (data and data.endorsedDetails and data.endorsedDetails[permit] and data.endorsedDetails[permit].mrnReference) or (data and data.mrnReference) or '' }}" aria-describedby="mrnReference-apply-hint">
         <p class="govuk-hint govuk-!-margin-top-2 customs-reference-actions">
           <span id="mrnReference-apply-hint" aria-live="polite"></span>
-          <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action govuk-!-display-block govuk-!-margin-top-1" id="applyReferenceLink" data-permit="{{ permit }}">Apply reference to all permits</a>
+          <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action govuk-!-display-block govuk-!-margin-top-1" id="applyReferenceLink" data-permit="{{ permit }}">Apply this reference to all permits in this consignment</a>
         </p>
       </div>
       <div class="govuk-button-group govuk-!-margin-top-4">

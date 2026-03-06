@@ -5,8 +5,8 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% set pageName = "Why are you refusing this permit?" %}
-{% set title = "Why are you refusing this permit?" %}
+{% set pageName = "Why are you not endorsing this permit?" %}
+{% set title = "Why are you not endorsing this permit?" %}
 {% set permit = data.permit or "25GBIMPABS719" %}
 {% set currentPermit = data.currentPermit or {} %}
 {% set permitQuantity = currentPermit.quantity or "80" %}
