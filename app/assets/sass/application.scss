@@ -10,6 +10,46 @@
   display: none;
 }
 
+// Notification banner – Close link in header, opposite title, white
+.govuk-notification-banner__header--with-close {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: govuk-spacing(2);
+}
+
+.govuk-notification-banner__header--with-close .govuk-notification-banner__close {
+  color: #ffffff;
+  font-size: 16px;
+  margin-left: auto;
+}
+
+.govuk-notification-banner__header--with-close .govuk-notification-banner__close:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.govuk-notification-banner__header--with-close .govuk-notification-banner__close:focus {
+  color: #0b0c0c;
+}
+
+// Notification banner – smooth close animation
+.govuk-notification-banner[data-dismissable] {
+  max-height: 300px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out, margin 0.3s ease-out, padding 0.3s ease-out;
+}
+
+.govuk-notification-banner[data-dismissable].govuk-notification-banner--closing {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-width: 0;
+}
+
 // Refuse permit – permit inset: aligned labels (bold, fixed width) and values for easier scanning
 .permit-inset-summary__row {
   display: flex;
