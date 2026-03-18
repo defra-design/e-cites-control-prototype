@@ -63,7 +63,7 @@ module.exports = (router) => {
       let tag = '<strong class="govuk-tag govuk-tag--green">Valid</strong>'
       if (status === 'endorsed') tag = '<strong class="govuk-tag govuk-tag--green">Endorsed</strong>'
       else if (status === 'refused') tag = '<strong class="govuk-tag govuk-tag--red">Refused</strong>'
-      else if (item.ref === '26GBIMPHG453Y') tag = '<strong class="govuk-tag govuk-tag--red">Expired</strong>'
+      else if (item.ref === '26GBIMPHG453Y') tag = '<strong class="govuk-tag govuk-tag--blue">Expired</strong>'
       return [
         { text: item.ref },
         { text: item.species },

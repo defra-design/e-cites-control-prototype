@@ -16,12 +16,12 @@
     <p class="govuk-body">Showing {{ permitSearchResults.length }} result{% if permitSearchResults.length != 1 %}s{% endif %}.</p>
 
     {{ govukTable({
-      classes: "govuk-body-s permit-search-results-table",
+      classes: "govuk-body-s permit-search-results-table permit-search-results-table--single",
       head: [
         { text: "Permit" },
         { text: "Species" },
         { text: "Quantity" },
-        { text: "Expires" },
+        { text: "Expiry date" },
         { text: "Status" },
         { text: "Action" }
       ],

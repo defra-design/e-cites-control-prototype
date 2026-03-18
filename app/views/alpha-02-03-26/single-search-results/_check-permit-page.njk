@@ -11,16 +11,16 @@
       {{ govukButton({ text: "View permit PDF", href: "/public/documents/" ~ permit ~ ".pdf", classes: "govuk-button--secondary", attributes: { target: "_blank", rel: "noopener noreferrer" } }) }}
     </div>
 
-    <h2 class="govuk-heading-s">Permit details</h2>
+    <h2 class="govuk-heading-s">Permit summary</h2>
     <div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px permit-info-compare summary-list-stacked">
       <div class="govuk-grid-column-one-half">
         {{ govukSummaryList({
           rows: [
             { key: { text: "Status" }, value: { html: "<strong class=\"govuk-tag " ~ (validityTagClass | default("govuk-tag--blue")) ~ "\">" ~ (validityTag | default("Valid")) ~ "</strong>" } },
             { key: { text: "Exporter/re-exporter" }, value: { html: "Montreval Cuir SA<br>Rue du Marché 18, 1204<br>Geneva<br>Switzerland" } },
-            { key: { text: "Source" }, value: { text: "C: Animals bred in captivity" } },
-            { key: { text: "Cites Appendix" }, value: { text: citesAppendix | default("II") } },
-            { key: { text: "Issue date" }, value: { text: expires | issueDate | default("28 August 2025") } }
+            { key: { text: "Issue date" }, value: { text: issueDate | default("8 September 2025") } },
+            { key: { text: "Scientific name" }, value: { text: species | default("Alligator mississippiensis") } },
+            { key: { text: "Description" }, value: { text: description | default("Watch straps made of alligator skin") } }
           ]
         }) }}
       </div>
@@ -29,29 +29,9 @@
           rows: [
             { key: { text: "Type" }, value: { text: "Import" } },
             { key: { text: "Importer" }, value: { html: "Stratford & Hale Watch Company Ltd<br>Unit 14 Hatton Garden Business Centre<br>London<br>EC1N 8DL" } },
-            { key: { text: "Purpose" }, value: { text: "T: Commercial" } },
-            { key: { text: "GB Annex" }, value: { text: gbAnnex | default("B") } },
-            { key: { text: "Expiry date" }, value: { text: expires } }
-          ]
-        }) }}
-      </div>
-    </div>
-
-    <h2 class="govuk-heading-s">Specimen details</h2>
-    <div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px summary-list-stacked">
-      <div class="govuk-grid-column-one-half">
-        {{ govukSummaryList({
-          rows: [
-            { key: { text: "Scientific name" }, value: { text: species } },
-            { key: { text: "Description" }, value: { text: description } }
-          ]
-        }) }}
-      </div>
-      <div class="govuk-grid-column-one-half">
-        {{ govukSummaryList({
-          rows: [
-            { key: { text: "Common name" }, value: { text: commonName } },
-            { key: { text: "Quantity" }, value: { text: quantity } }
+            { key: { text: "Expiry date" }, value: { text: expires | default("8 March 2026") } },
+            { key: { text: "Common name" }, value: { text: commonName | default("American alligator") } },
+            { key: { text: "Quantity" }, value: { text: quantity | default("20") } }
           ]
         }) }}
       </div>
@@ -64,7 +44,7 @@
         <label class="govuk-label" for="actualQuantity">Quantity</label>
         <input class="govuk-input govuk-input--width-5" id="actualQuantity" name="actualQuantity" type="text" inputmode="numeric" value="">
         <p class="govuk-hint govuk-!-margin-top-1">
-          <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action" id="useSpecimenQuantityLink" data-quantity="{{ quantity or '80' }}">Enter quantity shown on permit</a>
+          <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action" id="useSpecimenQuantityLink" data-quantity="{{ quantity or '20' }}">Enter quantity shown on permit</a>
         </p>
       </div>
       <div class="govuk-form-group">

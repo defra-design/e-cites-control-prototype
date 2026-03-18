@@ -102,7 +102,7 @@ module.exports = (router) => {
     })
   })
 
-  const DEFAULT_PERMIT_STATUSES = { '25GBIMPABS719': 'expired' }
+  const DEFAULT_PERMIT_STATUSES = {}
 
   router.get(`${BASE}/single-search-results/permit-search-results`, (req, res) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
@@ -112,6 +112,7 @@ module.exports = (router) => {
     let refs = data.searchedPermits || DEFAULT_PERMIT_REFS
     if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
     const permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
+    permitStatuses['25GBIMPABS719'] = 'expired'
     data.permitStatuses = permitStatuses
     const items = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
     data.permitSearchResults = items
@@ -406,4 +407,484 @@ module.exports = (router) => {
       res.redirect(`${BASE}/single-search-results/check-permit-details?permit=${encodeURIComponent(permitId)}`)
     }
   })
+
+  // Batch permit view – search, select, endorse or refuse multiple permits
+  router.get(`${BASE}/batch-search-results/search-results`, (req, res) => {
+    const data = req.session.data || {}
+    if (req.query.prefill === '1') {
+      const prefillValue = DEFAULT_PERMIT_REFS.join('\n')
+      data.batchPermitReferences = prefillValue
+      res.locals.data = res.locals.data || {}
+      res.locals.data.batchPermitReferences = prefillValue
+    }
+    res.render('alpha-02-03-26/batch-search-results/search-results')
+  })
+
+  router.post(`${BASE}/batch-search-results/search-results`, (req, res) => {
+    const data = req.session.data || {}
+    const permitReferences = (req.body.permitReferences || '').trim()
+    delete data.errors
+    delete data.errorList
+    if (!permitReferences) {
+      data.errors = { permitReferences: 'Enter at least one permit reference' }
+      data.errorList = [{ text: 'Enter at least one permit reference', href: '#permitReferences' }]
+      return res.redirect(`${BASE}/batch-search-results/search-results`)
+    }
+    const refs = permitReferences.split(/[\n,]+/).map(r => r.trim()).filter(r => r)
+    data.batchPermitReferences = permitReferences
+    data.batchSearchedPermits = refs
+    delete data.errors
+    delete data.errorList
+    req.session.save((err) => {
+      if (err) return res.redirect(`${BASE}/batch-search-results/search-results`)
+      res.redirect(`${BASE}/batch-search-results/permit-results`)
+    })
+  })
+
+  router.get(`${BASE}/batch-search-results/permit-results`, (req, res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
+    const data = req.session.data || {}
+    res.locals.data.batchSuccess = data.batchSuccess || null
+    res.locals.data.batchCount = data.batchCount || 0
+    delete data.batchSuccess
+    delete data.batchCount
+    data.permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
+    if (data.permitStatuses['25GBIMPABS719'] === 'expired') delete data.permitStatuses['25GBIMPABS719']
+    let refs = data.batchSearchedPermits || DEFAULT_PERMIT_REFS
+    if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
+    const noPermitsFound = refs.length > 0 && refs.every(r => !PERMIT_SEARCH_DATA[r])
+    res.locals.data.noPermitsFound = noPermitsFound
+    const permitList = noPermitsFound ? [] : buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
+    const selectablePermits = permitList.filter(item => {
+      const s = data.permitStatuses[item.ref]
+      return s !== 'endorsed' && s !== 'refused'
+    })
+    const batchTableRows = permitList.map((item) => {
+      const status = data.permitStatuses[item.ref]
+      let tag = '<strong class="govuk-tag govuk-tag--blue">Valid</strong>'
+      if (status === 'endorsed') tag = '<strong class="govuk-tag govuk-tag--green">Endorsed</strong>'
+      else if (status === 'refused') tag = '<strong class="govuk-tag govuk-tag--red">Refused</strong>'
+      else if (status === 'expired') tag = '<strong class="govuk-tag govuk-tag--red">Expired</strong>'
+      const viewHref = `${BASE}/batch-search-results/check-permit-details?permit=${encodeURIComponent(item.ref)}`
+      const isSelectable = status !== 'endorsed' && status !== 'refused'
+      const checkbox = isSelectable
+        ? `<span class="batch-permit-checkbox"><input type="checkbox" id="sel-${item.ref}" name="selectedPermits" value="${item.ref}" aria-label="Select permit ${item.ref}" class="batch-permit-checkbox__input"></span>`
+        : ''
+      const speciesCell = item.commonName && item.commonName !== '–'
+        ? `${item.species}<br>(${item.commonName})`
+        : item.species || '–'
+      return [
+        { html: checkbox },
+        { text: item.ref },
+        { html: speciesCell },
+        { text: item.quantity },
+        { text: item.expires },
+        { html: tag },
+        { html: `<a href="${viewHref}">View</a>` }
+      ]
+    })
+    res.locals.data.permitList = permitList
+    res.locals.data.selectablePermits = selectablePermits
+    res.locals.data.batchTableRows = batchTableRows
+    res.render('alpha-02-03-26/batch-search-results/permit-results')
+  })
+
+  // Batch single-permit view (View link from batch results – stays in batch folder)
+  const BATCH_CHECK_BASE = `${BASE}/batch-search-results`
+
+  router.get(`${BASE}/batch-search-results/refuse-permit`, (req, res) => {
+    const data = req.session.data || {}
+    let refs = data.batchSearchedPermits || DEFAULT_PERMIT_REFS
+    if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
+    const permitList = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
+    const permitRef = (req.query.permit || '').trim() || data.permit || '25GBIMPABS719'
+    let currentIndex = permitList.findIndex(p => p.ref === permitRef) + 1
+    if (currentIndex < 1) currentIndex = 1
+    if (currentIndex > permitList.length) currentIndex = permitList.length
+    const currentPermit = permitList[currentIndex - 1] || {}
+    data.permit = currentPermit.ref
+    data.currentPermit = currentPermit
+    res.locals.data.permit = currentPermit.ref
+    res.locals.data.currentPermit = currentPermit
+    res.render('alpha-02-03-26/batch-search-results/refuse-permit')
+  })
+
+  router.post(`${BASE}/batch-search-results/refuse-permit`, (req, res) => {
+    const data = req.session.data || {}
+    const permitId = (req.body.permit || '').trim() || data.permit || '25GBIMPABS719'
+    const refusalReason = (req.body.refusalReason || '').trim()
+    const additionalDetails = (req.body.additionalDetails || req.body.additionalDetailsAlt || '').trim().slice(0, 200)
+
+    delete data.errors
+    delete data.errorList
+
+    const errors = {}
+    const errorList = []
+
+    if (!refusalReason) {
+      errors.refusalReason = 'Select a reason for refusing this permit'
+      errorList.push({ text: 'Select a reason for refusing this permit', href: '#refusalReason' })
+    }
+
+    if (errorList.length > 0) {
+      data.errors = errors
+      data.errorList = errorList
+      data.additionalDetails = req.body.additionalDetails || req.body.additionalDetailsAlt || ''
+      return res.redirect(`${BATCH_CHECK_BASE}/refuse-permit?permit=${encodeURIComponent(permitId)}`)
+    }
+
+    const permitList = buildAndSortPermitList(data.batchSearchedPermits || DEFAULT_PERMIT_REFS, PERMIT_SEARCH_DATA)
+    const currentPermit = permitList.find(p => p.ref === permitId) || {}
+    const port = currentPermit.port || 'Dover'
+    const officerId = '233215'
+
+    const now = new Date()
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    const day = now.getDate()
+    const month = months[now.getMonth()]
+    const year = now.getFullYear()
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    const dateOfRefusal = `${day} ${month} ${year}, ${hours}:${minutes}`
+
+    data.endorsedDetails = data.endorsedDetails || {}
+    data.endorsedDetails[permitId] = {
+      refusalReason,
+      additionalDetails: additionalDetails || null,
+      dateOfRefusal,
+      port,
+      officerId
+    }
+    data.permitStatuses = data.permitStatuses || {}
+    data.permitStatuses[permitId] = 'refused'
+    data.endorsed = false
+    data.refused = true
+    data.successPermit = permitId
+    res.redirect(`${BATCH_CHECK_BASE}/check-permit-details?permit=${encodeURIComponent(permitId)}&refused=1`)
+  })
+
+  router.get(`${BASE}/batch-search-results/check-permit-details`, (req, res) => {
+    const data = req.session.data || {}
+    data.permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
+    let refs = data.batchSearchedPermits || DEFAULT_PERMIT_REFS
+    if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
+    const permitList = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
+    data.permitSearchResults = permitList
+    const totalCount = permitList.length
+    const permitRef = (req.query.permit || '').trim()
+    let currentIndex = permitList.findIndex(p => p.ref === permitRef) + 1
+    if (currentIndex < 1) currentIndex = 1
+    if (currentIndex > totalCount) currentIndex = totalCount
+    const currentPermit = permitList[currentIndex - 1]
+    data.permit = currentPermit.ref
+    data.currentPermit = currentPermit
+    data.checkPermitIndex = currentIndex
+    data.checkPermitTotal = totalCount
+    data.checkPermitList = permitList
+    res.locals.data.checkPermitList = permitList
+    res.locals.data.checkPermitIndex = currentIndex
+    res.locals.data.checkPermitTotal = totalCount
+    res.locals.data.permit = currentPermit.ref
+    res.locals.data.currentPermit = currentPermit
+    if (req.query.applyReference === '1' && req.query.mrnReference) {
+      data.mrnReference = (req.query.mrnReference || '').trim()
+      return res.redirect(`${BATCH_CHECK_BASE}/check-permit-details?permit=${encodeURIComponent(permitRef || data.permit)}`)
+    }
+    if (req.query.edit === '1') {
+      delete data.endorsed
+      delete data.refused
+      delete data.updated
+      delete data.successPermit
+      data.editEndorsement = true
+      res.locals.data.editEndorsement = true
+    } else {
+      data.editEndorsement = false
+      res.locals.data.editEndorsement = false
+      if (req.query.endorsed === '1') {
+        data.endorsed = true
+        data.successPermit = permitRef
+        delete data.refused
+        delete data.updated
+      } else if (req.query.refused === '1') {
+        data.refused = true
+        data.successPermit = permitRef
+        delete data.endorsed
+        delete data.updated
+      } else if (req.query.updated === '1') {
+        data.updated = true
+        data.successPermit = permitRef
+        res.locals.data.updated = true
+        delete data.endorsed
+        delete data.refused
+      } else {
+        delete data.endorsed
+        delete data.refused
+        delete data.updated
+      }
+      if (data.successPermit && data.successPermit !== permitRef) {
+        delete data.endorsed
+        delete data.refused
+        delete data.updated
+        delete data.successPermit
+      }
+    }
+    if (req.query.endorsed !== '1') delete res.locals.data.endorsed
+    if (req.query.refused !== '1') delete res.locals.data.refused
+    if (req.query.updated === '1') res.locals.data.updated = true
+    else delete res.locals.data.updated
+    if (res.locals.data.successPermit && res.locals.data.successPermit !== permitRef) {
+      delete res.locals.data.endorsed
+      delete res.locals.data.refused
+      delete res.locals.data.updated
+      delete res.locals.data.successPermit
+    }
+    res.render('alpha-02-03-26/batch-search-results/check-permit-details')
+  })
+
+  router.post(`${BASE}/batch-search-results/check-permit-details`, (req, res) => {
+    const data = req.session.data || {}
+    const permitId = (req.body.permit || '').trim() || data.permit || '25GBIMPABS719'
+    let refs = data.batchSearchedPermits || DEFAULT_PERMIT_REFS
+    if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
+    const permitList = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
+    const totalCount = permitList.length || 10
+    let currentIndex = permitList.findIndex(p => p.ref === permitId) + 1
+    if (currentIndex < 1) currentIndex = 1
+    const currentPermit = permitList[currentIndex - 1] || {}
+
+    const actualQuantity = (req.body.actualQuantity || '').trim()
+    const mrnReference = (req.body.mrnReference || '').trim()
+    const billOfLadingReference = (req.body.billOfLadingReference || '').trim()
+
+    const isEndorse = !!req.body.endorse
+    const isUpdate = !!req.body.update
+    const isUpdateRefusal = !!req.body.updateRefusal
+
+    delete data.errors
+    delete data.errorList
+    data.permit = permitId
+    data.endorsedDetails = data.endorsedDetails || {}
+
+    const errors = {}
+    const errorList = []
+
+    if (isUpdateRefusal) {
+      const refusalReason = (req.body.refusalReason || '').trim()
+      const additionalDetails = (req.body.additionalDetailsAmend || req.body.additionalDetailsAmendAlt || '').trim().slice(0, 200)
+      if (!refusalReason) {
+        errors.refusalReason = 'Select a reason for refusing this permit'
+        errorList.push({ text: 'Select a reason for refusing this permit', href: '#refusalReason-error' })
+      }
+      if (errorList.length > 0) {
+        data.errors = errors
+        data.errorList = errorList
+        return res.redirect(`${BATCH_CHECK_BASE}/check-permit-details?permit=${encodeURIComponent(permitId)}&edit=1#endorsement-section`)
+      }
+      const existing = data.endorsedDetails[permitId] || {}
+      const port = currentPermit.port || 'Dover'
+      const officerId = '233215'
+      data.endorsedDetails[permitId] = {
+        refusalReason,
+        additionalDetails: additionalDetails || null,
+        dateOfRefusal: existing.dateOfRefusal,
+        port: existing.port || port,
+        officerId: existing.officerId || officerId
+      }
+      delete data.editEndorsement
+      return res.redirect(`${BATCH_CHECK_BASE}/check-permit-details?permit=${encodeURIComponent(permitId)}&updated=1`)
+    }
+
+    if (isEndorse || isUpdate) {
+      if (!actualQuantity) {
+        errors.actualQuantity = 'Enter the quantity'
+        errorList.push({ text: 'Enter the quantity', href: '#actualQuantity' })
+      } else if (!/^\d+$/.test(actualQuantity) || parseInt(actualQuantity, 10) < 1) {
+        errors.actualQuantity = 'Quantity must be a whole number of 1 or more'
+        errorList.push({ text: 'Quantity must be a whole number of 1 or more', href: '#actualQuantity' })
+      }
+      if (!mrnReference) {
+        errors.mrnReference = 'Enter the customs document reference'
+        errorList.push({ text: 'Enter the customs document reference', href: '#mrnReference' })
+      }
+    }
+
+    if (errorList.length > 0) {
+      data.endorsedDetails[permitId] = { actualQuantity, mrnReference, billOfLadingReference }
+      data.errors = errors
+      data.errorList = errorList
+      return res.redirect(`${BATCH_CHECK_BASE}/check-permit-details?permit=${encodeURIComponent(permitId)}`)
+    }
+
+    delete data.errors
+    delete data.errorList
+    data.permitStatuses = data.permitStatuses || {}
+
+    const port = currentPermit.port || 'Dover'
+    const officerId = '233215'
+
+    if (isUpdate) {
+      const existing = data.endorsedDetails[permitId] || {}
+      data.endorsedDetails[permitId] = {
+        actualQuantity,
+        mrnReference,
+        billOfLadingReference: billOfLadingReference || existing.billOfLadingReference,
+        dateOfEndorsement: existing.dateOfEndorsement,
+        port: existing.port || port,
+        officerId: existing.officerId || officerId
+      }
+      delete data.editEndorsement
+      return res.redirect(`${BATCH_CHECK_BASE}/check-permit-details?permit=${encodeURIComponent(permitId)}&updated=1`)
+    } else if (isEndorse) {
+      const now = new Date()
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      const day = now.getDate()
+      const month = months[now.getMonth()]
+      const year = now.getFullYear()
+      const hours = String(now.getHours()).padStart(2, '0')
+      const minutes = String(now.getMinutes()).padStart(2, '0')
+      const dateOfEndorsement = `${day} ${month} ${year}, ${hours}:${minutes}`
+      data.endorsedDetails[permitId] = { actualQuantity, mrnReference, billOfLadingReference, dateOfEndorsement, port, officerId }
+      data.permitStatuses[permitId] = 'endorsed'
+      data.endorsed = true
+      data.refused = false
+      res.redirect(`${BATCH_CHECK_BASE}/check-permit-details?permit=${encodeURIComponent(permitId)}&endorsed=1`)
+    } else {
+      res.redirect(`${BATCH_CHECK_BASE}/check-permit-details?permit=${encodeURIComponent(permitId)}`)
+    }
+  })
+
+  router.post(`${BASE}/batch-search-results/select-action`, (req, res) => {
+    const data = req.session.data || {}
+    const selected = req.body.selectedPermits
+    let refs = Array.isArray(selected) ? selected : (selected ? [selected] : [])
+    refs = refs.filter((r) => r && r !== '_unchecked' && String(r).trim() !== '')
+    const action = (req.body.action || '').toLowerCase()
+    delete data.errors
+    delete data.errorList
+    if (refs.length === 0) {
+      data.errors = { selectedPermits: 'Select at least one permit' }
+      data.errorList = [{ text: 'Select at least one permit', href: '#batch-form' }]
+      return res.redirect(`${BASE}/batch-search-results/permit-results`)
+    }
+    data.batchSelectedPermits = refs
+    if (action === 'refuse') {
+      return res.redirect(`${BASE}/batch-search-results/batch-refuse`)
+    }
+    res.redirect(`${BASE}/batch-search-results/batch-endorse`)
+  })
+
+  router.get(`${BASE}/batch-search-results/batch-endorse`, (req, res) => {
+    const data = req.session.data || {}
+    let refs = data.batchSelectedPermits || []
+    refs = refs.filter((r) => r && r !== '_unchecked' && String(r).trim() !== '')
+    if (refs.length === 0) return res.redirect(`${BASE}/batch-search-results/permit-results`)
+    data.batchSelectedPermits = refs
+    const permitList = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
+    res.locals.data.batchSelectedPermits = refs
+    res.locals.data.batchSelectedList = permitList
+    res.render('alpha-02-03-26/batch-search-results/batch-endorse')
+  })
+
+  router.post(`${BASE}/batch-search-results/batch-endorse`, (req, res) => {
+    const data = req.session.data || {}
+    const refs = data.batchSelectedPermits || []
+    const actualQuantities = req.body.actualQuantity || {}
+    const mrnReference = (req.body.mrnReference || '').trim()
+    delete data.errors
+    delete data.errorList
+    const errors = {}
+    const errorList = []
+
+    if (!mrnReference) {
+      errors.mrnReference = 'Enter the customs document reference'
+      errorList.push({ text: 'Enter the customs document reference', href: '#mrnReference' })
+    }
+
+    refs.forEach((permitId) => {
+      const qty = (actualQuantities[permitId] || '').trim()
+      if (!qty) {
+        errors.quantity = errors.quantity || {}
+        errors.quantity[permitId] = 'Enter the actual quantity'
+        errorList.push({ text: `Enter the actual quantity for ${permitId}`, href: `#actualQuantity-${permitId}` })
+      } else if (!/^\d+$/.test(qty) || parseInt(qty, 10) < 1) {
+        errors.quantity = errors.quantity || {}
+        errors.quantity[permitId] = 'Quantity must be a whole number of 1 or more'
+        errorList.push({ text: `Quantity for ${permitId} must be 1 or more`, href: `#actualQuantity-${permitId}` })
+      }
+    })
+
+    if (errorList.length > 0) {
+      data.errors = errors
+      data.errorList = errorList
+      data.batchMrnReference = mrnReference
+      data.batchBillOfLadingReference = (req.body.billOfLadingReference || '').trim()
+      data.batchEndorsedDetails = {}
+      refs.forEach((permitId) => {
+        data.batchEndorsedDetails[permitId] = { actualQuantity: (actualQuantities[permitId] || '').trim() }
+      })
+      return res.redirect(`${BASE}/batch-search-results/batch-endorse`)
+    }
+
+    const port = 'Dover'
+    const officerId = '233215'
+    const now = new Date()
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    const dateOfEndorsement = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+    data.endorsedDetails = data.endorsedDetails || {}
+    data.permitStatuses = data.permitStatuses || {}
+    refs.forEach((permitId) => {
+      const qty = (actualQuantities[permitId] || '').trim()
+      data.endorsedDetails[permitId] = { actualQuantity: qty, mrnReference, dateOfEndorsement, port, officerId }
+      data.permitStatuses[permitId] = 'endorsed'
+    })
+    delete data.batchSelectedPermits
+    delete data.batchEndorsedDetails
+    delete data.batchMrnReference
+    delete data.batchBillOfLadingReference
+    data.batchSuccess = 'endorsed'
+    data.batchCount = refs.length
+    res.redirect(`${BASE}/batch-search-results/permit-results`)
+  })
+
+  router.get(`${BASE}/batch-search-results/batch-refuse`, (req, res) => {
+    const data = req.session.data || {}
+    let refs = data.batchSelectedPermits || []
+    refs = refs.filter((r) => r && r !== '_unchecked' && String(r).trim() !== '')
+    if (refs.length === 0) return res.redirect(`${BASE}/batch-search-results/permit-results`)
+    data.batchSelectedPermits = refs
+    const permitList = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
+    res.locals.data.batchSelectedPermits = refs
+    res.locals.data.batchSelectedList = permitList
+    res.render('alpha-02-03-26/batch-search-results/batch-refuse')
+  })
+
+  router.post(`${BASE}/batch-search-results/batch-refuse`, (req, res) => {
+    const data = req.session.data || {}
+    const refs = data.batchSelectedPermits || []
+    const refusalReason = (req.body.refusalReason || '').trim()
+    const additionalDetails = (req.body.additionalDetails || req.body.additionalDetailsAlt || '').trim().slice(0, 200)
+    delete data.errors
+    delete data.errorList
+    if (!refusalReason) {
+      data.errors = { refusalReason: 'Select a reason for refusing these permits' }
+      data.errorList = [{ text: 'Select a reason for refusing these permits', href: '#refusalReason' }]
+      return res.redirect(`${BASE}/batch-search-results/batch-refuse`)
+    }
+    const port = 'Dover'
+    const officerId = '233215'
+    const now = new Date()
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    const dateOfRefusal = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+    data.endorsedDetails = data.endorsedDetails || {}
+    data.permitStatuses = data.permitStatuses || {}
+    refs.forEach((permitId) => {
+      data.endorsedDetails[permitId] = { refusalReason, additionalDetails: additionalDetails || null, dateOfRefusal, port, officerId }
+      data.permitStatuses[permitId] = 'refused'
+    })
+    delete data.batchSelectedPermits
+    data.batchSuccess = 'refused'
+    data.batchCount = refs.length
+    res.redirect(`${BASE}/batch-search-results/permit-results`)
+  })
+
 }
