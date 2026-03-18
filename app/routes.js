@@ -39,3 +39,6 @@ require('./views/alpha-24-02-26/routes')(router)
 
 // Alpha 02-03-26 – single search results journey
 require('./views/alpha-02-03-26/routes')(router)
+
+// Alpha 18-03-26 – Design iteration 3, single permit view
+require('./views/alpha-18-03-26/routes')(router)

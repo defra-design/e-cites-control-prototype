@@ -1,0 +1,98 @@
+{% extends "layouts/main.html" %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageName = "Search for CITES permits" %}
+{% set title = "Search for CITES permits" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {% if data.errorList %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: data.errorList
+      }) }}
+    {% endif %}
+
+    <h1 class="govuk-heading-xl">
+      Search for CITES permits
+    </h1>
+
+    {% set hasError = data.errors and data.errors.permitReferences %}
+    {% set errorMessage = { text: data.errors.permitReferences } if hasError else null %}
+    {% set formGroupClasses = "govuk-form-group--error" if hasError else "" %}
+
+    <form method="post" action="">
+      {{ govukTextarea({
+        name: "permitReferences",
+        id: "permitReferences",
+        label: {
+          text: "Enter permit references",
+          classes: "govuk-label--m"
+        },
+        hint: {
+          text: "Each reference must be on a new line."
+        },
+        rows: 5,
+        value: data.permitReferences,
+        errorMessage: errorMessage,
+        formGroup: {
+          classes: formGroupClasses
+        }
+      }) }}
+      <p id="permitCount" class="govuk-body-s govuk-!-margin-top-1" aria-live="polite" aria-atomic="true"></p>
+
+      {{ govukButton({
+        text: "Search permits",
+        name: "search"
+      }) }}
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block pageScripts %}
+<script>
+(function () {
+  'use strict'
+  var textarea = document.getElementById('permitReferences')
+  var countEl = document.getElementById('permitCount')
+  if (!textarea) return
+
+  function countPermits() {
+    var value = textarea.value || ''
+    var refs = value.split(/[\n,]+/).map(function (r) { return r.trim() }).filter(Boolean)
+    return refs.length
+  }
+
+  function updateCount() {
+    if (!countEl) return
+    var n = countPermits()
+    countEl.textContent = n > 0 ? 'You have entered ' + n + ' permit reference' + (n === 1 ? '' : 's') : ''
+  }
+
+  textarea.addEventListener('input', updateCount)
+  textarea.addEventListener('paste', function (e) {
+    e.preventDefault()
+    var pasted = (e.clipboardData || window.clipboardData).getData('text')
+    var refs = pasted.split(/[\s,]+/).map(function (r) { return r.trim() }).filter(Boolean)
+    var formatted = refs.join('\n')
+    var start = textarea.selectionStart
+    var end = textarea.selectionEnd
+    var value = textarea.value
+    var before = value.substring(0, start)
+    var after = value.substring(end)
+    textarea.value = before + formatted + after
+    textarea.selectionStart = textarea.selectionEnd = start + formatted.length
+    updateCount()
+  })
+  updateCount()
+})()
+</script>
+{% endblock %}
