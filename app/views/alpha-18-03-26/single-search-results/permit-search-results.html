@@ -1,5 +1,6 @@
 {% extends "layouts/main.html" %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% set pageName = "Permit search results" %}
 {% set title = "Permit search results" %}
@@ -13,8 +14,55 @@
 
     {% set permitSearchResults = data.permitSearchResults or [] %}
     {% set permitSearchRows = data.permitSearchRows or [] %}
-    <p class="govuk-body">Showing {{ permitSearchResults.length }} result{% if permitSearchResults.length != 1 %}s{% endif %}.</p>
+    {% set permitRefsNotFound = data.permitRefsNotFound or [] %}
+    {% set foundCount = permitSearchResults.length %}
+    {% set notFoundCount = permitRefsNotFound.length %}
 
+    {% if foundCount > 0 and notFoundCount > 0 %}
+    <p class="govuk-body">We found {{ foundCount }} permit{% if foundCount != 1 %}s{% endif %}.</p>
+    {% set notFoundListHtml %}
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+      {% for ref in permitRefsNotFound %}
+      <li><code>{{ ref }}</code></li>
+      {% endfor %}
+    </ul>
+    {% endset %}
+    {% set notFoundDetailsHtml %}
+    <p class="govuk-body govuk-!-margin-bottom-2">The following references could not be found. Check the reference and try again.</p>
+    {{ notFoundListHtml }}
+    {% endset %}
+    <div class="govuk-inset-text govuk-!-margin-bottom-4">
+      {{ govukDetails({
+        summaryText: "1 reference could not be found" if notFoundCount == 1 else (notFoundCount ~ " references could not be found"),
+        html: notFoundDetailsHtml,
+        open: false
+      }) }}
+    </div>
+    {% elif foundCount > 0 %}
+    <p class="govuk-body">Showing {{ foundCount }} result{% if foundCount != 1 %}s{% endif %}.</p>
+    {% elif notFoundCount > 0 %}
+    <p class="govuk-body">No permits were found for the references you entered.</p>
+    {% set notFoundListHtml %}
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+      {% for ref in permitRefsNotFound %}
+      <li><code>{{ ref }}</code></li>
+      {% endfor %}
+    </ul>
+    {% endset %}
+    {% set notFoundDetailsHtml %}
+    <p class="govuk-body govuk-!-margin-bottom-2">The following references could not be found. Check the reference and try again.</p>
+    {{ notFoundListHtml }}
+    {% endset %}
+    <div class="govuk-inset-text govuk-!-margin-bottom-4">
+      {{ govukDetails({
+        summaryText: "1 reference could not be found" if notFoundCount == 1 else (notFoundCount ~ " references could not be found"),
+        html: notFoundDetailsHtml,
+        open: false
+      }) }}
+    </div>
+    {% endif %}
+
+    {% if foundCount > 0 %}
     {{ govukTable({
       classes: "govuk-body-s permit-search-results-table permit-search-results-table--single",
       head: [
@@ -27,8 +75,13 @@
       ],
       rows: permitSearchRows
     }) }}
+    {% endif %}
 
-    <p class="govuk-body">
+    {% if foundCount == 0 and notFoundCount == 0 %}
+    <p class="govuk-body">No results to show.</p>
+    {% endif %}
+
+    <p class="govuk-body govuk-!-margin-top-6">
       <a href="/alpha-18-03-26/single-search-results/search-results">Back to search</a>
     </p>
 

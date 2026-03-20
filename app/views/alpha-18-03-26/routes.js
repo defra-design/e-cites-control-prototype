@@ -85,7 +85,8 @@ module.exports = (router) => {
     delete data.errorList
     req.session.save((err) => {
       if (err) return res.redirect(`${BASE}/single-search-results/search-results`)
-      if (refs.length === 1) {
+      const foundRef = refs.length === 1 && PERMIT_SEARCH_DATA[refs[0]]
+      if (refs.length === 1 && foundRef) {
         res.redirect(`${BASE}/single-search-results/check-permit-details?permit=${encodeURIComponent(refs[0])}`)
       } else {
         res.redirect(`${BASE}/single-search-results/permit-search-results`)
@@ -102,9 +103,13 @@ module.exports = (router) => {
     const data = req.session.data || {}
     let refs = data.searchedPermits || DEFAULT_PERMIT_REFS
     if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
+    const foundRefs = refs.filter(ref => PERMIT_SEARCH_DATA[ref])
+    const notFoundRefs = refs.filter(ref => !PERMIT_SEARCH_DATA[ref])
     const permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
     data.permitStatuses = permitStatuses
-    const items = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
+    data.permitRefsNotFound = notFoundRefs
+    data.searchedPermitsFound = foundRefs
+    const items = buildAndSortPermitList(foundRefs, PERMIT_SEARCH_DATA)
     data.permitSearchResults = items
     data.permitSearchRows = items.map((item) => {
       const status = permitStatuses[item.ref]
@@ -124,6 +129,7 @@ module.exports = (router) => {
     })
     res.locals.data.permitSearchResults = data.permitSearchResults
     res.locals.data.permitSearchRows = data.permitSearchRows
+    res.locals.data.permitRefsNotFound = data.permitRefsNotFound
     res.render('alpha-18-03-26/single-search-results/permit-search-results')
   })
 
@@ -139,7 +145,7 @@ module.exports = (router) => {
 
   router.get(`${BASE}/single-search-results/refuse-permit`, (req, res) => {
     const data = req.session.data || {}
-    let refs = data.searchedPermits || DEFAULT_PERMIT_REFS
+    let refs = data.searchedPermitsFound || data.searchedPermits || DEFAULT_PERMIT_REFS
     if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
     const permitList = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
     const permitRef = (req.query.permit || '').trim() || data.permit || '26GBIMP180001'
