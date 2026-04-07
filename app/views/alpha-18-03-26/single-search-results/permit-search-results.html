@@ -21,45 +21,49 @@
     {% if foundCount > 0 and notFoundCount > 0 %}
     <p class="govuk-body">We found {{ foundCount }} permit{% if foundCount != 1 %}s{% endif %}.</p>
     {% set notFoundListHtml %}
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+    <ul class="govuk-list govuk-!-margin-bottom-0">
       {% for ref in permitRefsNotFound %}
       <li><code>{{ ref }}</code></li>
       {% endfor %}
     </ul>
     {% endset %}
     {% set notFoundDetailsHtml %}
-    <p class="govuk-body govuk-!-margin-bottom-2">The following references could not be found. Check the reference and try again.</p>
-    {{ notFoundListHtml }}
+    <p class="govuk-body govuk-!-margin-bottom-2">The following permits could not be found.</p>
+    {{ notFoundListHtml | safe }}
+    <p class="govuk-body govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+      <a href="/alpha-18-03-26/single-search-results/search-results" class="govuk-link">Change your search</a>
+    </p>
     {% endset %}
-    <div class="govuk-inset-text govuk-!-margin-bottom-4">
-      {{ govukDetails({
-        summaryText: "1 reference could not be found" if notFoundCount == 1 else (notFoundCount ~ " references could not be found"),
-        html: notFoundDetailsHtml,
-        open: false
-      }) }}
-    </div>
+    {{ govukDetails({
+      summaryText: "1 permit could not be found" if notFoundCount == 1 else (notFoundCount ~ " permits could not be found"),
+      html: notFoundDetailsHtml,
+      classes: "govuk-!-margin-bottom-4",
+      open: true
+    }) }}
     {% elif foundCount > 0 %}
     <p class="govuk-body">Showing {{ foundCount }} result{% if foundCount != 1 %}s{% endif %}.</p>
     {% elif notFoundCount > 0 %}
-    <p class="govuk-body">No permits were found for the references you entered.</p>
+    <p class="govuk-body">No permits were found for the permit numbers you entered.</p>
     {% set notFoundListHtml %}
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+    <ul class="govuk-list govuk-!-margin-bottom-0">
       {% for ref in permitRefsNotFound %}
       <li><code>{{ ref }}</code></li>
       {% endfor %}
     </ul>
     {% endset %}
     {% set notFoundDetailsHtml %}
-    <p class="govuk-body govuk-!-margin-bottom-2">The following references could not be found. Check the reference and try again.</p>
-    {{ notFoundListHtml }}
+    <p class="govuk-body govuk-!-margin-bottom-2">The following permits could not be found.</p>
+    {{ notFoundListHtml | safe }}
+    <p class="govuk-body govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+      <a href="/alpha-18-03-26/single-search-results/search-results" class="govuk-link">Change your search</a>
+    </p>
     {% endset %}
-    <div class="govuk-inset-text govuk-!-margin-bottom-4">
-      {{ govukDetails({
-        summaryText: "1 reference could not be found" if notFoundCount == 1 else (notFoundCount ~ " references could not be found"),
-        html: notFoundDetailsHtml,
-        open: false
-      }) }}
-    </div>
+    {{ govukDetails({
+      summaryText: "1 permit could not be found" if notFoundCount == 1 else (notFoundCount ~ " permits could not be found"),
+      html: notFoundDetailsHtml,
+      classes: "govuk-!-margin-bottom-4",
+      open: true
+    }) }}
     {% endif %}
 
     {% if foundCount > 0 %}
