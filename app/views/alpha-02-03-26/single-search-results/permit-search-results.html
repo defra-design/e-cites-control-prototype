@@ -17,16 +17,12 @@
       {% set nInv = invalidList.length %}
       {% set summaryWording = "1 permit could not be found" if nInv == 1 else (nInv ~ " permits could not be found") %}
       {% set notFoundBannerHtml %}
-        {% if nInv == 1 %}
-        <p class="govuk-notification-banner__heading govuk-!-margin-bottom-3">Permit reference: <strong>{{ invalidList[0] }}</strong></p>
-        {% else %}
-        <p class="govuk-body govuk-!-margin-bottom-2">Permit references:</p>
+        <p class="govuk-body govuk-!-margin-bottom-2">{{ "Permit reference:" if nInv == 1 else "Permit references:" }}</p>
         <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-3">
           {% for ref in invalidList %}
           <li><strong>{{ ref }}</strong></li>
           {% endfor %}
         </ul>
-        {% endif %}
         <p class="govuk-body govuk-!-margin-bottom-0"><a href="/alpha-02-03-26/single-search-results/search-results" class="govuk-link govuk-link--no-visited-state">Change your search</a></p>
       {% endset %}
       <div class="govuk-!-margin-bottom-6">
