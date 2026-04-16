@@ -1,5 +1,6 @@
 {% extends "layouts/main.html" %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% set pageName = "Permit search results" %}
 {% set title = "Permit search results" %}
@@ -11,25 +12,59 @@
 
     <h1 class="govuk-heading-l">Permit search results</h1>
 
+    {% set invalidList = data.invalidSearchedPermits or [] %}
+    {% if invalidList.length %}
+      {% set nInv = invalidList.length %}
+      {% set summaryWording = "1 permit could not be found" if nInv == 1 else (nInv ~ " permits could not be found") %}
+      {% set detailsHtml %}
+        {% if nInv == 1 %}
+        <p class="govuk-body govuk-!-margin-bottom-3">Permit reference <strong>{{ invalidList[0] }}</strong> is not in this service.</p>
+        {% else %}
+        <p class="govuk-body govuk-!-margin-bottom-2">These permit references are not in this service:</p>
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-3">
+          {% for ref in invalidList %}
+          <li><strong>{{ ref }}</strong></li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        <p class="govuk-body govuk-!-margin-bottom-0"><a href="/alpha-02-03-26/single-search-results/search-results" class="govuk-link govuk-link--no-visited-state">Change your search</a></p>
+      {% endset %}
+      <div class="govuk-!-margin-bottom-6">
+        {{ govukDetails({
+          summaryText: summaryWording,
+          open: true,
+          html: detailsHtml | trim
+        }) }}
+      </div>
+    {% endif %}
+
     {% set permitSearchResults = data.permitSearchResults or [] %}
     {% set permitSearchRows = data.permitSearchRows or [] %}
-    <p class="govuk-body">Showing {{ permitSearchResults.length }} result{% if permitSearchResults.length != 1 %}s{% endif %}.</p>
+    {% if invalidList.length %}
+    <p class="govuk-body">Showing {{ permitSearchResults.length }} result{% if permitSearchResults.length != 1 %}s{% endif %} for references we matched.</p>
+    {% else %}
+    <p class="govuk-body">Showing {{ permitSearchResults.length }} result{% if permitSearchResults.length != 1 %}s{% endif %}</p>
+    {% endif %}
 
+    {% if permitSearchRows and permitSearchRows.length %}
+    <h2 class="govuk-heading-s govuk-visually-hidden">Matching permits</h2>
     {{ govukTable({
       classes: "govuk-body-s permit-search-results-table permit-search-results-table--single",
       head: [
-        { text: "Permit" },
-        { text: "Species" },
+        { text: "Permit number" },
+        { text: "Type" },
+        { text: "Scientific name" },
         { text: "Quantity" },
-        { text: "Expiry date" },
+        { text: "Valid until" },
         { text: "Status" },
         { text: "Action" }
       ],
       rows: permitSearchRows
     }) }}
+    {% endif %}
 
     <p class="govuk-body">
-      <a href="/alpha-02-03-26/single-search-results/search-results">Back to search</a>
+      <a href="/alpha-02-03-26/single-search-results/search-results" class="govuk-link govuk-link--no-visited-state">Back to search</a>
     </p>
 
   </div>

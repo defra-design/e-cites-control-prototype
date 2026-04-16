@@ -136,7 +136,7 @@
             { key: { text: "Exporter/re-exporter" }, value: { html: "Montreval Cuir SA<br>Rue du Marché 18, 1204<br>Geneva<br>Switzerland" } },
             { key: { text: "Issue date" }, value: { text: currentPermit.issueDate or "8 September 2025" } },
             { key: { text: "Scientific name" }, value: { text: currentPermit.species or "Alligator mississippiensis" } },
-            { key: { text: "Description" }, value: { text: currentPermit.description or "Watch straps made of alligator skin" } }
+            { key: { text: "Description" }, value: { html: currentPermit.description or "Watch straps made of alligator skin" } }
           ]
         }) }}
       </div>
@@ -198,7 +198,7 @@
           rows: [
             { key: { text: "Scientific name of species" }, value: { text: currentPermit.species or "Alligator mississippiensis" } },
             { key: { text: "Common name of species" }, value: { text: currentPermit.commonName or "American alligator" } },
-            { key: { text: "Description of specimens" }, value: { text: currentPermit.description or "Watch straps made of alligator skin" } },
+            { key: { text: "Description of specimens" }, value: { html: currentPermit.description or "Watch straps made of alligator skin" } },
             { key: { text: "Cites Appendix" }, value: { text: currentPermit.citesAppendix or "II" } }
           ]
         }) }}

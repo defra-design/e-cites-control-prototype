@@ -1,0 +1,205 @@
+{% extends "layouts/main.html" %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+
+{% set pageName = "Check permit details" %}
+{% set title = "Check permit details" %}
+{% set validityTag = "Endorsed" if data.endorsed else ("Refused" if data.refused else "Valid") %}
+{% set validityTagClass = "govuk-tag--red" if data.refused else "govuk-tag--green" %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    items: [
+      { text: "Search", href: "/beta-16-04-26/single-search-results/search-results" },
+      { text: "Search results", href: "/beta-16-04-26/single-search-results/permit-search-results" },
+      { text: "Check permit details" }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+{% if data.errorList %}
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: data.errorList
+  }) }}
+{% endif %}
+
+{% if data.endorsed %}
+  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+    <div class="govuk-notification-banner__header">
+      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+        Permit endorsed
+      </h2>
+    </div>
+    <div class="govuk-notification-banner__content">
+      <p class="govuk-body">Permit number: {{ data.permit or "26GBIMP12344X" }} has been endorsed</p>
+      <p class="govuk-body"><a href="/beta-16-04-26/single-search-results/permit-search-results">Back to search results</a></p>
+    </div>
+  </div>
+{% endif %}
+
+{% if data.refused %}
+  <div class="govuk-notification-banner" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+    <div class="govuk-notification-banner__header">
+      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+        Permit not endorsed
+      </h2>
+    </div>
+    <div class="govuk-notification-banner__content">
+      <p class="govuk-body">Permit number: {{ data.permit or "26GBIMP12344X" }} has been refused</p>
+      <p class="govuk-body"><a href="/beta-16-04-26/single-search-results/permit-search-results">Back to search results</a></p>
+    </div>
+  </div>
+{% endif %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-xl">
+      Check permit details
+    </h1>
+
+    <p class="govuk-body">
+      {{ govukButton({
+        text: "View permit PDF",
+        classes: "govuk-button--secondary"
+      }) }}
+      {% if data.endorsed or data.refused %}
+        <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ data.permit or '26GBIMP12344X' }}&edit=1" class="govuk-button govuk-button--secondary govuk-!-margin-left-2">Edit endorsement details</a>
+      {% endif %}
+    </p>
+
+    <h2 class="govuk-heading-m">Permit details</h2>
+    <div class="summary-list-stacked">
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Permit number" }, value: { text: data.permit or "26GBIMP12344X" } },
+        { key: { text: "Type" }, value: { text: "Export" } },
+        { key: { text: "Exporter/re-exporter" }, value: { text: "Falconers Ltd, 12 Falconry Way, Norfolk, NR1 4FN, United Kingdom" } },
+        { key: { text: "Importer" }, value: { text: "The Royal Falconry Centre, Al-Safa Street, Jumeirah, PO Box 112233, Dubai, UAE" } },
+        { key: { text: "Country of import" }, value: { text: "United Arab Emirates" } },
+        { key: { text: "Source" }, value: { text: "C: Animals bred in captivity" } },
+        { key: { text: "Purpose" }, value: { text: "T: Commercial" } },
+        { key: { text: "Appendix/Annex" }, value: { text: "I/A" } },
+        { key: { text: "Last day of validity" }, value: { html: "28 February 2026 <strong class=\"govuk-tag " ~ validityTagClass ~ "\">" ~ validityTag ~ "</strong>" } }
+      ]
+    }) }}
+    </div>
+
+    <h2 class="govuk-heading-m">Specimen details</h2>
+    <div class="summary-list-stacked">
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Scientific name" }, value: { text: "Falco peregrinus" } },
+        { key: { text: "Common name" }, value: { text: "Peregrine falcon" } },
+        { key: { text: "Description" }, value: { text: "Live bird" } },
+        { key: { text: "Net mass (kg)" }, value: { text: "–" } },
+        { key: { text: "Quantity" }, value: { text: "1" } }
+      ]
+    }) }}
+    </div>
+
+    {% if data.endorsed or data.refused %}
+    <h2 class="govuk-heading-m">Endorse permit</h2>
+    <div class="summary-list-stacked">
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Actual quantity" }, value: { text: data.actualQuantity or "1" } },
+        { key: { text: "Number of animals dead on arrival" }, value: { text: data.deadOnArrival or "0" } },
+        { key: { text: "CDS MRN reference" }, value: { text: data.mrnReference or "26GB9X7K4L2M8N6P3Q" } },
+        { key: { text: "Bill of Lading or Air waybill (AWB) reference" }, value: { text: data.awbReference or "932-87654321" } }
+      ]
+    }) }}
+    </div>
+    <p class="govuk-body">
+      <a href="/beta-16-04-26/single-search-results/permit-search-results">Back to results</a>
+    </p>
+    {% else %}
+    <h2 class="govuk-heading-m">Endorse permit</h2>
+
+    <form method="post" action="/beta-16-04-26/single-search-results/check-permit-details">
+      <input type="hidden" name="permit" value="{{ data.permit or '26GBIMP12344X' }}" />
+
+      {% set actualQuantityError = data.errors and data.errors.actualQuantity %}
+      {% set actualQuantityErrorMsg = { text: data.errors.actualQuantity } if actualQuantityError else null %}
+      {% set actualQuantityFormGroup = { classes: "govuk-form-group--error" if actualQuantityError else "" } %}
+      {{ govukInput({
+        label: { text: "Actual quantity" },
+        id: "actualQuantity",
+        name: "actualQuantity",
+        value: data.actualQuantity,
+        classes: "govuk-input--width-5",
+        errorMessage: actualQuantityErrorMsg,
+        formGroup: actualQuantityFormGroup
+      }) }}
+
+      {% set deadOnArrivalError = data.errors and data.errors.deadOnArrival %}
+      {% set deadOnArrivalErrorMsg = { text: data.errors.deadOnArrival } if deadOnArrivalError else null %}
+      {% set deadOnArrivalFormGroup = { classes: "govuk-form-group--error" if deadOnArrivalError else "" } %}
+      {{ govukInput({
+        label: { text: "Number of animals dead on arrival" },
+        id: "deadOnArrival",
+        name: "deadOnArrival",
+        value: data.deadOnArrival,
+        classes: "govuk-input--width-5",
+        errorMessage: deadOnArrivalErrorMsg,
+        formGroup: deadOnArrivalFormGroup
+      }) }}
+
+      {% set mrnReferenceError = data.errors and data.errors.mrnReference %}
+      {% set mrnReferenceErrorMsg = { text: data.errors.mrnReference } if mrnReferenceError else null %}
+      {% set mrnReferenceFormGroup = { classes: "govuk-form-group--error" if mrnReferenceError else "" } %}
+      {{ govukInput({
+        label: { text: "Enter CDS MRN reference" },
+        id: "mrnReference",
+        name: "mrnReference",
+        value: data.mrnReference,
+        classes: "govuk-input--width-20",
+        errorMessage: mrnReferenceErrorMsg,
+        formGroup: mrnReferenceFormGroup
+      }) }}
+
+      {% set awbReferenceError = data.errors and data.errors.awbReference %}
+      {% set awbReferenceErrorMsg = { text: data.errors.awbReference } if awbReferenceError else null %}
+      {% set awbReferenceFormGroup = { classes: "govuk-form-group--error" if awbReferenceError else "" } %}
+      {{ govukInput({
+        label: { text: "Enter Bill of Lading or Air waybill (AWB) reference" },
+        id: "awbReference",
+        name: "awbReference",
+        value: data.awbReference,
+        classes: "govuk-input--width-20",
+        errorMessage: awbReferenceErrorMsg,
+        formGroup: awbReferenceFormGroup
+      }) }}
+
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Endorse permit",
+          name: "endorse",
+          value: "Endorse permit",
+          type: "submit"
+        }) }}
+        {{ govukButton({
+          text: "Refuse endorsement",
+          name: "refuse",
+          value: "Refuse endorsement",
+          type: "submit",
+          classes: "govuk-button--secondary"
+        }) }}
+      </div>
+    </form>
+
+    <p class="govuk-body">
+      <a href="/beta-16-04-26/single-search-results/permit-search-results">Back to results</a>
+    </p>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

@@ -10,91 +10,100 @@
 
     <!-- {% include "govuk-prototype-kit/includes/homepage-top.njk" %} -->
 
-    <h1 class="govuk-heading-xl">
-      {{ serviceName }}
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
+      {{ serviceName }} prototype
     </h1>
 
-    <h2 class="govuk-heading-s">Ecites Alpha</h2>
+    <h2 class="govuk-heading-m">Ecites private beta</h2>
 
-    <p class="govuk-body govuk-!-margin-bottom-0">
+    <p class="govuk-body govuk-!-margin-bottom-6">
+      As part of the eCITES private beta, we are delivering the minimum viable product (MVP) journey for Border Force officers to digitally endorse CITES permits.
+    </p>
+
+    <div class="govuk-inset-text govuk-!-margin-bottom-6">
+      <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-bottom-1">16 April 2026</span>
+      <h3 class="govuk-heading-m govuk-!-margin-top-0">Design iteration 1 <span class="govuk-tag govuk-tag--blue govuk-!-margin-left-2">In progress</span></h3>
+      <h4 class="govuk-heading-s govuk-!-margin-top-4">Single permit view</h4>
+      {{ govukDetails({
+        summaryText: "Permit references",
+        html: '<div class="govuk-body-s"><code>25GBIMPABS719</code><br><code>25GBIMPSTYXH1</code><br><code>25GBIMPSTYHNO</code><br><code>25GBIMPUVWOFM</code><br><code>25GBIMPWX0N12</code><br><code>25GBIMPYZOPGY</code><br><code>25GBIMPABZPMT</code><br><code>25GBIMPCDO2DA</code><br><code>25GBIMPEFPJOB</code><br><code>25GBIMPGHAQTG</code></div>'
+      }) }}
+      <ul class="govuk-list govuk-list--bullet govuk-list--spaced govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+        <li><a href="/alpha-02-03-26/single-search-results/search-results?prefill=1">Search for CITES permits</a></li>
+        <li><a href="/alpha-02-03-26/single-search-results/permit-search-results">Permit search results</a></li>
+        <li><a href="/alpha-02-03-26/single-search-results/check-permit-details?permit=25GBIMPABS719">Check permit details (dynamic)</a></li>
+        <li><a href="/alpha-02-03-26/single-search-results/refuse-permit?permit=26GBIMP12344X">Refuse permit (direct link for testing)</a></li>
+        <li><a href="/alpha-02-03-26/single-search-results/check-permit-1">Check permit 1</a>, <a href="/alpha-02-03-26/single-search-results/check-permit-2">2</a>, … <a href="/alpha-02-03-26/single-search-results/check-permit-10">10</a> (static pages with prev/next)</li>
+      </ul>
+    </div>
+
+    <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--l govuk-!-margin-top-0 govuk-!-margin-bottom-6">
+
+    <h2 class="govuk-heading-m">Ecites Alpha <span class="govuk-tag govuk-tag--green govuk-!-margin-left-2">Complete</span></h2>
+
+    <p class="govuk-body govuk-!-margin-bottom-6">
       As part of the eCITES team Alpha, we are exploring how Border Force officers could digitally endorse CITES permits.
     </p>
 
-    <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--l govuk-!-margin-top-4 govuk-!-margin-bottom-4">
+    <section class="govuk-!-margin-bottom-6" aria-labelledby="home-iter2-heading">
+      <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-bottom-1">9 March 2026</span>
+      <h3 class="govuk-heading-m govuk-!-margin-top-0" id="home-iter2-heading">Design iteration 2</h3>
+      <p class="govuk-body-s govuk-!-margin-bottom-4"><a href="https://eaflood.atlassian.net/wiki/spaces/ECITES/pages/6465716740/Design+iteration+2" target="_blank" rel="noopener noreferrer" class="govuk-link">Design iteration 2 write up (Confluence)</a></p>
+      <h4 class="govuk-heading-s">Single permit view</h4>
+      {{ govukDetails({
+        summaryText: "Permit references",
+        html: '<div class="govuk-body-s"><code>25GBIMPABS719</code><br><code>25GBIMPSTYXH1</code><br><code>25GBIMPSTYHNO</code><br><code>25GBIMPUVWOFM</code><br><code>25GBIMPWX0N12</code><br><code>25GBIMPYZOPGY</code><br><code>25GBIMPABZPMT</code><br><code>25GBIMPCDO2DA</code><br><code>25GBIMPEFPJOB</code><br><code>25GBIMPGHAQTG</code></div>'
+      }) }}
+      <ul class="govuk-list govuk-list--bullet govuk-list--spaced govuk-!-margin-top-2 govuk-!-margin-bottom-6">
+        <li><a href="/alpha-02-03-26/single-search-results/search-results?prefill=1">Search for CITES permits</a></li>
+        <li><a href="/alpha-02-03-26/single-search-results/permit-search-results">Permit search results</a></li>
+        <li><a href="/alpha-02-03-26/single-search-results/check-permit-details?permit=25GBIMPABS719">Check permit details (dynamic)</a></li>
+        <li><a href="/alpha-02-03-26/single-search-results/refuse-permit?permit=26GBIMP12344X">Refuse permit (direct link for testing)</a></li>
+        <li><a href="/alpha-02-03-26/single-search-results/check-permit-1">Check permit 1</a>, <a href="/alpha-02-03-26/single-search-results/check-permit-2">2</a>, … <a href="/alpha-02-03-26/single-search-results/check-permit-10">10</a> (static pages with prev/next)</li>
+      </ul>
 
-    <span class="govuk-caption-m">18 March 2026</span>
-    <h2 class="govuk-heading-m">Design iteration 3 <span class="govuk-tag govuk-tag--blue govuk-!-margin-left-2">In progress</span></h2>
-    <p class="govuk-body-s govuk-!-margin-bottom-2"><a href="https://eaflood.atlassian.net/wiki/spaces/ECITES/pages/6475022464/Design+iteration+3" target="_blank" rel="noopener noreferrer">Design iteration 3 write up (Confluence)</a></p>
-    <p class="govuk-heading-s">Single permit view</p>
-    {{ govukDetails({
-      summaryText: "Permit references",
-      html: '<div class="govuk-body-s">50 permits: <code>26GBIMP180001</code> … <code>26GBIMP180050</code></div>'
-    }) }}
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
-      <li><a href="/alpha-18-03-26/single-search-results/search-results?prefill=1">Search for CITES permits</a></li>
-      <li><a href="/alpha-18-03-26/single-search-results/permit-search-results">Permit search results</a></li>
-      <li><a href="/alpha-18-03-26/single-search-results/check-permit-details?permit=26GBIMP180001">Check permit details (dynamic)</a></li>
-      <li><a href="/alpha-18-03-26/single-search-results/refuse-permit?permit=26GBIMP180001">Refuse permit (direct link for testing)</a></li>
-      <li><a href="/alpha-18-03-26/single-search-results/check-permit-1">Check permit 1</a>, <a href="/alpha-18-03-26/single-search-results/check-permit-2">2</a>, … <a href="/alpha-18-03-26/single-search-results/check-permit-10">10</a> (static pages with prev/next)</li>
-    </ul>
+      <h4 class="govuk-heading-s govuk-!-margin-top-2">Batch permit view</h4>
+      {{ govukDetails({
+        summaryText: "Permit references",
+        html: '<div class="govuk-body-s"><code>25GBIMPABS719</code><br><code>25GBIMPSTYXH1</code><br><code>25GBIMPSTYHNO</code><br><code>25GBIMPUVWOFM</code><br><code>25GBIMPWX0N12</code><br><code>25GBIMPYZOPGY</code><br><code>25GBIMPABZPMT</code><br><code>25GBIMPCDO2DA</code><br><code>25GBIMPEFPJOB</code><br><code>25GBIMPGHAQTG</code></div>'
+      }) }}
+      <ul class="govuk-list govuk-list--bullet govuk-list--spaced govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+        <li><a href="/alpha-02-03-26/batch-search-results/search-results?prefill=1">Search for CITES permits</a></li>
+        <li><a href="/alpha-02-03-26/batch-search-results/permit-results">Batch permit results</a> – select permits, then endorse or refuse in batch. View links open single permit details within batch flow (back to batch results)</li>
+        <li><a href="/alpha-02-03-26/batch-search-results/permit-results">Batch permit results (direct link for testing)</a></li>
+        <li><a href="/alpha-02-03-26/batch-search-results/check-permit-details?permit=25GBIMPABS719">Check permit details (batch context, direct link for testing)</a></li>
+      </ul>
+    </section>
 
-    <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--l govuk-!-margin-top-4 govuk-!-margin-bottom-4">
+    <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--l govuk-!-margin-top-0 govuk-!-margin-bottom-6">
 
-    <span class="govuk-caption-m">9 March 2026</span>
-    <h2 class="govuk-heading-m">Design iteration 2 <span class="govuk-tag govuk-tag--green govuk-!-margin-left-2">Complete</span></h2>
-    <p class="govuk-body-s govuk-!-margin-bottom-2"><a href="https://eaflood.atlassian.net/wiki/spaces/ECITES/pages/6465716740/Design+iteration+2" target="_blank" rel="noopener noreferrer">Design iteration 2 write up (Confluence)</a></p>
-    <p class="govuk-heading-s">Single permit view</p>
-    {{ govukDetails({
-      summaryText: "Permit references",
-      html: '<div class="govuk-body-s"><code>25GBIMPABS719</code><br><code>25GBIMPSTYXH1</code><br><code>25GBIMPSTYHNO</code><br><code>25GBIMPUVWOFM</code><br><code>25GBIMPWX0N12</code><br><code>25GBIMPYZOPGY</code><br><code>25GBIMPABZPMT</code><br><code>25GBIMPCDO2DA</code><br><code>25GBIMPEFPJOB</code><br><code>25GBIMPGHAQTG</code></div>'
-    }) }}
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
-      <li><a href="/alpha-02-03-26/single-search-results/search-results?prefill=1">Search for CITES permits</a></li>
-      <li><a href="/alpha-02-03-26/single-search-results/permit-search-results">Permit search results</a></li>
-      <li><a href="/alpha-02-03-26/single-search-results/check-permit-details?permit=25GBIMPABS719">Check permit details (dynamic)</a></li>
-      <li><a href="/alpha-02-03-26/single-search-results/refuse-permit?permit=26GBIMP12344X">Refuse permit (direct link for testing)</a></li>
-      <li><a href="/alpha-02-03-26/single-search-results/check-permit-1">Check permit 1</a>, <a href="/alpha-02-03-26/single-search-results/check-permit-2">2</a>, … <a href="/alpha-02-03-26/single-search-results/check-permit-10">10</a> (static pages with prev/next)</li>
-    </ul>
+    <section aria-labelledby="home-iter1-heading">
+      <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-bottom-1">25 February 2026</span>
+      <h3 class="govuk-heading-m govuk-!-margin-top-0" id="home-iter1-heading">Design iteration 1</h3>
+      <p class="govuk-body-s govuk-!-margin-bottom-4"><a href="https://eaflood.atlassian.net/wiki/spaces/ECITES/pages/6465390048/Design+iteration+1" target="_blank" rel="noopener noreferrer" class="govuk-link">Design iteration 1 write up (Confluence)</a></p>
+      <h4 class="govuk-heading-s">Single permit view inc search results</h4>
+      {{ govukDetails({
+        summaryText: "Search terms",
+        html: '<div class="govuk-body-s"><code>26GBIMP12344X</code> (1 result)<br><code>26GBIMP12344X</code> <code>26GBIMP7GH45R</code> <code>26GBIMPHG453Y</code> (3 results)</div>'
+      }) }}
+      <ul class="govuk-list govuk-list--bullet govuk-list--spaced govuk-!-margin-top-2 govuk-!-margin-bottom-6">
+        <li><a href="/alpha-24-02-26/single-search-results/search-results">Search for CITES permits</a></li>
+        <li><a href="/alpha-24-02-26/single-search-results/permit-search-results">Permit search results</a></li>
+        <li><a href="/alpha-24-02-26/single-search-results/check-permit-details?permit=26GBIMP12344X">Check permit details</a></li>
+      </ul>
 
-    <p class="govuk-heading-s govuk-!-margin-top-4">Batch permit view</p>
-    {{ govukDetails({
-      summaryText: "Permit references",
-      html: '<div class="govuk-body-s"><code>25GBIMPABS719</code><br><code>25GBIMPSTYXH1</code><br><code>25GBIMPSTYHNO</code><br><code>25GBIMPUVWOFM</code><br><code>25GBIMPWX0N12</code><br><code>25GBIMPYZOPGY</code><br><code>25GBIMPABZPMT</code><br><code>25GBIMPCDO2DA</code><br><code>25GBIMPEFPJOB</code><br><code>25GBIMPGHAQTG</code></div>'
-    }) }}
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
-      <li><a href="/alpha-02-03-26/batch-search-results/search-results?prefill=1">Search for CITES permits</a></li>
-      <li><a href="/alpha-02-03-26/batch-search-results/permit-results">Batch permit results</a> – select permits, then endorse or refuse in batch. View links open single permit details within batch flow (back to batch results)</li>
-      <li><a href="/alpha-02-03-26/batch-search-results/permit-results">Batch permit results (direct link for testing)</a></li>
-      <li><a href="/alpha-02-03-26/batch-search-results/check-permit-details?permit=25GBIMPABS719">Check permit details (batch context, direct link for testing)</a></li>
-    </ul>
-
-    <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--l govuk-!-margin-top-4 govuk-!-margin-bottom-4">
-
-    <span class="govuk-caption-m">25 February 2026</span>
-    <h2 class="govuk-heading-m">Design iteration 1 <span class="govuk-tag govuk-tag--green govuk-!-margin-left-2">Complete</span></h2>
-    <p class="govuk-body-s govuk-!-margin-bottom-2"><a href="https://eaflood.atlassian.net/wiki/spaces/ECITES/pages/6465390048/Design+iteration+1" target="_blank" rel="noopener noreferrer">Design iteration 1 write up (Confluence)</a></p>
-    <p class="govuk-heading-s">Single permit view inc search results</p>
-    {{ govukDetails({
-      summaryText: "Search terms",
-      html: '<div class="govuk-body-s"><code>26GBIMP12344X</code> (1 result)<br><code>26GBIMP12344X</code> <code>26GBIMP7GH45R</code> <code>26GBIMPHG453Y</code> (3 results)</div>'
-    }) }}
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
-      <li><a href="/alpha-24-02-26/single-search-results/search-results">Search for CITES permits</a></li>
-      <li><a href="/alpha-24-02-26/single-search-results/permit-search-results">Permit search results</a></li>
-      <li><a href="/alpha-24-02-26/single-search-results/check-permit-details?permit=26GBIMP12344X">Check permit details</a></li>
-    </ul>
-
-    <p class="govuk-heading-s govuk-!-margin-top-4">Combined permit view</p>
-    {{ govukDetails({
-      summaryText: "Search terms",
-      html: '<div class="govuk-body-s"><code>26GBIMP6GT534</code><br><code>26GBIMP7GH45R</code></div>'
-    }) }}
-    <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
-      <li><a href="/alpha-24-02-26/combined-search-results/search-results">Search for a CITES permit</a></li>
-      <li><a href="/alpha-24-02-26/combined-search-results/check-permit-details">Check permit details (combined)</a></li>
-      <li><a href="/alpha-24-02-26/combined-search-results/endorsement-confirmation">Endorsement confirmation</a></li>
-      <li><a href="/alpha-24-02-26/combined-search-results/refusal-confirmation">Refusal confirmation</a></li>
-    </ul>
+      <h4 class="govuk-heading-s govuk-!-margin-top-2">Combined permit view</h4>
+      {{ govukDetails({
+        summaryText: "Search terms",
+        html: '<div class="govuk-body-s"><code>26GBIMP6GT534</code><br><code>26GBIMP7GH45R</code></div>'
+      }) }}
+      <ul class="govuk-list govuk-list--bullet govuk-list--spaced govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+        <li><a href="/alpha-24-02-26/combined-search-results/search-results">Search for a CITES permit</a></li>
+        <li><a href="/alpha-24-02-26/combined-search-results/check-permit-details">Check permit details (combined)</a></li>
+        <li><a href="/alpha-24-02-26/combined-search-results/endorsement-confirmation">Endorsement confirmation</a></li>
+        <li><a href="/alpha-24-02-26/combined-search-results/refusal-confirmation">Refusal confirmation</a></li>
+      </ul>
+    </section>
 
   </div>
 </div>

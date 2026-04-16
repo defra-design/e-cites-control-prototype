@@ -1,5 +1,5 @@
 {
-  "serviceName": "E-cites control prototype",
+  "serviceName": "Process a CITES permit",
   "useServiceNavigation": true,
   "plugins": {
     "govuk-frontend": {

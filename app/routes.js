@@ -37,6 +37,9 @@ router.get('/clear-data', (req, res) => {
 // Alpha 24-02-26 – single and combined search results journeys
 require('./views/alpha-24-02-26/routes')(router)
 
+// Beta 16-04-26 – copy of iteration 1 flows for beta testing
+require('./views/beta-16-04-26/routes')(router)
+
 // Alpha 02-03-26 – single search results journey
 require('./views/alpha-02-03-26/routes')(router)
 
