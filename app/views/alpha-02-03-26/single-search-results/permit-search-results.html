@@ -1,6 +1,6 @@
 {% extends "layouts/main.html" %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% set pageName = "Permit search results" %}
 {% set title = "Permit search results" %}
@@ -16,11 +16,11 @@
     {% if invalidList.length %}
       {% set nInv = invalidList.length %}
       {% set summaryWording = "1 permit could not be found" if nInv == 1 else (nInv ~ " permits could not be found") %}
-      {% set detailsHtml %}
+      {% set notFoundBannerHtml %}
         {% if nInv == 1 %}
-        <p class="govuk-body govuk-!-margin-bottom-3">Permit reference <strong>{{ invalidList[0] }}</strong> is not in this service.</p>
+        <p class="govuk-notification-banner__heading govuk-!-margin-bottom-3">Permit reference: <strong>{{ invalidList[0] }}</strong></p>
         {% else %}
-        <p class="govuk-body govuk-!-margin-bottom-2">These permit references are not in this service:</p>
+        <p class="govuk-body govuk-!-margin-bottom-2">Permit references:</p>
         <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-3">
           {% for ref in invalidList %}
           <li><strong>{{ ref }}</strong></li>
@@ -30,10 +30,13 @@
         <p class="govuk-body govuk-!-margin-bottom-0"><a href="/alpha-02-03-26/single-search-results/search-results" class="govuk-link govuk-link--no-visited-state">Change your search</a></p>
       {% endset %}
       <div class="govuk-!-margin-bottom-6">
-        {{ govukDetails({
-          summaryText: summaryWording,
-          open: true,
-          html: detailsHtml | trim
+        {{ govukNotificationBanner({
+          titleText: summaryWording,
+          titleHeadingLevel: 2,
+          html: notFoundBannerHtml | trim,
+          classes: "govuk-!-margin-top-0",
+          role: "alert",
+          titleId: "govuk-notification-banner-title-permit-not-found"
         }) }}
       </div>
     {% endif %}

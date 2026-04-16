@@ -224,12 +224,11 @@
   padding-top: 0;
 }
 
-// Permit pagination – grouped layout with subtle panel (compact height)
 .permit-pagination-inline {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: govuk-spacing(2);
+  gap: govuk-spacing(3);
   padding: govuk-spacing(2) govuk-spacing(4);
   margin-top: govuk-spacing(2);
   margin-bottom: govuk-spacing(3);
@@ -239,10 +238,9 @@
 
   .permit-pagination-inline__nav.govuk-pagination--block {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch;
+    gap: govuk-spacing(2);
     width: 100%;
     margin: 0;
     padding: 0;
@@ -252,31 +250,43 @@
     .govuk-pagination__prev,
     .govuk-pagination__next {
       float: none;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      margin-left: 0;
       border-top: none;
-    }
-
-    .govuk-pagination__next {
-      margin-left: auto;
+      text-align: left;
     }
 
     .govuk-pagination__prev + .govuk-pagination__next {
       border-top: none;
     }
+
+    .govuk-pagination__link {
+      box-sizing: border-box;
+    }
+
+    .govuk-pagination__link-label {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
   }
 
   .permit-pagination-inline__position {
     font-size: 14px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    order: -1;
+    align-self: center;
+    position: static;
+    transform: none;
+    left: auto;
+    top: auto;
     padding: govuk-spacing(1) govuk-spacing(3);
     background: #ffffff;
     border-radius: 4px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    text-align: center;
   }
 
-  // Smaller font for pagination links (Previous/Next permit, permit refs)
   .permit-pagination-inline__nav .govuk-pagination__prev,
   .permit-pagination-inline__nav .govuk-pagination__next {
     font-size: 16px;
@@ -284,6 +294,36 @@
     .govuk-pagination__link-title,
     .govuk-pagination__link-label {
       font-size: inherit;
+    }
+  }
+
+  @media (min-width: 48.0625em) {
+    gap: govuk-spacing(2);
+
+    .permit-pagination-inline__nav.govuk-pagination--block {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0;
+
+      .govuk-pagination__prev,
+      .govuk-pagination__next {
+        width: auto;
+      }
+
+      .govuk-pagination__next {
+        margin-left: auto;
+        text-align: right;
+      }
+    }
+
+    .permit-pagination-inline__position {
+      order: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   }
 }
