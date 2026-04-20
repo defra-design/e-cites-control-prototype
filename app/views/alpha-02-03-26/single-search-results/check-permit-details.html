@@ -48,8 +48,8 @@
 {% set purposeLabel = currentPermit.purpose or "T: Commercial trade" %}
 {% set netMass = currentPermit.netMass | default("") | trim %}
 {% set reexportCountry = currentPermit.reexportCountry or ("Germany" if mvpPermit else "Italy") %}
-{% set reexportIssueDate = currentPermit.reexportIssueDate or ("30 April 2025" if mvpPermit else (currentPermit.issueDate or "8 September 2025")) %}
-{% set reexportCert = currentPermit.reexportCertNumber or ("DE-W 00032/25" if mvpPermit else "–") %}
+{% set reexportIssueDate = currentPermit.reexportIssueDate or ("20 Mar 2026" if mvpPermit else (currentPermit.issueDate or "8 September 2025")) %}
+{% set reexportCert = currentPermit.reexportCertNumber or ("DE-W 00045/01" if mvpPermit else "–") %}
 {% set originCountry = currentPermit.originCountry or ("Vietnam" if mvpPermit else "–") %}
 {% set originIssueDate = currentPermit.originIssueDate or ("31 July 2018" if mvpPermit else "–") %}
 {% set originPermitNo = currentPermit.originPermitNumber or ("18VN39735/CT-KL" if mvpPermit else "–") %}
