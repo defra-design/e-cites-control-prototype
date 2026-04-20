@@ -28,13 +28,12 @@
 
       {{ govukDetails({
         summaryText: "Permit references",
-        html: '<div class="govuk-body-s"><code>26GBIMP12344X</code><br><code>26GBIMP7GH45R</code><br><code>26GBIMPHG453Y</code></div>'
+        html: '<div class="govuk-body-s"><code>26GBIMP12344X</code><br><code>26GBIMP7GH45R</code><br><code>26GBIMPHG453Y</code><br><code>25GBIMPABS719</code><br><code>25GBIMPSTYXH1</code><br><code>25GBIMPSTYHNO</code><br><code>25GBIMPUVWOFM</code><br><code>25GBIMPWX0N12</code><br><code>25GBIMPYZOPGY</code><br><code>25GBIMPABZPMT</code><br><code>25GBIMPCDO2DA</code><br><code>25GBIMPEFPJOB</code><br><code>25GBIMPGHAQTG</code></div>'
       }) }}
       <ul class="govuk-list govuk-list--bullet govuk-list--spaced govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-        <li><a href="/beta-16-04-26/single-search-results/search-results">Search for CITES permits</a></li>
-        <li><a href="/beta-16-04-26/single-search-results/permit-search-results">Permit search results</a></li>
-        <li><a href="/beta-16-04-26/single-search-results/check-permit-details?permit=26GBIMP12344X">Check permit details (dynamic)</a> — endorse or refuse on the page</li>
-        <li><a href="/beta-16-04-26/combined-search-results/search-results">Combined search for a CITES permit</a></li>
+        <li><a href="/beta-16-04-26/single-search-results/search-results?empty=1">Search for CITES permits (empty)</a></li>
+        <li><a href="/beta-16-04-26/single-search-results/search-results?prefill=1">Search for CITES permits (pre-filled 10 permits)</a></li>
+        <li><a href="/beta-16-04-26/single-search-results/search-results?errors9valid=1">Search for CITES permits (9 permits, 1 incorrect)</a></li>
       </ul>
     </div>
 
@@ -56,11 +55,9 @@
         html: '<div class="govuk-body-s"><code>25GBIMPABS719</code><br><code>25GBIMPSTYXH1</code><br><code>25GBIMPSTYHNO</code><br><code>25GBIMPUVWOFM</code><br><code>25GBIMPWX0N12</code><br><code>25GBIMPYZOPGY</code><br><code>25GBIMPABZPMT</code><br><code>25GBIMPCDO2DA</code><br><code>25GBIMPEFPJOB</code><br><code>25GBIMPGHAQTG</code></div>'
       }) }}
       <ul class="govuk-list govuk-list--bullet govuk-list--spaced govuk-!-margin-top-2 govuk-!-margin-bottom-6">
-        <li><a href="/alpha-02-03-26/single-search-results/search-results?prefill=1">Search for CITES permits</a></li>
-        <li><a href="/alpha-02-03-26/single-search-results/permit-search-results">Permit search results</a></li>
-        <li><a href="/alpha-02-03-26/single-search-results/check-permit-details?permit=25GBIMPABS719">Check permit details (dynamic)</a></li>
-        <li><a href="/alpha-02-03-26/single-search-results/refuse-permit?permit=26GBIMP12344X">Refuse permit (direct link for testing)</a></li>
-        <li><a href="/alpha-02-03-26/single-search-results/check-permit-1">Check permit 1</a>, <a href="/alpha-02-03-26/single-search-results/check-permit-2">2</a>, … <a href="/alpha-02-03-26/single-search-results/check-permit-10">10</a> (static pages with prev/next)</li>
+        <li><a href="/beta-16-04-26/single-search-results/search-results?prefill=1">Search for CITES permits</a></li>
+        <li><a href="/beta-16-04-26/single-search-results/refuse-permit?permit=26GBIMP12344X">Refuse permit (direct link for testing)</a></li>
+        <li><a href="/beta-16-04-26/single-search-results/check-permit-1">Check permit 1</a>, <a href="/beta-16-04-26/single-search-results/check-permit-2">2</a>, … <a href="/beta-16-04-26/single-search-results/check-permit-10">10</a> (static pages with prev/next)</li>
       </ul>
 
       <h4 class="govuk-heading-s govuk-!-margin-top-2">Batch permit view</h4>
@@ -69,10 +66,10 @@
         html: '<div class="govuk-body-s"><code>25GBIMPABS719</code><br><code>25GBIMPSTYXH1</code><br><code>25GBIMPSTYHNO</code><br><code>25GBIMPUVWOFM</code><br><code>25GBIMPWX0N12</code><br><code>25GBIMPYZOPGY</code><br><code>25GBIMPABZPMT</code><br><code>25GBIMPCDO2DA</code><br><code>25GBIMPEFPJOB</code><br><code>25GBIMPGHAQTG</code></div>'
       }) }}
       <ul class="govuk-list govuk-list--bullet govuk-list--spaced govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-        <li><a href="/alpha-02-03-26/batch-search-results/search-results?prefill=1">Search for CITES permits</a></li>
-        <li><a href="/alpha-02-03-26/batch-search-results/permit-results">Batch permit results</a> – select permits, then endorse or refuse in batch. View links open single permit details within batch flow (back to batch results)</li>
-        <li><a href="/alpha-02-03-26/batch-search-results/permit-results">Batch permit results (direct link for testing)</a></li>
-        <li><a href="/alpha-02-03-26/batch-search-results/check-permit-details?permit=25GBIMPABS719">Check permit details (batch context, direct link for testing)</a></li>
+        <li><a href="/beta-16-04-26/batch-search-results/search-results?prefill=1">Search for CITES permits</a></li>
+        <li><a href="/beta-16-04-26/batch-search-results/permit-results">Batch permit results</a> – select permits, then endorse or refuse in batch. View links open single permit details within batch flow (back to batch results)</li>
+        <li><a href="/beta-16-04-26/batch-search-results/permit-results">Batch permit results (direct link for testing)</a></li>
+        <li><a href="/beta-16-04-26/batch-search-results/check-permit-details?permit=25GBIMPABS719">Check permit details (batch context, direct link for testing)</a></li>
       </ul>
     </section>
 
@@ -89,7 +86,6 @@
       }) }}
       <ul class="govuk-list govuk-list--bullet govuk-list--spaced govuk-!-margin-top-2 govuk-!-margin-bottom-6">
         <li><a href="/alpha-24-02-26/single-search-results/search-results">Search for CITES permits</a></li>
-        <li><a href="/alpha-24-02-26/single-search-results/permit-search-results">Permit search results</a></li>
         <li><a href="/alpha-24-02-26/single-search-results/check-permit-details?permit=26GBIMP12344X">Check permit details</a></li>
       </ul>
 

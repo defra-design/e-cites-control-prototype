@@ -1,23 +1,91 @@
 {% extends "layouts/main.html" %}
-{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
 
 {% set pageName = "Check permit details" %}
 {% set title = "Check permit details" %}
-{% set validityTag = "Endorsed" if data.endorsed else ("Refused" if data.refused else "Valid") %}
-{% set validityTagClass = "govuk-tag--red" if data.refused else "govuk-tag--green" %}
+{% set permit = data.permit or "25GBIMPABS719" %}
+{% set currentPermit = data.currentPermit or {} %}
+{% set currentIndex = data.checkPermitIndex or 1 %}
+{% set totalCount = data.checkPermitTotal or 10 %}
+{% set permitList = data.checkPermitList or data.permitSearchResults or [] %}
+{% set endorsedDetails = data.endorsedDetails and data.endorsedDetails[permit] or {} %}
+{% set validityTag = "Valid" %}
+{% set validityTagClass = "govuk-tag--blue" %}
+{% if data.permitStatuses and data.permitStatuses[permit] %}
+  {% if data.permitStatuses[permit] === "endorsed" %}
+    {% set validityTag = "Endorsed" %}
+    {% set validityTagClass = "govuk-tag--green" %}
+  {% elif data.permitStatuses[permit] === "refused" %}
+    {% set validityTag = "Refused" %}
+    {% set validityTagClass = "govuk-tag--red" %}
+  {% elif data.permitStatuses[permit] === "expired" %}
+    {% set validityTag = "Expired" %}
+    {% set validityTagClass = "govuk-tag--red" %}
+  {% endif %}
+{% endif %}
+{% set mvpPermit = permit and permit.startsWith("25GBIMP") %}
+{% if currentPermit.exporterHtml %}
+  {% set exporterHtml = currentPermit.exporterHtml %}
+{% elif mvpPermit %}
+  {% set exporterHtml %}Serpentis Logistik GmbH<br>Gewerbepark Süd 14a<br>DE-64546 Mörfelden-Walldorf<br>Germany{% endset %}
+{% else %}
+  {% set exporterHtml %}Montreval Cuir SA<br>Rue du Marché 18<br>1204 Geneva<br>Switzerland{% endset %}
+{% endif %}
+{% set countryReexport = currentPermit.countryOfReexport or ("Germany" if mvpPermit else "Switzerland") %}
+{% if currentPermit.importerHtml %}
+  {% set importerHtml = currentPermit.importerHtml %}
+{% elif mvpPermit %}
+  {% set importerHtml %}UK Exotic Reptile Imports Ltd<br>Unit 7, Riverside Business Park<br>Essex<br>IG11 0HZ<br>United Kingdom{% endset %}
+{% else %}
+  {% set importerHtml %}Stratford & Hale Watch Company Ltd<br>Unit 14 Hatton Garden Business Centre<br>London<br>EC1N 8DL{% endset %}
+{% endif %}
+{% set countryImport = currentPermit.countryOfImport or "United Kingdom" %}
+{% set sourceLabel = currentPermit.source or "W: Wild" %}
+{% set purposeLabel = currentPermit.purpose or "T: Commercial trade" %}
+{% set netMass = currentPermit.netMass | default("") | trim %}
+{% set reexportCountry = currentPermit.reexportCountry or ("Germany" if mvpPermit else "Italy") %}
+{% set reexportIssueDate = currentPermit.reexportIssueDate or ("20 Mar 2026" if mvpPermit else (currentPermit.issueDate or "8 September 2025")) %}
+{% set reexportCert = currentPermit.reexportCertNumber or ("DE-W 00045/01" if mvpPermit else "–") %}
+{% set originCountry = currentPermit.originCountry or ("Vietnam" if mvpPermit else "–") %}
+{% set originIssueDate = currentPermit.originIssueDate or ("31 July 2018" if mvpPermit else "–") %}
+{% set originPermitNo = currentPermit.originPermitNumber or ("18VN39735/CT-KL" if mvpPermit else "–") %}
+{% set remarksHtml %}
+<p class="govuk-body-s govuk-!-margin-bottom-0">This permit is valid only for the specimens and quantities stated. Transport of live animals must follow the current edition of the IATA Live Animals Regulations. A copy of this permit must travel with the consignment. Endorsement by Border Force confirms import clearance against the customs declaration you enter in this service.</p>
+{% endset %}
+{% set specimenDescriptionHtml %}
+Live Burmese python.<br>Microchip number 12345678912345
+{% endset %}
 
 {% block beforeContent %}
-  {{ govukBreadcrumbs({
-    items: [
-      { text: "Search", href: "/beta-16-04-26/single-search-results/search-results" },
-      { text: "Search results", href: "/beta-16-04-26/single-search-results/permit-search-results" },
-      { text: "Check permit details" }
-    ]
-  }) }}
+  <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+    {{ govukBackLink({
+      text: totalCount > 1 and "Back to search results" or "Back to search",
+      href: totalCount > 1 and "/beta-16-04-26/single-search-results/permit-search-results" or "/beta-16-04-26/single-search-results/search-results"
+    }) }}
+    {% if totalCount > 1 %}
+    <div class="permit-pagination-inline">
+      {{ govukPagination({
+        classes: "permit-pagination-inline__nav",
+        landmarkLabel: "Permit navigation",
+        previous: (currentIndex > 1) and {
+          text: "Previous permit",
+          labelText: permitList[currentIndex - 2].ref,
+          href: "/beta-16-04-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex - 2].ref
+        },
+        next: (currentIndex < totalCount) and {
+          text: "Next permit",
+          labelText: permitList[currentIndex].ref,
+          href: "/beta-16-04-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex].ref
+        }
+      }) }}
+      <span class="permit-pagination-inline__position govuk-body-s govuk-!-font-weight-bold">Permit {{ currentIndex }} of {{ totalCount }}</span>
+    </div>
+    {% endif %}
+  </div>
 {% endblock %}
 
 {% block content %}
@@ -30,176 +98,243 @@
 {% endif %}
 
 {% if data.endorsed %}
-  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-    <div class="govuk-notification-banner__header">
+  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" data-dismissable>
+    <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
       <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
         Permit endorsed
       </h2>
+      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
     </div>
     <div class="govuk-notification-banner__content">
-      <p class="govuk-body">Permit number: {{ data.permit or "26GBIMP12344X" }} has been endorsed</p>
-      <p class="govuk-body"><a href="/beta-16-04-26/single-search-results/permit-search-results">Back to search results</a></p>
+      <p class="govuk-body">This permit has been successfully endorsed.</p>
+    </div>
+  </div>
+{% endif %}
+
+{% if data.updated %}
+  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title-updated" data-module="govuk-notification-banner" data-dismissable>
+    <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
+      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-updated">
+        Changes saved
+      </h2>
+      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
+    </div>
+    <div class="govuk-notification-banner__content">
+      <p class="govuk-body">This permit has been successfully endorsed.</p>
     </div>
   </div>
 {% endif %}
 
 {% if data.refused %}
-  <div class="govuk-notification-banner" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-    <div class="govuk-notification-banner__header">
-      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+  <div class="govuk-notification-banner" role="alert" aria-labelledby="govuk-notification-banner-title-refused" data-module="govuk-notification-banner" data-dismissable>
+    <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
+      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-refused">
         Permit not endorsed
       </h2>
+      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
     </div>
     <div class="govuk-notification-banner__content">
-      <p class="govuk-body">Permit number: {{ data.permit or "26GBIMP12344X" }} has been refused</p>
-      <p class="govuk-body"><a href="/beta-16-04-26/single-search-results/permit-search-results">Back to search results</a></p>
+      <p class="govuk-body">This permit has not been endorsed.</p>
     </div>
   </div>
 {% endif %}
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-full">
 
-    <h1 class="govuk-heading-xl">
-      Check permit details
-    </h1>
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-6">Check permit details</h1>
 
-    <p class="govuk-body">
-      {{ govukButton({
-        text: "View permit PDF",
-        classes: "govuk-button--secondary"
+    <h2 class="govuk-heading-s">Permit overview</h2>
+    {{ govukSummaryList({
+      classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
+      rows: [
+        { key: { text: "Permit number" }, value: { text: permit } },
+        { key: { text: "Type" }, value: { text: "Import" } },
+        { key: { text: "Valid until" }, value: { text: currentPermit.expires or "30 October 2026" } },
+        { key: { text: "Status" }, value: { html: "<strong class=\"govuk-tag " ~ validityTagClass ~ "\">" ~ validityTag ~ "</strong>" } }
+      ]
+    }) }}
+
+    <h2 class="govuk-heading-s">Exporter/Re-exporter</h2>
+    {{ govukSummaryList({
+      classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
+      rows: [
+        { key: { text: "Name and address" }, value: { html: exporterHtml } },
+        { key: { text: "Country of re-export" }, value: { text: countryReexport } }
+      ]
+    }) }}
+
+    <h2 class="govuk-heading-s">Importer</h2>
+    {{ govukSummaryList({
+      classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
+      rows: [
+        { key: { text: "Name and address" }, value: { html: importerHtml } },
+        { key: { text: "Country of import" }, value: { text: countryImport } }
+      ]
+    }) }}
+
+    <h2 class="govuk-heading-s">Specimen details</h2>
+    {{ govukSummaryList({
+      classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
+      rows: [
+        { key: { text: "Scientific name of species" }, value: { text: currentPermit.species or "Python bivittatus" } },
+        { key: { text: "Common name of species" }, value: { text: currentPermit.commonName or "Burmese python" } },
+        { key: { text: "Description of specimens" }, value: { html: currentPermit.description or specimenDescriptionHtml } },
+        { key: { text: "CITES Appendix" }, value: { text: currentPermit.citesAppendix or "II" } },
+        { key: { text: "GB Annex" }, value: { text: currentPermit.gbAnnex or "B" } },
+        { key: { text: "Source" }, value: { text: sourceLabel } },
+        { key: { text: "Purpose" }, value: { text: purposeLabel } },
+        { key: { text: "Quantity" }, value: { text: currentPermit.quantity or "1" } },
+        { key: { text: "Net mass (KG)" }, value: { text: netMass } }
+      ]
+    }) }}
+
+    <h2 class="govuk-heading-s">Re-export history</h2>
+    {{ govukSummaryList({
+      classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
+      rows: [
+        { key: { text: "Country of last re-export" }, value: { text: reexportCountry } },
+        { key: { text: "Date of issue" }, value: { text: reexportIssueDate } },
+        { key: { text: "Certificate number" }, value: { text: reexportCert } }
+      ]
+    }) }}
+
+    <h2 class="govuk-heading-s">Origin history</h2>
+    {{ govukSummaryList({
+      classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
+      rows: [
+        { key: { text: "Country of origin" }, value: { text: originCountry } },
+        { key: { text: "Date of issue" }, value: { text: originIssueDate } },
+        { key: { text: "Permit number" }, value: { text: originPermitNo } }
+      ]
+    }) }}
+
+    <h2 class="govuk-heading-s">Remarks and conditions</h2>
+    {{ govukSummaryList({
+      classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
+      rows: [
+        { key: { text: "Special conditions" }, value: { html: remarksHtml } },
+        { key: { text: "Management Authority" }, value: { text: "Animal and Plant Health Agency (APHA)" } },
+        { key: { text: "Signature and official stamp" }, value: { text: "Emma Biggs, Head of International Trade and Customer Service" } },
+        { key: { text: "Issuing official" }, value: { text: "J. Smith" } },
+        { key: { text: "Place and date of issue" }, value: { text: "Bristol, 30 April 2026" } }
+      ]
+    }) }}
+
+    {% if (data.permitStatuses and data.permitStatuses[permit]) and not data.editEndorsement %}
+    <div id="endorsement-section">
+    {% if data.permitStatuses[permit] === "refused" %}
+    <h2 class="govuk-heading-s govuk-!-margin-top-8">Endorsement refused</h2>
+    <div class="govuk-!-margin-bottom-3 permit-summary-16px permit-details-summary-list">
+      {{ govukSummaryList({
+        rows: [
+          { key: { text: "Refusal reason" }, value: { text: endorsedDetails.refusalReason or "–" } },
+          { key: { text: "Refusal date" }, value: { text: endorsedDetails.dateOfRefusal or "–" } },
+          { key: { text: "Port" }, value: { text: endorsedDetails.port or currentPermit.port or "Dover" } },
+          { key: { text: "Additional details" }, value: { text: endorsedDetails.additionalDetails or "–" } },
+          { key: { text: "Officer ID" }, value: { text: endorsedDetails.officerId or "–" } }
+        ]
       }) }}
-      {% if data.endorsed or data.refused %}
-        <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ data.permit or '26GBIMP12344X' }}&edit=1" class="govuk-button govuk-button--secondary govuk-!-margin-left-2">Edit endorsement details</a>
-      {% endif %}
-    </p>
-
-    <h2 class="govuk-heading-m">Permit details</h2>
-    <div class="summary-list-stacked">
-    {{ govukSummaryList({
-      rows: [
-        { key: { text: "Permit number" }, value: { text: data.permit or "26GBIMP12344X" } },
-        { key: { text: "Type" }, value: { text: "Export" } },
-        { key: { text: "Exporter/re-exporter" }, value: { text: "Falconers Ltd, 12 Falconry Way, Norfolk, NR1 4FN, United Kingdom" } },
-        { key: { text: "Importer" }, value: { text: "The Royal Falconry Centre, Al-Safa Street, Jumeirah, PO Box 112233, Dubai, UAE" } },
-        { key: { text: "Country of import" }, value: { text: "United Arab Emirates" } },
-        { key: { text: "Source" }, value: { text: "C: Animals bred in captivity" } },
-        { key: { text: "Purpose" }, value: { text: "T: Commercial" } },
-        { key: { text: "Appendix/Annex" }, value: { text: "I/A" } },
-        { key: { text: "Last day of validity" }, value: { html: "28 February 2026 <strong class=\"govuk-tag " ~ validityTagClass ~ "\">" ~ validityTag ~ "</strong>" } }
-      ]
-    }) }}
     </div>
-
-    <h2 class="govuk-heading-m">Specimen details</h2>
-    <div class="summary-list-stacked">
-    {{ govukSummaryList({
-      rows: [
-        { key: { text: "Scientific name" }, value: { text: "Falco peregrinus" } },
-        { key: { text: "Common name" }, value: { text: "Peregrine falcon" } },
-        { key: { text: "Description" }, value: { text: "Live bird" } },
-        { key: { text: "Net mass (kg)" }, value: { text: "–" } },
-        { key: { text: "Quantity" }, value: { text: "1" } }
-      ]
-    }) }}
+    <div class="govuk-button-group govuk-!-margin-top-4">
+      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}&edit=1#endorsement-section" class="govuk-button">Amend details</a>
     </div>
-
-    {% if data.endorsed or data.refused %}
-    <h2 class="govuk-heading-m">Endorse permit</h2>
-    <div class="summary-list-stacked">
-    {{ govukSummaryList({
-      rows: [
-        { key: { text: "Actual quantity" }, value: { text: data.actualQuantity or "1" } },
-        { key: { text: "Number of animals dead on arrival" }, value: { text: data.deadOnArrival or "0" } },
-        { key: { text: "CDS MRN reference" }, value: { text: data.mrnReference or "26GB9X7K4L2M8N6P3Q" } },
-        { key: { text: "Bill of Lading or Air waybill (AWB) reference" }, value: { text: data.awbReference or "932-87654321" } }
-      ]
-    }) }}
+    {% elif data.permitStatuses[permit] === "endorsed" %}
+    <h2 class="govuk-heading-s govuk-!-margin-top-8">Endorsement</h2>
+    <div class="govuk-!-margin-bottom-3 permit-summary-16px permit-details-summary-list">
+      {{ govukSummaryList({
+        rows: [
+          { key: { text: "Actual imported quantity" }, value: { text: endorsedDetails.actualQuantity or "–" } },
+          { key: { text: "Number of animals dead on arrival" }, value: { text: endorsedDetails.deadOnArrival or "–" } },
+          { key: { text: "Customs document reference" }, value: { text: endorsedDetails.mrnReference or "–" } },
+          { key: { text: "Endorsement date" }, value: { text: endorsedDetails.dateOfEndorsement or "–" } },
+          { key: { text: "Port" }, value: { text: endorsedDetails.port or currentPermit.port or "Dover" } },
+          { key: { text: "Officer ID" }, value: { text: endorsedDetails.officerId or "–" } }
+        ]
+      }) }}
     </div>
-    <p class="govuk-body">
-      <a href="/beta-16-04-26/single-search-results/permit-search-results">Back to results</a>
-    </p>
+    <div class="govuk-button-group govuk-!-margin-top-4">
+      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}&edit=1#endorsement-section" class="govuk-button">Amend details</a>
+    </div>
     {% else %}
-    <h2 class="govuk-heading-m">Endorse permit</h2>
-
-    <form method="post" action="/beta-16-04-26/single-search-results/check-permit-details">
-      <input type="hidden" name="permit" value="{{ data.permit or '26GBIMP12344X' }}" />
-
-      {% set actualQuantityError = data.errors and data.errors.actualQuantity %}
-      {% set actualQuantityErrorMsg = { text: data.errors.actualQuantity } if actualQuantityError else null %}
-      {% set actualQuantityFormGroup = { classes: "govuk-form-group--error" if actualQuantityError else "" } %}
-      {{ govukInput({
-        label: { text: "Actual quantity" },
-        id: "actualQuantity",
-        name: "actualQuantity",
-        value: data.actualQuantity,
-        classes: "govuk-input--width-5",
-        errorMessage: actualQuantityErrorMsg,
-        formGroup: actualQuantityFormGroup
-      }) }}
-
-      {% set deadOnArrivalError = data.errors and data.errors.deadOnArrival %}
-      {% set deadOnArrivalErrorMsg = { text: data.errors.deadOnArrival } if deadOnArrivalError else null %}
-      {% set deadOnArrivalFormGroup = { classes: "govuk-form-group--error" if deadOnArrivalError else "" } %}
-      {{ govukInput({
-        label: { text: "Number of animals dead on arrival" },
-        id: "deadOnArrival",
-        name: "deadOnArrival",
-        value: data.deadOnArrival,
-        classes: "govuk-input--width-5",
-        errorMessage: deadOnArrivalErrorMsg,
-        formGroup: deadOnArrivalFormGroup
-      }) }}
-
-      {% set mrnReferenceError = data.errors and data.errors.mrnReference %}
-      {% set mrnReferenceErrorMsg = { text: data.errors.mrnReference } if mrnReferenceError else null %}
-      {% set mrnReferenceFormGroup = { classes: "govuk-form-group--error" if mrnReferenceError else "" } %}
-      {{ govukInput({
-        label: { text: "Enter CDS MRN reference" },
-        id: "mrnReference",
-        name: "mrnReference",
-        value: data.mrnReference,
-        classes: "govuk-input--width-20",
-        errorMessage: mrnReferenceErrorMsg,
-        formGroup: mrnReferenceFormGroup
-      }) }}
-
-      {% set awbReferenceError = data.errors and data.errors.awbReference %}
-      {% set awbReferenceErrorMsg = { text: data.errors.awbReference } if awbReferenceError else null %}
-      {% set awbReferenceFormGroup = { classes: "govuk-form-group--error" if awbReferenceError else "" } %}
-      {{ govukInput({
-        label: { text: "Enter Bill of Lading or Air waybill (AWB) reference" },
-        id: "awbReference",
-        name: "awbReference",
-        value: data.awbReference,
-        classes: "govuk-input--width-20",
-        errorMessage: awbReferenceErrorMsg,
-        formGroup: awbReferenceFormGroup
-      }) }}
-
-      <div class="govuk-button-group">
+    <form method="post" action="/beta-16-04-26/single-search-results/check-permit-details" autocomplete="off" id="endorsement-form">
+      <input type="hidden" name="permit" value="{{ permit }}" />
+      {% include "beta-16-04-26/single-search-results/_endorsement-form-fields.njk" %}
+      <div class="govuk-button-group govuk-!-margin-top-4">
         {{ govukButton({
           text: "Endorse permit",
           name: "endorse",
           value: "Endorse permit",
           type: "submit"
         }) }}
-        {{ govukButton({
-          text: "Refuse endorsement",
-          name: "refuse",
-          value: "Refuse endorsement",
-          type: "submit",
-          classes: "govuk-button--secondary"
-        }) }}
+        <a href="/beta-16-04-26/single-search-results/refuse-permit?permit={{ permit }}" class="govuk-button govuk-button--secondary">Refuse endorsement</a>
       </div>
     </form>
-
-    <p class="govuk-body">
-      <a href="/beta-16-04-26/single-search-results/permit-search-results">Back to results</a>
+    {% endif %}
+    </div>
+    {% elif data.editEndorsement %}
+    <div id="endorsement-section">
+    <form method="post" action="/beta-16-04-26/single-search-results/check-permit-details" autocomplete="off">
+      <input type="hidden" name="permit" value="{{ permit }}" />
+      {% if data.permitStatuses and data.permitStatuses[permit] === "endorsed" %}<input type="hidden" name="update" value="1" />{% endif %}
+      {% include "beta-16-04-26/single-search-results/_endorsement-form-fields.njk" %}
+      <div class="govuk-button-group govuk-!-margin-top-4">
+        {% if data.permitStatuses and data.permitStatuses[permit] === "endorsed" %}
+        {{ govukButton({
+          text: "Save changes",
+          name: "update",
+          value: "Save changes",
+          type: "submit"
+        }) }}
+        {% else %}
+        {{ govukButton({
+          text: "Endorse permit",
+          name: "endorse",
+          value: "Endorse permit",
+          type: "submit"
+        }) }}
+        <a href="/beta-16-04-26/single-search-results/refuse-permit?permit={{ permit }}" class="govuk-button govuk-button--secondary">Refuse endorsement</a>
+        {% endif %}
+      </div>
+    </form>
+    <p class="govuk-body govuk-!-margin-top-4">
+      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-link">Cancel amend</a>
     </p>
+    </div>
+    {% else %}
+    <div id="endorsement-section">
+    <form method="post" action="/beta-16-04-26/single-search-results/check-permit-details" autocomplete="off">
+      <input type="hidden" name="permit" value="{{ permit }}" />
+      {% include "beta-16-04-26/single-search-results/_endorsement-form-fields.njk" %}
+      <div class="govuk-button-group govuk-!-margin-top-4">
+        {% if data.editEndorsement %}
+        {{ govukButton({
+          text: "Save changes",
+          name: "update",
+          value: "Save changes",
+          type: "submit"
+        }) }}
+        <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-link govuk-!-margin-left-3 govuk-!-padding-top-2 govuk-!-padding-bottom-2">Cancel amend</a>
+        {% else %}
+        {{ govukButton({
+          text: "Endorse permit",
+          name: "endorse",
+          value: "Endorse permit",
+          type: "submit"
+        }) }}
+        <a href="/beta-16-04-26/single-search-results/refuse-permit?permit={{ permit }}" class="govuk-button govuk-button--secondary">Refuse endorsement</a>
+        {% endif %}
+      </div>
+    </form>
+    </div>
     {% endif %}
 
   </div>
 </div>
 
+{% endblock %}
+
+{% block pageScripts %}
+  {% include "beta-16-04-26/single-search-results/_customs-reference-script.njk" %}
+  {% include "beta-16-04-26/single-search-results/_notification-banner-close-script.njk" %}
 {% endblock %}

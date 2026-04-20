@@ -1,19 +1,10 @@
 {% extends "layouts/main.html" %}
-{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageName = "Search for CITES permits" %}
 {% set title = "Search for CITES permits" %}
-
-{% block beforeContent %}
-  {{ govukBreadcrumbs({
-    items: [
-      { text: "Search" }
-    ]
-  }) }}
-{% endblock %}
 
 {% block content %}
 
@@ -40,22 +31,23 @@
         name: "permitReferences",
         id: "permitReferences",
         label: {
-          text: "Enter permit references",
+          text: "Enter the permit references you want to process",
           classes: "govuk-label--m"
         },
         hint: {
-          text: "If you want to search for more than one, enter each reference on a new line."
+          text: "Each reference must be on a new line."
         },
-        rows: 5,
+        rows: 10,
         value: data.permitReferences,
         errorMessage: errorMessage,
         formGroup: {
           classes: formGroupClasses
         }
       }) }}
+      <p id="permitCount" class="govuk-body-s govuk-!-margin-top-1" aria-live="polite" aria-atomic="true"></p>
 
       {{ govukButton({
-        text: "Search permits",
+        text: "Search for permits",
         name: "search"
       }) }}
     </form>
@@ -70,8 +62,22 @@
 (function () {
   'use strict'
   var textarea = document.getElementById('permitReferences')
+  var countEl = document.getElementById('permitCount')
   if (!textarea) return
 
+  function countPermits() {
+    var value = textarea.value || ''
+    var refs = value.split(/[\n,]+/).map(function (r) { return r.trim() }).filter(Boolean)
+    return refs.length
+  }
+
+  function updateCount() {
+    if (!countEl) return
+    var n = countPermits()
+    countEl.textContent = n > 0 ? 'You have entered ' + n + ' permit reference' + (n === 1 ? '' : 's') : ''
+  }
+
+  textarea.addEventListener('input', updateCount)
   textarea.addEventListener('paste', function (e) {
     e.preventDefault()
     var pasted = (e.clipboardData || window.clipboardData).getData('text')
@@ -84,7 +90,9 @@
     var after = value.substring(end)
     textarea.value = before + formatted + after
     textarea.selectionStart = textarea.selectionEnd = start + formatted.length
+    updateCount()
   })
+  updateCount()
 })()
 </script>
 {% endblock %}

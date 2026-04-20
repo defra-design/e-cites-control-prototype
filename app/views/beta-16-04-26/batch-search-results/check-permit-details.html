@@ -8,7 +8,7 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 
-{% set basePath = "/alpha-02-03-26/batch-search-results" %}
+{% set basePath = "/beta-16-04-26/batch-search-results" %}
 {% set pageName = "Check permit details" %}
 {% set title = "Check permit details" %}
 {% set permit = data.permit or "25GBIMPABS719" %}
@@ -489,6 +489,6 @@
 {% endblock %}
 
 {% block pageScripts %}
-  {% include "alpha-02-03-26/batch-search-results/_customs-reference-script-batch.njk" %}
-  {% include "alpha-02-03-26/single-search-results/_notification-banner-close-script.njk" %}
+  {% include "beta-16-04-26/batch-search-results/_customs-reference-script-batch.njk" %}
+  {% include "beta-16-04-26/single-search-results/_notification-banner-close-script.njk" %}
 {% endblock %}

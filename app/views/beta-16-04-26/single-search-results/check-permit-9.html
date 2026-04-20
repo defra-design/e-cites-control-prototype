@@ -3,23 +3,23 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% set pageName = "Check permit details" %}
 {% set title = "Check permit details" %}
-{% set permit = "25GBIMPCDO2DA" %}
+{% set permit = "25GBIMPGHAQTG" %}
 {% set expires = "11 March 2026" %}
 {% set species = "Alligator mississippiensis" %}
 {% set commonName = "American alligator" %}
 {% set description = "Watch straps made of alligator skin" %}
-{% set quantity = "50" %}
-{% set prevHref = "/alpha-02-03-26/single-search-results/check-permit-7" %}
-{% set prevRef = "25GBIMPABZPMT" %}
-{% set nextHref = "/alpha-02-03-26/single-search-results/check-permit-9" %}
-{% set nextRef = "25GBIMPGHAQTG" %}
-{% set currentIndex = 8 %}
+{% set quantity = "10" %}
+{% set prevHref = "/beta-16-04-26/single-search-results/check-permit-8" %}
+{% set prevRef = "25GBIMPCDO2DA" %}
+{% set nextHref = "/beta-16-04-26/single-search-results/check-permit-10" %}
+{% set nextRef = "25GBIMPYZOPGY" %}
+{% set currentIndex = 9 %}
 {% set totalCount = 10 %}
 {% block beforeContent %}
   <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
     {{ govukBackLink({
       text: "Back to search results",
-      href: "/alpha-02-03-26/single-search-results/permit-search-results"
+      href: "/beta-16-04-26/single-search-results/permit-search-results"
     }) }}
     <div class="permit-pagination-inline">
       {{ govukPagination({
@@ -33,8 +33,8 @@
   </div>
 {% endblock %}
 {% block content %}
-  {% include "alpha-02-03-26/single-search-results/_check-permit-page.njk" %}
+  {% include "beta-16-04-26/single-search-results/_check-permit-page.njk" %}
 {% endblock %}
 {% block pageScripts %}
-  {% include "alpha-02-03-26/single-search-results/_customs-reference-script.njk" %}
+  {% include "beta-16-04-26/single-search-results/_customs-reference-script.njk" %}
 {% endblock %}

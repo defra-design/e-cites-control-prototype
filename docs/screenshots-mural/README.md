@@ -1,4 +1,4 @@
-# Screenshots for Mural (alpha-02-03-26 single-permit flow)
+# Screenshots for Mural (beta-16-04-26 single-permit flow, formerly alpha-02-03-26)
 
 Full-page PNGs captured from the prototype for use in Mural.
 

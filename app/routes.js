@@ -13,6 +13,17 @@ router.use((req, res, next) => {
   next()
 })
 
+// Legacy Alpha 02-03-26 URLs (iteration 2) now live under Beta 16-04-26
+const ALPHA_02_LEGACY = '/alpha-02-03-26'
+router.use((req, res, next) => {
+  if (req.path === ALPHA_02_LEGACY || req.path.startsWith(`${ALPHA_02_LEGACY}/`)) {
+    const q = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : ''
+    const newPath = req.path.replace(ALPHA_02_LEGACY, '/beta-16-04-26')
+    return res.redirect(302, newPath + q)
+  }
+  next()
+})
+
 // Serve permit PDFs by reference (for View permit PDF button)
 const PERMIT_PDF_REFS = [
   '25GBIMPABS719', '25GBIMPABZPMT', '25GBIMPCDO2DA', '25GBIMPEFPJOB',
@@ -37,11 +48,8 @@ router.get('/clear-data', (req, res) => {
 // Alpha 24-02-26 – single and combined search results journeys
 require('./views/alpha-24-02-26/routes')(router)
 
-// Beta 16-04-26 – copy of iteration 1 flows for beta testing
+// Beta 16-04-26 – iteration 2 single + batch flows, iteration 1 combined search, prototype search entry points
 require('./views/beta-16-04-26/routes')(router)
-
-// Alpha 02-03-26 – single search results journey
-require('./views/alpha-02-03-26/routes')(router)
 
 // Alpha 18-03-26 – Design iteration 3, single permit view
 require('./views/alpha-18-03-26/routes')(router)
