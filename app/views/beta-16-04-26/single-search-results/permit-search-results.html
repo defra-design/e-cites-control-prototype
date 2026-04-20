@@ -1,6 +1,7 @@
 {% extends "layouts/main.html" %}
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% set pageName = "Permit search results" %}
 {% set title = "Permit search results" %}
@@ -23,14 +24,46 @@
       Permit search results
     </h1>
 
+    {% set invalidList = data.invalidSearchedPermits or [] %}
+    {% if invalidList.length %}
+      {% set nInv = invalidList.length %}
+      {% set summaryWording = "1 permit could not be found" if nInv == 1 else (nInv ~ " permits could not be found") %}
+      {% set notFoundBannerHtml %}
+        <p class="govuk-body govuk-!-margin-bottom-2">{{ "Permit reference:" if nInv == 1 else "Permit references:" }}</p>
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-3">
+          {% for ref in invalidList %}
+          <li><strong>{{ ref }}</strong></li>
+          {% endfor %}
+        </ul>
+        <p class="govuk-body govuk-!-margin-bottom-0"><a href="/beta-16-04-26/single-search-results/search-results" class="govuk-link govuk-link--no-visited-state">Change your search</a></p>
+      {% endset %}
+      <div class="govuk-!-margin-bottom-6">
+        {{ govukNotificationBanner({
+          titleText: summaryWording,
+          titleHeadingLevel: 2,
+          html: notFoundBannerHtml | trim,
+          classes: "govuk-!-margin-top-0 permit-notification-banner--error",
+          role: "alert",
+          titleId: "govuk-notification-banner-title-permit-not-found"
+        }) }}
+      </div>
+    {% endif %}
+
     {% set permitSearchResults = data.permitSearchResults or [
       { ref: "26GBIMP12344X", species: "Falco peregrinus", expires: "28 February 2026" },
       { ref: "26GBIMP7GH45R", species: "Milvus milvus", expires: "28 February 2026" },
       { ref: "26GBIMPHG453Y", species: "Aquila chrysaetos", expires: "22 February 2026" }
     ] %}
     {% set permitSearchRows = data.permitSearchRows or [] %}
-    <p class="govuk-body">Showing {{ permitSearchResults.length }} result{% if permitSearchResults.length != 1 %}s{% endif %}.</p>
+    {% if permitSearchResults.length %}
+    <p class="govuk-body">Showing {{ permitSearchResults.length }} permit{% if permitSearchResults.length != 1 %}s{% endif %} that matched your search.</p>
+    {% elif invalidList.length %}
+    <p class="govuk-body">No permits could be matched from your search in this prototype.</p>
+    {% else %}
+    <p class="govuk-body">Showing {{ permitSearchResults.length }} permit{% if permitSearchResults.length != 1 %}s{% endif %} that matched your search.</p>
+    {% endif %}
 
+    {% if permitSearchRows and permitSearchRows.length %}
     {{ govukTable({
       head: [
         { text: "Permit" },
@@ -41,6 +74,7 @@
       ],
       rows: permitSearchRows
     }) }}
+    {% endif %}
 
     <p class="govuk-body">
       <a href="/beta-16-04-26/single-search-results/search-results">Search again</a>

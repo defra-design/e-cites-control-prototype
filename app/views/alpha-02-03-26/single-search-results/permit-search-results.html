@@ -30,7 +30,7 @@
           titleText: summaryWording,
           titleHeadingLevel: 2,
           html: notFoundBannerHtml | trim,
-          classes: "govuk-!-margin-top-0",
+          classes: "govuk-!-margin-top-0 permit-notification-banner--error",
           role: "alert",
           titleId: "govuk-notification-banner-title-permit-not-found"
         }) }}
@@ -39,14 +39,16 @@
 
     {% set permitSearchResults = data.permitSearchResults or [] %}
     {% set permitSearchRows = data.permitSearchRows or [] %}
-    {% if invalidList.length %}
-    <p class="govuk-body">Showing {{ permitSearchResults.length }} result{% if permitSearchResults.length != 1 %}s{% endif %} for references we matched.</p>
+    {% if permitSearchResults.length %}
+    <p class="govuk-body">Showing {{ permitSearchResults.length }} permit{% if permitSearchResults.length != 1 %}s{% endif %} that matched your search.</p>
+    {% elif invalidList.length %}
+    <p class="govuk-body">No permits could be matched from your search in this prototype.</p>
     {% else %}
-    <p class="govuk-body">Showing {{ permitSearchResults.length }} result{% if permitSearchResults.length != 1 %}s{% endif %}</p>
+    <p class="govuk-body">Showing {{ permitSearchResults.length }} permit{% if permitSearchResults.length != 1 %}s{% endif %} that matched your search.</p>
     {% endif %}
 
     {% if permitSearchRows and permitSearchRows.length %}
-    <h2 class="govuk-heading-s govuk-visually-hidden">Matching permits</h2>
+    <h2 class="govuk-heading-s govuk-visually-hidden">Permits from your search</h2>
     {{ govukTable({
       classes: "govuk-body-s permit-search-results-table permit-search-results-table--single",
       head: [

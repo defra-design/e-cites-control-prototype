@@ -1,6 +1,5 @@
 {% set specimenQuantity = currentPermit.quantity or "1" %}
-{% set defaultMrn = "26GBQOBVY5KR20Z414" %}
-{% set mrnFieldValue = endorsedDetails.mrnReference or data.mrnReference or defaultMrn %}
+{% set mrnFieldValue = endorsedDetails.mrnReference or data.mrnReference or '' %}
 {% set actualQuantityError = data.errors and data.errors.actualQuantity %}
 {% set deadOnArrivalError = data.errors and data.errors.deadOnArrival %}
 {% set mrnReferenceError = data.errors and data.errors.mrnReference %}

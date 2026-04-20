@@ -2,6 +2,9 @@
 
 const BASE = '/alpha-02-03-26'
 
+const { normalizePermitReference } = require('../../lib/cites-permit-ref-validation')
+const { consumeSessionValidationErrors } = require('../../lib/consume-session-validation-errors')
+
 module.exports = (router) => {
   const DEFAULT_PERMIT_REFS = [
     '25GBIMPABS719', '25GBIMPSTYXH1', '25GBIMPSTYHNO', '25GBIMPUVWOFM', '25GBIMPWX0N12',
@@ -33,7 +36,30 @@ module.exports = (router) => {
     return items
   }
 
+  function mapRefToSearchResultItem (ref) {
+    const item = PERMIT_SEARCH_DATA[ref]
+    if (!item) {
+      return {
+        ref,
+        matched: false,
+        species: '–',
+        commonName: '–',
+        quantity: '–',
+        expires: '–',
+        issueDate: '–'
+      }
+    }
+    const expires = item.expires || '–'
+    return {
+      ref,
+      matched: true,
+      ...item,
+      issueDate: item.issueDate || issueDateFromExpiry(expires)
+    }
+  }
+
   router.get(`${BASE}/single-search-results/search-results`, (req, res) => {
+    consumeSessionValidationErrors(req)
     const data = req.session.data || {}
     if (req.query.prefill === '1') {
       const prefillValue = DEFAULT_PERMIT_REFS.join('\n')
@@ -84,13 +110,23 @@ module.exports = (router) => {
 
     const refs = permitReferences
       .split(/[\n,]+/)
-      .map(r => r.trim())
-      .filter(r => r)
+      .map((r) => normalizePermitReference(r))
+      .filter((r) => r)
+
+    if (refs.length === 0) {
+      data.permitReferences = permitReferences
+      data.errors = { permitReferences: 'Enter at least one permit reference' }
+      data.errorList = [
+        { text: 'Enter at least one permit reference', href: '#permitReferences' }
+      ]
+      return res.redirect(`${BASE}/single-search-results/search-results`)
+    }
 
     const validRefs = refs.filter((r) => !!PERMIT_SEARCH_DATA[r])
     const invalidRefs = [...new Set(refs.filter((r) => !PERMIT_SEARCH_DATA[r]))]
 
     data.permitReferences = permitReferences
+    data.allFormattedSearchRefs = refs
     data.searchedPermits = validRefs
     data.invalidSearchedPermits = invalidRefs
     delete data.errors
@@ -114,15 +150,28 @@ module.exports = (router) => {
     const data = req.session.data || {}
     const invalidRefs = data.invalidSearchedPermits || []
     const hasInvalid = invalidRefs.length > 0
-    let refs = Array.isArray(data.searchedPermits) ? data.searchedPermits : null
-    if (refs === null || refs.length === 0) {
-      refs = hasInvalid ? [] : DEFAULT_PERMIT_REFS.slice()
+    const orderRefs = (Array.isArray(data.allFormattedSearchRefs) && data.allFormattedSearchRefs.length > 0)
+      ? data.allFormattedSearchRefs
+      : null
+
+    let items
+    if (orderRefs) {
+      items = orderRefs.map((ref) => mapRefToSearchResultItem(ref))
+    } else {
+      let refs = Array.isArray(data.searchedPermits) ? data.searchedPermits : null
+      if (refs === null || refs.length === 0) {
+        refs = hasInvalid ? [] : DEFAULT_PERMIT_REFS.slice()
+      }
+      items = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA).map((row) => ({ ...row, matched: true }))
     }
+
     const permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
     data.permitStatuses = permitStatuses
-    const items = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
-    data.permitSearchResults = items
-    data.permitSearchRows = items.map((item) => {
+    const matchedItems = items.filter((item) => item.matched)
+    const notFoundCount = items.filter((item) => !item.matched).length
+    data.permitSearchResults = matchedItems
+    data.permitSearchNotFoundCount = notFoundCount
+    data.permitSearchRows = matchedItems.map((item) => {
       const status = permitStatuses[item.ref]
       let tag = '<strong class="govuk-tag govuk-tag--blue">Valid</strong>'
       if (status === 'endorsed') tag = '<strong class="govuk-tag govuk-tag--green">Endorsed</strong>'
@@ -142,6 +191,7 @@ module.exports = (router) => {
     res.locals.data.permitSearchResults = data.permitSearchResults
     res.locals.data.permitSearchRows = data.permitSearchRows
     res.locals.data.invalidSearchedPermits = invalidRefs
+    res.locals.data.permitSearchNotFoundCount = notFoundCount
     res.render('alpha-02-03-26/single-search-results/permit-search-results')
   })
 
@@ -156,6 +206,7 @@ module.exports = (router) => {
   })
 
   router.get(`${BASE}/single-search-results/refuse-permit`, (req, res) => {
+    consumeSessionValidationErrors(req)
     const data = req.session.data || {}
     let refs = data.searchedPermits || DEFAULT_PERMIT_REFS
     if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
@@ -227,6 +278,7 @@ module.exports = (router) => {
   })
 
   router.get(`${BASE}/single-search-results/check-permit-details`, (req, res) => {
+    consumeSessionValidationErrors(req)
     const data = req.session.data || {}
     data.permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
     let refs = data.searchedPermits || DEFAULT_PERMIT_REFS
@@ -427,6 +479,7 @@ module.exports = (router) => {
 
   // Batch permit view – search, select, endorse or refuse multiple permits
   router.get(`${BASE}/batch-search-results/search-results`, (req, res) => {
+    consumeSessionValidationErrors(req)
     const data = req.session.data || {}
     if (req.query.prefill === '1') {
       const prefillValue = DEFAULT_PERMIT_REFS.join('\n')
@@ -447,7 +500,16 @@ module.exports = (router) => {
       data.errorList = [{ text: 'Enter at least one permit reference', href: '#permitReferences' }]
       return res.redirect(`${BASE}/batch-search-results/search-results`)
     }
-    const refs = permitReferences.split(/[\n,]+/).map(r => r.trim()).filter(r => r)
+    const refs = permitReferences
+      .split(/[\n,]+/)
+      .map((r) => normalizePermitReference(r))
+      .filter((r) => r)
+    if (refs.length === 0) {
+      data.batchPermitReferences = permitReferences
+      data.errors = { permitReferences: 'Enter at least one permit reference' }
+      data.errorList = [{ text: 'Enter at least one permit reference', href: '#permitReferences' }]
+      return res.redirect(`${BASE}/batch-search-results/search-results`)
+    }
     data.batchPermitReferences = permitReferences
     data.batchSearchedPermits = refs
     delete data.errors
@@ -510,6 +572,7 @@ module.exports = (router) => {
   const BATCH_CHECK_BASE = `${BASE}/batch-search-results`
 
   router.get(`${BASE}/batch-search-results/refuse-permit`, (req, res) => {
+    consumeSessionValidationErrors(req)
     const data = req.session.data || {}
     let refs = data.batchSearchedPermits || DEFAULT_PERMIT_REFS
     if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
@@ -581,6 +644,7 @@ module.exports = (router) => {
   })
 
   router.get(`${BASE}/batch-search-results/check-permit-details`, (req, res) => {
+    consumeSessionValidationErrors(req)
     const data = req.session.data || {}
     data.permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
     let refs = data.batchSearchedPermits || DEFAULT_PERMIT_REFS
@@ -791,6 +855,7 @@ module.exports = (router) => {
   })
 
   router.get(`${BASE}/batch-search-results/batch-endorse`, (req, res) => {
+    consumeSessionValidationErrors(req)
     const data = req.session.data || {}
     let refs = data.batchSelectedPermits || []
     refs = refs.filter((r) => r && r !== '_unchecked' && String(r).trim() !== '')
@@ -864,6 +929,7 @@ module.exports = (router) => {
   })
 
   router.get(`${BASE}/batch-search-results/batch-refuse`, (req, res) => {
+    consumeSessionValidationErrors(req)
     const data = req.session.data || {}
     let refs = data.batchSelectedPermits || []
     refs = refs.filter((r) => r && r !== '_unchecked' && String(r).trim() !== '')

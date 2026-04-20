@@ -5,6 +5,11 @@
 
 // Add extra styles here
 
+.govuk-notification-banner.permit-notification-banner--error {
+  border-color: govuk-colour("red");
+  background-color: govuk-colour("red");
+}
+
 // Hide empty content area on notification banners that only show a title
 .govuk-notification-banner--title-only .govuk-notification-banner__content {
   display: none;
