@@ -4,7 +4,7 @@ const CITES_PERMIT_FORMAT_ERROR =
   'Enter permit references in the correct format'
 
 function normalizePermitReference (ref) {
-  return (ref || '').trim().toUpperCase()
+  return (ref || '').replace(/\./g, '').trim().toUpperCase()
 }
 
 function isValidCitesPermitReferenceFormat (ref) {

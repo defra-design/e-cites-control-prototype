@@ -67,8 +67,8 @@
 
   function countPermits() {
     var value = textarea.value || ''
-    var refs = value.split(/[\n,]+/).map(function (r) { return r.trim() }).filter(Boolean)
-    return refs.length
+    var refs = value.split(/[\n,]+/).map(function (r) { return r.replace(/\./g, '').trim().toUpperCase() }).filter(Boolean)
+    return new Set(refs).size
   }
 
   function updateCount() {

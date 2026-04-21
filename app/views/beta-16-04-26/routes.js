@@ -44,6 +44,22 @@ module.exports = (router) => {
     return items
   }
 
+  /** Copy customs document ref to each permit draft when user chooses "Apply to all". Per-permit only — avoids session-wide data.mrnReference (e.g. from autoStoreData) pre-filling other permits. */
+  function applyMrnReferenceToShipmentPermits (data, permitList, mrnValue) {
+    const mrn = (mrnValue || '').trim()
+    data.endorsedDetails = data.endorsedDetails || {}
+    const statuses = data.permitStatuses || {}
+    ;(permitList || []).forEach((p) => {
+      const ref = p.ref
+      if (!ref) return
+      if (statuses[ref] === 'refused') return
+      const existing = data.endorsedDetails[ref] || {}
+      if (existing.refusalReason && !existing.dateOfEndorsement) return
+      data.endorsedDetails[ref] = { ...existing, mrnReference: mrn }
+    })
+    delete data.mrnReference
+  }
+
   /** Single-search permit list: match results table order (search line order, else MVP default list order). */
   function buildSingleSearchPermitList (data) {
     let refs = data.searchedPermits || DEFAULT_PERMIT_REFS
@@ -170,11 +186,13 @@ module.exports = (router) => {
       return res.redirect(`${BASE}/single-search-results/search-results`)
     }
 
-    const validRefs = refs.filter((r) => !!PERMIT_SEARCH_DATA[r])
-    const invalidRefs = [...new Set(refs.filter((r) => !PERMIT_SEARCH_DATA[r]))]
+    const uniqueRefs = [...new Set(refs)]
 
-    data.permitReferences = permitReferences
-    data.allFormattedSearchRefs = refs
+    const validRefs = uniqueRefs.filter((r) => !!PERMIT_SEARCH_DATA[r])
+    const invalidRefs = [...new Set(uniqueRefs.filter((r) => !PERMIT_SEARCH_DATA[r]))]
+
+    data.permitReferences = uniqueRefs.join('\n')
+    data.allFormattedSearchRefs = uniqueRefs
     data.searchedPermits = validRefs
     data.invalidSearchedPermits = invalidRefs
     delete data.errors
@@ -326,6 +344,7 @@ module.exports = (router) => {
   router.get(`${BASE}/single-search-results/check-permit-details`, (req, res) => {
     consumeSessionValidationErrors(req)
     const data = req.session.data || {}
+    delete data.mrnReference
     data.permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
     const permitList = buildSingleSearchPermitList(data)
     data.permitSearchResults = permitList
@@ -346,7 +365,7 @@ module.exports = (router) => {
     res.locals.data.permit = currentPermit.ref
     res.locals.data.currentPermit = currentPermit
     if (req.query.applyReference === '1' && req.query.mrnReference) {
-      data.mrnReference = (req.query.mrnReference || '').trim()
+      applyMrnReferenceToShipmentPermits(data, permitList, req.query.mrnReference)
       return res.redirect(`${BASE}/single-search-results/check-permit-details?permit=${encodeURIComponent(permitRef || data.permit)}`)
     }
     if (req.query.edit === '1') {
@@ -467,6 +486,9 @@ module.exports = (router) => {
       } else if (!/^\d+$/.test(deadOnArrival) || parseInt(deadOnArrival, 10) < 0) {
         errors.deadOnArrival = 'Number must be 0 or more'
         errorList.push({ text: 'Number must be 0 or more', href: '#deadOnArrival' })
+      } else if (deadOnArrival.length > 4) {
+        errors.deadOnArrival = 'Enter no more than 4 characters'
+        errorList.push({ text: 'Enter no more than 4 characters', href: '#deadOnArrival' })
       }
       if (!mrnReference) {
         errors.mrnReference = 'Enter the customs document reference'
@@ -552,8 +574,9 @@ module.exports = (router) => {
       data.errorList = [{ text: 'Enter at least one permit reference', href: '#permitReferences' }]
       return res.redirect(`${BASE}/batch-search-results/search-results`)
     }
-    data.batchPermitReferences = permitReferences
-    data.batchSearchedPermits = refs
+    const uniqueRefs = [...new Set(refs)]
+    data.batchPermitReferences = uniqueRefs.join('\n')
+    data.batchSearchedPermits = uniqueRefs
     delete data.errors
     delete data.errorList
     req.session.save((err) => {
@@ -688,6 +711,7 @@ module.exports = (router) => {
   router.get(`${BASE}/batch-search-results/check-permit-details`, (req, res) => {
     consumeSessionValidationErrors(req)
     const data = req.session.data || {}
+    delete data.mrnReference
     data.permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
     let refs = data.batchSearchedPermits || DEFAULT_PERMIT_REFS
     if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
@@ -710,7 +734,7 @@ module.exports = (router) => {
     res.locals.data.permit = currentPermit.ref
     res.locals.data.currentPermit = currentPermit
     if (req.query.applyReference === '1' && req.query.mrnReference) {
-      data.mrnReference = (req.query.mrnReference || '').trim()
+      applyMrnReferenceToShipmentPermits(data, permitList, req.query.mrnReference)
       return res.redirect(`${BATCH_CHECK_BASE}/check-permit-details?permit=${encodeURIComponent(permitRef || data.permit)}`)
     }
     if (req.query.edit === '1') {
@@ -1098,6 +1122,9 @@ module.exports = (router) => {
       } else if (!/^\d+$/.test(deadOnArrival) || parseInt(deadOnArrival, 10) < 0) {
         errors[`deadOnArrival-${i}`] = 'Number must be 0 or more'
         errorList.push({ text: `Permit ${i + 1}: Number must be 0 or more`, href: `#deadOnArrival-${i}` })
+      } else if (deadOnArrival.length > 4) {
+        errors[`deadOnArrival-${i}`] = 'Enter no more than 4 characters'
+        errorList.push({ text: `Permit ${i + 1}: Enter no more than 4 characters`, href: `#deadOnArrival-${i}` })
       }
 
       if (!actualQuantity) {

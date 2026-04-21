@@ -110,6 +110,8 @@
                 name: "deadOnArrival-0",
                 value: data.combinedDeadOnArrival and data.combinedDeadOnArrival[0] or "",
                 classes: "govuk-input--width-5",
+                inputmode: "numeric",
+                attributes: { maxlength: "4" },
                 errorMessage: data.errors and data.errors["deadOnArrival-0"] and { text: data.errors["deadOnArrival-0"] } or null,
                 formGroup: { classes: data.errors and data.errors["deadOnArrival-0"] and "govuk-form-group--error" or "" }
               }) }}
@@ -164,6 +166,8 @@
                 name: "deadOnArrival-1",
                 value: data.combinedDeadOnArrival and data.combinedDeadOnArrival[1] or "",
                 classes: "govuk-input--width-5",
+                inputmode: "numeric",
+                attributes: { maxlength: "4" },
                 errorMessage: data.errors and data.errors["deadOnArrival-1"] and { text: data.errors["deadOnArrival-1"] } or null,
                 formGroup: { classes: data.errors and data.errors["deadOnArrival-1"] and "govuk-form-group--error" or "" }
               }) }}

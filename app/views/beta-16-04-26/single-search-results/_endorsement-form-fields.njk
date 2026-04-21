@@ -1,5 +1,5 @@
 {% set specimenQuantity = currentPermit.quantity or "1" %}
-{% set mrnFieldValue = endorsedDetails.mrnReference or data.mrnReference or '' %}
+{% set mrnFieldValue = endorsedDetails.mrnReference or '' %}
 {% set actualQuantityError = data.errors and data.errors.actualQuantity %}
 {% set deadOnArrivalError = data.errors and data.errors.deadOnArrival %}
 {% set mrnReferenceError = data.errors and data.errors.mrnReference %}
@@ -20,7 +20,7 @@
   {% if deadOnArrivalError %}
   <p id="deadOnArrival-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.deadOnArrival }}</p>
   {% endif %}
-  <input class="govuk-input govuk-input--width-5{% if deadOnArrivalError %} govuk-input--error{% endif %}" id="deadOnArrival" name="deadOnArrival" type="text" inputmode="numeric" value="{{ endorsedDetails.deadOnArrival or '' }}" {% if deadOnArrivalError %}aria-describedby="deadOnArrival-error"{% endif %}>
+  <input class="govuk-input govuk-input--width-5{% if deadOnArrivalError %} govuk-input--error{% endif %}" id="deadOnArrival" name="deadOnArrival" type="text" inputmode="numeric" maxlength="4" value="{{ endorsedDetails.deadOnArrival or '' }}" {% if deadOnArrivalError %}aria-describedby="deadOnArrival-error"{% endif %}>
 </div>
 
 <div class="govuk-form-group{% if mrnReferenceError %} govuk-form-group--error{% endif %}">

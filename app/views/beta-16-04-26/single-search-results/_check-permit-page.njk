@@ -46,7 +46,7 @@
       </div>
       <div class="govuk-form-group">
         <label class="govuk-label" for="mrnReference">Customs document reference</label>
-        <input class="govuk-input govuk-input--width-20" id="mrnReference" name="mrnReference" type="text" value="{{ (data and data.endorsedDetails and data.endorsedDetails[permit] and data.endorsedDetails[permit].mrnReference) or (data and data.mrnReference) or '' }}" aria-describedby="mrnReference-apply-hint">
+        <input class="govuk-input govuk-input--width-20" id="mrnReference" name="mrnReference" type="text" value="{{ (data and data.endorsedDetails and data.endorsedDetails[permit] and data.endorsedDetails[permit].mrnReference) or '' }}" aria-describedby="mrnReference-apply-hint">
         <p class="govuk-hint govuk-!-margin-top-2 customs-reference-actions">
           <span id="mrnReference-apply-hint" aria-live="polite"></span>
           <span class="customs-reference-link-wrap">
