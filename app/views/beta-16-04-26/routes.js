@@ -3,6 +3,7 @@
 const BASE = '/beta-16-04-26'
 
 const { normalizePermitReference } = require('../../lib/cites-permit-ref-validation')
+const { CDS_MRN_FORMAT_ERROR, normalizeMrn, isValidCdsMrnFormat } = require('../../lib/cds-mrn-validation')
 const { consumeSessionValidationErrors } = require('../../lib/consume-session-validation-errors')
 
 module.exports = (router) => {
@@ -44,9 +45,18 @@ module.exports = (router) => {
     return items
   }
 
+  /** Surface a one-shot MRN validation error after redirect (consumeSessionValidationErrors clears errors on GET). */
+  function flushApplyMrnValidationError (data) {
+    if (!data || !data.applyMrnValidationError) return
+    const msg = data.applyMrnValidationError
+    delete data.applyMrnValidationError
+    data.errors = { mrnReference: msg }
+    data.errorList = [{ text: msg, href: '#mrnReference' }]
+  }
+
   /** Copy customs document ref to each permit draft when user chooses "Apply to all". Per-permit only — avoids session-wide data.mrnReference (e.g. from autoStoreData) pre-filling other permits. */
   function applyMrnReferenceToShipmentPermits (data, permitList, mrnValue) {
-    const mrn = (mrnValue || '').trim()
+    const mrn = normalizeMrn(mrnValue)
     data.endorsedDetails = data.endorsedDetails || {}
     const statuses = data.permitStatuses || {}
     ;(permitList || []).forEach((p) => {
@@ -344,6 +354,7 @@ module.exports = (router) => {
   router.get(`${BASE}/single-search-results/check-permit-details`, (req, res) => {
     consumeSessionValidationErrors(req)
     const data = req.session.data || {}
+    flushApplyMrnValidationError(data)
     delete data.mrnReference
     data.permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
     const permitList = buildSingleSearchPermitList(data)
@@ -365,6 +376,10 @@ module.exports = (router) => {
     res.locals.data.permit = currentPermit.ref
     res.locals.data.currentPermit = currentPermit
     if (req.query.applyReference === '1' && req.query.mrnReference) {
+      if (!isValidCdsMrnFormat(req.query.mrnReference)) {
+        data.applyMrnValidationError = CDS_MRN_FORMAT_ERROR
+        return res.redirect(`${BASE}/single-search-results/check-permit-details?permit=${encodeURIComponent(permitRef || data.permit)}`)
+      }
       applyMrnReferenceToShipmentPermits(data, permitList, req.query.mrnReference)
       return res.redirect(`${BASE}/single-search-results/check-permit-details?permit=${encodeURIComponent(permitRef || data.permit)}`)
     }
@@ -432,7 +447,7 @@ module.exports = (router) => {
 
     const actualQuantity = (req.body.actualQuantity || '').trim()
     const deadOnArrival = (req.body.deadOnArrival || '').trim()
-    const mrnReference = (req.body.mrnReference || '').trim()
+    const mrnReference = normalizeMrn(req.body.mrnReference || '')
 
     const isEndorse = !!req.body.endorse
     const isUpdate = !!req.body.update
@@ -477,8 +492,8 @@ module.exports = (router) => {
         errors.actualQuantity = 'Enter the actual imported quantity'
         errorList.push({ text: 'Enter the actual imported quantity', href: '#actualQuantity' })
       } else if (!/^\d+$/.test(actualQuantity) || parseInt(actualQuantity, 10) < 1) {
-        errors.actualQuantity = 'Actual imported quantity must be a whole number of 1 or more'
-        errorList.push({ text: 'Actual imported quantity must be a whole number of 1 or more', href: '#actualQuantity' })
+        errors.actualQuantity = 'Actual imported quantity must be 1 or more'
+        errorList.push({ text: 'Actual imported quantity must be 1 or more', href: '#actualQuantity' })
       }
       if (deadOnArrival === '') {
         errors.deadOnArrival = 'Enter the number of animals dead on arrival'
@@ -493,6 +508,9 @@ module.exports = (router) => {
       if (!mrnReference) {
         errors.mrnReference = 'Enter the customs document reference'
         errorList.push({ text: 'Enter the customs document reference', href: '#mrnReference' })
+      } else if (!isValidCdsMrnFormat(mrnReference)) {
+        errors.mrnReference = CDS_MRN_FORMAT_ERROR
+        errorList.push({ text: CDS_MRN_FORMAT_ERROR, href: '#mrnReference' })
       }
     }
 
@@ -711,6 +729,7 @@ module.exports = (router) => {
   router.get(`${BASE}/batch-search-results/check-permit-details`, (req, res) => {
     consumeSessionValidationErrors(req)
     const data = req.session.data || {}
+    flushApplyMrnValidationError(data)
     delete data.mrnReference
     data.permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
     let refs = data.batchSearchedPermits || DEFAULT_PERMIT_REFS
@@ -734,6 +753,10 @@ module.exports = (router) => {
     res.locals.data.permit = currentPermit.ref
     res.locals.data.currentPermit = currentPermit
     if (req.query.applyReference === '1' && req.query.mrnReference) {
+      if (!isValidCdsMrnFormat(req.query.mrnReference)) {
+        data.applyMrnValidationError = CDS_MRN_FORMAT_ERROR
+        return res.redirect(`${BATCH_CHECK_BASE}/check-permit-details?permit=${encodeURIComponent(permitRef || data.permit)}`)
+      }
       applyMrnReferenceToShipmentPermits(data, permitList, req.query.mrnReference)
       return res.redirect(`${BATCH_CHECK_BASE}/check-permit-details?permit=${encodeURIComponent(permitRef || data.permit)}`)
     }
@@ -800,7 +823,7 @@ module.exports = (router) => {
     const currentPermit = permitList[currentIndex - 1] || {}
 
     const actualQuantity = (req.body.actualQuantity || '').trim()
-    const mrnReference = (req.body.mrnReference || '').trim()
+    const mrnReference = normalizeMrn(req.body.mrnReference || '')
     const billOfLadingReference = (req.body.billOfLadingReference || '').trim()
 
     const isEndorse = !!req.body.endorse
@@ -852,6 +875,9 @@ module.exports = (router) => {
       if (!mrnReference) {
         errors.mrnReference = 'Enter the customs document reference'
         errorList.push({ text: 'Enter the customs document reference', href: '#mrnReference' })
+      } else if (!isValidCdsMrnFormat(mrnReference)) {
+        errors.mrnReference = CDS_MRN_FORMAT_ERROR
+        errorList.push({ text: CDS_MRN_FORMAT_ERROR, href: '#mrnReference' })
       }
     }
 
@@ -937,7 +963,7 @@ module.exports = (router) => {
     const data = req.session.data || {}
     const refs = data.batchSelectedPermits || []
     const actualQuantities = req.body.actualQuantity || {}
-    const mrnReference = (req.body.mrnReference || '').trim()
+    const mrnReference = normalizeMrn(req.body.mrnReference || '')
     delete data.errors
     delete data.errorList
     const errors = {}
@@ -946,6 +972,9 @@ module.exports = (router) => {
     if (!mrnReference) {
       errors.mrnReference = 'Enter the customs document reference'
       errorList.push({ text: 'Enter the customs document reference', href: '#mrnReference' })
+    } else if (!isValidCdsMrnFormat(mrnReference)) {
+      errors.mrnReference = CDS_MRN_FORMAT_ERROR
+      errorList.push({ text: CDS_MRN_FORMAT_ERROR, href: '#mrnReference' })
     }
 
     refs.forEach((permitId) => {
@@ -1074,6 +1103,8 @@ module.exports = (router) => {
 
   router.get(`${BASE}/combined-search-results/check-permit-details`, (req, res) => {
     consumeSessionValidationErrors(req)
+    const data = req.session.data || {}
+    flushApplyMrnValidationError(data)
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
     res.set('Pragma', 'no-cache')
     res.set('Expires', '0')
@@ -1097,7 +1128,7 @@ module.exports = (router) => {
       return res.redirect(`${BASE}/combined-search-results/refusal-confirmation`)
     }
 
-    const mrnReference = (req.body.mrnReference || '').trim()
+    const mrnReference = normalizeMrn(req.body.mrnReference || '')
     const awbReference = (req.body.awbReference || '').trim()
 
     const errors = {}
@@ -1106,6 +1137,9 @@ module.exports = (router) => {
     if (!mrnReference) {
       errors.mrnReference = 'Enter the CDS MRN reference'
       errorList.push({ text: 'Enter the CDS MRN reference', href: '#mrnReference' })
+    } else if (!isValidCdsMrnFormat(mrnReference)) {
+      errors.mrnReference = CDS_MRN_FORMAT_ERROR
+      errorList.push({ text: CDS_MRN_FORMAT_ERROR, href: '#mrnReference' })
     }
     if (!awbReference) {
       errors.awbReference = 'Enter the Bill of Lading or Air waybill (AWB) reference'

@@ -1,0 +1,42 @@
+{% set specimenQuantity = currentPermit.quantity or "1" %}
+{% set mrnFieldValue = endorsedDetails.mrnReference or '' %}
+{% set actualQuantityError = data.errors and data.errors.actualQuantity %}
+{% set deadOnArrivalError = data.errors and data.errors.deadOnArrival %}
+{% set mrnReferenceError = data.errors and data.errors.mrnReference %}
+
+<h2 class="govuk-heading-s govuk-!-margin-top-8">Enter endorsement details</h2>
+<p class="govuk-body govuk-!-margin-bottom-4">Permit quantity: {{ specimenQuantity }}</p>
+
+<div class="govuk-form-group{% if actualQuantityError %} govuk-form-group--error{% endif %}">
+  <label class="govuk-label" for="actualQuantity">Actual imported quantity</label>
+  {% if actualQuantityError %}
+  <p id="actualQuantity-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.actualQuantity }}</p>
+  {% endif %}
+  <input class="govuk-input govuk-input--width-5{% if actualQuantityError %} govuk-input--error{% endif %}" id="actualQuantity" name="actualQuantity" type="text" inputmode="numeric" value="{{ endorsedDetails.actualQuantity or '' }}" {% if actualQuantityError %}aria-describedby="actualQuantity-error"{% endif %}>
+</div>
+
+<div class="govuk-form-group{% if deadOnArrivalError %} govuk-form-group--error{% endif %}">
+  <label class="govuk-label" for="deadOnArrival">Number of animals dead on arrival</label>
+  {% if deadOnArrivalError %}
+  <p id="deadOnArrival-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.deadOnArrival }}</p>
+  {% endif %}
+  <input class="govuk-input govuk-input--width-5{% if deadOnArrivalError %} govuk-input--error{% endif %}" id="deadOnArrival" name="deadOnArrival" type="text" inputmode="numeric" maxlength="4" value="{{ endorsedDetails.deadOnArrival or '' }}" {% if deadOnArrivalError %}aria-describedby="deadOnArrival-error"{% endif %}>
+</div>
+
+<div class="govuk-form-group{% if mrnReferenceError %} govuk-form-group--error{% endif %}">
+  <label class="govuk-label" for="mrnReference">Customs document reference</label>
+  {% if mrnReferenceError %}
+  <p id="mrnReference-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.mrnReference }}</p>
+  {% endif %}
+  <input class="govuk-input govuk-input--width-20{% if mrnReferenceError %} govuk-input--error{% endif %}" id="mrnReference" name="mrnReference" type="text" value="{{ mrnFieldValue }}" maxlength="18" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="{% if mrnReferenceError %}mrnReference-error {% endif %}mrnReference-apply-hint">
+  {% if totalCount > 1 %}
+  <p class="govuk-hint govuk-!-margin-top-2 customs-reference-actions">
+    <span id="mrnReference-apply-hint" aria-live="polite"></span>
+    <span class="customs-reference-link-wrap">
+      <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action" id="applyReferenceLink" data-permit="{{ permit }}">Apply reference to all permits in this shipment</a>
+    </span>
+  </p>
+  {% else %}
+  <p id="mrnReference-apply-hint" class="govuk-hint govuk-!-margin-top-2" aria-live="polite"></p>
+  {% endif %}
+</div>

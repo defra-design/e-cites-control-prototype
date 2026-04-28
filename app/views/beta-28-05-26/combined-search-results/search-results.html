@@ -1,0 +1,79 @@
+{% extends "layouts/main.html" %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageName = "Search for a CITES permit" %}
+{% set title = "Search for a CITES permit" %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    items: [
+      { text: "Search" }
+    ]
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {% if data.errorList %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: data.errorList
+      }) }}
+    {% endif %}
+
+    <h1 class="govuk-heading-xl">
+      Search for a CITES permit
+    </h1>
+
+    <form method="post" action="" id="permit-search-form" data-module="add-another-permit">
+      <div id="permit-inputs">
+        {% set permitRefs = data.combinedPermitReferences or [''] %}
+        {% for ref in permitRefs %}
+        <div class="govuk-form-group permit-input-group {% if loop.index > 1 %}govuk-!-margin-top-4{% endif %}" data-permit-index="{{ loop.index0 }}">
+          {% set hasError = data.errors and data.errors.permitReferences and loop.first %}
+          {% set formGroupClasses = "govuk-form-group--error" if hasError else "" %}
+          <div class="govuk-form-group {{ formGroupClasses }}">
+            <label class="govuk-label govuk-label--s" for="permit-{{ loop.index0 }}">Enter permit reference</label>
+            <div id="permit-{{ loop.index0 }}-hint" class="govuk-hint">For example 26GBIMP1234A</div>
+            <div class="permit-input-row" style="display: flex; align-items: center; gap: 1rem;">
+              <input class="govuk-input govuk-input--width-20 {% if hasError %}govuk-input--error{% endif %}" id="permit-{{ loop.index0 }}" name="permit-{{ loop.index0 }}" type="text" value="{{ ref }}" autocomplete="off" aria-describedby="permit-{{ loop.index0 }}-hint" {% if hasError %}aria-invalid="true"{% endif %}>
+              {% if loop.index > 1 %}
+              <a href="#" class="govuk-link govuk-link--no-visited-state permit-remove govuk-!-flex-shrink-0" data-index="{{ loop.index0 }}">Remove</a>
+              {% endif %}
+            </div>
+            {% if hasError %}
+            <span class="govuk-error-message" id="permit-{{ loop.index0 }}-error"><span class="govuk-visually-hidden">Error: </span>{{ data.errors.permitReferences }}</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <p class="govuk-body govuk-!-margin-top-4">
+        {{ govukButton({
+          text: "Add another permit reference",
+          type: "button",
+          classes: "govuk-button--secondary govuk-!-margin-bottom-2",
+          id: "add-another-permit"
+        }) }}
+      </p>
+
+      {{ govukButton({
+        text: "Search",
+        name: "search"
+      }) }}
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block pageScripts %}
+  <script src="/public/javascripts/add-another-permit.js"></script>
+{% endblock %}

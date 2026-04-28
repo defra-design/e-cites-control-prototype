@@ -1,0 +1,139 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% set p = summaryPermit or {} %}
+{% set firstRef = p.ref %}
+{% set permitListForSummary = summaryPermitList or [summaryPermit] %}
+{% set uniformSpecies = permitListForSummary | uniformSpecies %}
+{% set summaryStatus = data.permitStatuses and data.permitStatuses[firstRef] %}
+{% if summaryStatus === "endorsed" %}
+  {% set validityTag = "Endorsed" %}
+  {% set validityTagClass = "govuk-tag--green" %}
+{% elif summaryStatus === "refused" %}
+  {% set validityTag = "Refused" %}
+  {% set validityTagClass = "govuk-tag--red" %}
+{% elif summaryStatus === "expired" %}
+  {% set validityTag = "Expired" %}
+  {% set validityTagClass = "govuk-tag--red" %}
+{% else %}
+  {% set validityTag = "Valid" %}
+  {% set validityTagClass = "govuk-tag--blue" %}
+{% endif %}
+
+<h2 class="govuk-heading-s govuk-!-margin-top-0">{% if showFullDetails %}Import consignment summary{% else %}Consignment summary{% endif %}</h2>
+
+{% if showFullDetails %}
+{# Exporter/Re-exporter and Importer visible; everything else in Show full permit details accordion #}
+<h3 class="govuk-heading-s govuk-!-margin-top-0">Exporter/Re-exporter</h3>
+<div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px summary-list-stacked">
+  <div class="govuk-grid-column-one-half">
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Name and address" }, value: { html: "Montreval Cuir SA<br>Rue du Marché 18, 1204<br>Geneva<br>Switzerland" } },
+        { key: { text: "Country of re-export" }, value: { text: "Switzerland" } }
+      ]
+    }) }}
+  </div>
+  <div class="govuk-grid-column-one-half">
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Importer" }, value: { html: "Stratford & Hale Watch Company Ltd<br>Unit 14 Hatton Garden Business Centre<br>London<br>EC1N 8DL" } },
+        { key: { text: "Country of import" }, value: { text: "United Kingdom" } }
+      ]
+    }) }}
+  </div>
+</div>
+{% set fullDetailsContent %}
+<h3 class="govuk-heading-s govuk-!-margin-top-0">Specimen details</h3>
+<div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px summary-list-stacked">
+  <div class="govuk-grid-column-one-half">
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Scientific name of species" }, value: { text: uniformSpecies or p.species or "Alligator mississippiensis" } },
+        { key: { text: "Common name of species" }, value: { text: p.commonName or "American alligator" } },
+        { key: { text: "Description of specimens" }, value: { html: p.description or "Watch straps made of alligator skin" } },
+        { key: { text: "Cites Appendix" }, value: { text: p.citesAppendix or "II" } }
+      ]
+    }) }}
+  </div>
+  <div class="govuk-grid-column-one-half">
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "GB Annex" }, value: { text: p.gbAnnex or "B" } },
+        { key: { text: "Source" }, value: { text: "C: Animals bred in captivity" } },
+        { key: { text: "Purpose" }, value: { text: "T: Commercial" } }
+      ]
+    }) }}
+  </div>
+</div>
+<h3 class="govuk-heading-s govuk-!-margin-top-0">Origin history</h3>
+<div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px summary-list-stacked">
+  <div class="govuk-grid-column-one-half">
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Country of origin" }, value: { text: "United States of America" } },
+        { key: { text: "Permit no." }, value: { text: "24IMPBBY888" } }
+      ]
+    }) }}
+  </div>
+  <div class="govuk-grid-column-one-half">
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Date of issue" }, value: { text: "01 June 2025" } }
+      ]
+    }) }}
+  </div>
+</div>
+<h3 class="govuk-heading-s govuk-!-margin-top-0">Remarks and conditions</h3>
+<div class="govuk-grid-row govuk-!-margin-bottom-0 permit-summary-16px summary-list-stacked">
+  <div class="govuk-grid-column-one-half">
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Management Authority" }, value: { text: "Animal and Plant Health Agency (APHA)" } }
+      ]
+    }) }}
+  </div>
+  <div class="govuk-grid-column-one-half">
+    {{ govukSummaryList({
+      rows: [
+        { key: { text: "Issuing official" }, value: { text: "J. Smith" } }
+      ]
+    }) }}
+  </div>
+</div>
+{% endset %}
+{{ govukDetails({
+  summaryText: "Show full permit details",
+  html: fullDetailsContent
+}) }}
+{% else %}
+<h3 class="govuk-heading-s govuk-!-margin-top-0 govuk-!-font-size-16">Import permit details</h3>
+<div class="govuk-grid-row govuk-!-margin-bottom-4 permit-summary-16px permit-info-compare summary-list-stacked">
+  {% set leftFirst = [
+    { key: { text: "Exporter/re-exporter" }, value: { html: "Montreval Cuir SA<br>Rue du Marché 18, 1204<br>Geneva<br>Switzerland" } }
+  ] %}
+  {% set speciesRow = uniformSpecies and [{ key: { text: "Species" }, value: { text: uniformSpecies or p.species or "Alligator mississippiensis" } }] or [] %}
+  {% set commonNameRow = uniformSpecies and [{ key: { text: "Common name" }, value: { text: p.commonName or "American alligator" } }] or [] %}
+  {% set leftRest = [
+    { key: { text: "Source" }, value: { text: "C: Animals bred in captivity" } },
+    { key: { text: "Cites Appendix" }, value: { text: p.citesAppendix or "II" } },
+    { key: { text: "Issue date" }, value: { text: p.issueDate or "28 August 2025" } }
+  ] %}
+  {% set leftBase = leftFirst.concat(speciesRow).concat(leftRest) %}
+  {% set leftRows = (hideStatusAndType and leftBase) or ([{ key: { text: "Status" }, value: { html: "<strong class=\"govuk-tag " ~ validityTagClass ~ "\">" ~ validityTag ~ "</strong>" } }].concat(leftBase)) %}
+  <div class="govuk-grid-column-one-half">
+    {{ govukSummaryList({ rows: leftRows }) }}
+  </div>
+  {% set rightFirst = commonNameRow %}
+  {% set rightRest = [
+    { key: { text: "Importer" }, value: { html: "Stratford & Hale Watch Company Ltd<br>Unit 14 Hatton Garden Business Centre<br>London<br>EC1N 8DL" } },
+    { key: { text: "Purpose" }, value: { text: "T: Commercial" } },
+    { key: { text: "GB Annex" }, value: { text: p.gbAnnex or "B" } },
+    { key: { text: "Expiry date" }, value: { text: p.expires or "28 February 2026" } }
+  ] %}
+  {% set rightBase = rightFirst.concat(rightRest) %}
+  {% set rightRows = rightBase %}
+  <div class="govuk-grid-column-one-half">
+    {{ govukSummaryList({ rows: rightRows }) }}
+  </div>
+</div>
+{% endif %}

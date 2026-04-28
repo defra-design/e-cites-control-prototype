@@ -51,5 +51,8 @@ require('./views/alpha-24-02-26/routes')(router)
 // Beta 16-04-26 – iteration 2 single + batch flows, iteration 1 combined search, prototype search entry points
 require('./views/beta-16-04-26/routes')(router)
 
+// Beta 28-05-26 – scaffolded interaction (currently redirects to Beta 16-04-26)
+require('./views/beta-28-05-26/routes')(router)
+
 // Alpha 18-03-26 – Design iteration 3, single permit view
 require('./views/alpha-18-03-26/routes')(router)
