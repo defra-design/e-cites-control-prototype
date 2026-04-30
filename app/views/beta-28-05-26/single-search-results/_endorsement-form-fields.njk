@@ -1,18 +1,29 @@
 {% set specimenQuantity = currentPermit.quantity or "1" %}
-{% set mrnFieldValue = endorsedDetails.mrnReference or '' %}
+{% set formDetails = endorsementFormDetails or endorsedDetails %}
+{% set mrnFieldValue = formDetails.mrnReference or '' %}
+{% set permitNetMass = currentPermit.netMass or '' %}
+{% set netMassFieldValue = formDetails.netMassKg or '' %}
 {% set actualQuantityError = data.errors and data.errors.actualQuantity %}
 {% set deadOnArrivalError = data.errors and data.errors.deadOnArrival %}
 {% set mrnReferenceError = data.errors and data.errors.mrnReference %}
+{% set netMassError = data.errors and data.errors.netMassKg %}
+{% set isLeechPermit = currentPermit.commonName == "Southern medicinal leech" %}
 
 <h2 class="govuk-heading-s govuk-!-margin-top-8">Enter endorsement details</h2>
+{% if not isLeechPermit %}
 <p class="govuk-body govuk-!-margin-bottom-4">Permit quantity: {{ specimenQuantity }}</p>
+{% endif %}
+{% if permitNetMass %}
+<p class="govuk-body govuk-!-margin-bottom-4">Permit net mass: {{ permitNetMass }}</p>
+{% endif %}
 
+{% if not isLeechPermit %}
 <div class="govuk-form-group{% if actualQuantityError %} govuk-form-group--error{% endif %}">
   <label class="govuk-label" for="actualQuantity">Actual imported quantity</label>
   {% if actualQuantityError %}
   <p id="actualQuantity-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.actualQuantity }}</p>
   {% endif %}
-  <input class="govuk-input govuk-input--width-5{% if actualQuantityError %} govuk-input--error{% endif %}" id="actualQuantity" name="actualQuantity" type="text" inputmode="numeric" value="{{ endorsedDetails.actualQuantity or '' }}" {% if actualQuantityError %}aria-describedby="actualQuantity-error"{% endif %}>
+  <input class="govuk-input govuk-input--width-5{% if actualQuantityError %} govuk-input--error{% endif %}" id="actualQuantity" name="actualQuantity" type="text" inputmode="numeric" value="{{ formDetails.actualQuantity or '' }}" {% if actualQuantityError %}aria-describedby="actualQuantity-error"{% endif %}>
 </div>
 
 <div class="govuk-form-group{% if deadOnArrivalError %} govuk-form-group--error{% endif %}">
@@ -20,7 +31,19 @@
   {% if deadOnArrivalError %}
   <p id="deadOnArrival-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.deadOnArrival }}</p>
   {% endif %}
-  <input class="govuk-input govuk-input--width-5{% if deadOnArrivalError %} govuk-input--error{% endif %}" id="deadOnArrival" name="deadOnArrival" type="text" inputmode="numeric" maxlength="4" value="{{ endorsedDetails.deadOnArrival or '' }}" {% if deadOnArrivalError %}aria-describedby="deadOnArrival-error"{% endif %}>
+  <input class="govuk-input govuk-input--width-5{% if deadOnArrivalError %} govuk-input--error{% endif %}" id="deadOnArrival" name="deadOnArrival" type="text" inputmode="numeric" maxlength="4" value="{{ formDetails.deadOnArrival or '' }}" {% if deadOnArrivalError %}aria-describedby="deadOnArrival-error"{% endif %}>
+</div>
+{% endif %}
+
+<div class="govuk-form-group{% if netMassError %} govuk-form-group--error{% endif %}">
+  <label class="govuk-label" for="netMassKg">Net mass, in kilograms</label>
+  {% if netMassError %}
+  <p id="netMassKg-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ data.errors.netMassKg }}</p>
+  {% endif %}
+  <div class="govuk-input__wrapper">
+    <input class="govuk-input govuk-input--width-5{% if netMassError %} govuk-input--error{% endif %}" id="netMassKg" name="netMassKg" type="text" inputmode="numeric" value="{{ netMassFieldValue }}" {% if netMassError %}aria-describedby="netMassKg-error"{% endif %}>
+    <div class="govuk-input__suffix" aria-hidden="true">KG</div>
+  </div>
 </div>
 
 <div class="govuk-form-group{% if mrnReferenceError %} govuk-form-group--error{% endif %}">
@@ -33,7 +56,7 @@
   <p class="govuk-hint govuk-!-margin-top-2 customs-reference-actions">
     <span id="mrnReference-apply-hint" aria-live="polite"></span>
     <span class="customs-reference-link-wrap">
-      <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action" id="applyReferenceLink" data-permit="{{ permit }}">Apply reference to all permits in this shipment</a>
+      <a href="#" class="govuk-link govuk-link--no-visited-state endorsement-form-action" id="applyReferenceLink" data-permit="{{ permit }}">Apply reference to all permits</a>
     </span>
   </p>
   {% else %}

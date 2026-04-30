@@ -13,7 +13,7 @@
 {% block beforeContent %}
   {{ govukBackLink({
     text: "Back to batch results",
-    href: "/beta-16-04-26/batch-search-results/permit-results"
+    href: "/beta-28-05-26/batch-search-results/permit-results"
   }) }}
 {% endblock %}
 
@@ -34,7 +34,7 @@
 {% if selectedList.length > 0 %}
 {% set summaryPermit = selectedList[0] %}
 {% set summaryPermitList = selectedList %}
-{% include "beta-16-04-26/components/_consignment-summary.njk" %}
+{% include "beta-28-05-26/components/_consignment-summary.njk" %}
 {% endif %}
 
 <h2 class="govuk-heading-m govuk-!-margin-top-6 govuk-!-margin-bottom-3">Permits to refuse</h2>
@@ -63,7 +63,7 @@
   </tbody>
 </table>
 
-<form method="post" action="/beta-16-04-26/batch-search-results/batch-refuse" autocomplete="off" class="govuk-!-margin-top-6">
+<form method="post" action="/beta-28-05-26/batch-search-results/batch-refuse" autocomplete="off" class="govuk-!-margin-top-6">
   {% for p in selectedList %}
   <input type="hidden" name="selectedPermits" value="{{ p.ref }}" />
   {% endfor %}
@@ -109,7 +109,7 @@
       value: "1",
       type: "submit"
     }) }}
-    <a href="/beta-16-04-26/batch-search-results/permit-results" class="govuk-link govuk-!-margin-left-3 govuk-!-padding-top-2 govuk-!-padding-bottom-2">Cancel</a>
+    <a href="/beta-28-05-26/batch-search-results/permit-results" class="govuk-link govuk-!-margin-left-3 govuk-!-padding-top-2 govuk-!-padding-bottom-2">Cancel</a>
   </div>
 </form>
 

@@ -26,9 +26,10 @@ router.use((req, res, next) => {
 
 // Serve permit PDFs by reference (for View permit PDF button)
 const PERMIT_PDF_REFS = [
-  '25GBIMPABS719', '25GBIMPABZPMT', '25GBIMPCDO2DA', '25GBIMPEFPJOB',
-  '25GBIMPGHAQTG', '25GBIMPSTYHNO', '25GBIMPSTYXH1', '25GBIMPUVWOFM',
-  '25GBIMPWX0N12', '25GBIMPYZOPGY'
+  '26GBIMPABS719', '26GBIMPSTYXH1', '26GBIMPSTYHNO',
+  '26GBIMPABZPMT', '26GBIMPCDO2DA', '26GBIMPEFPJOB',
+  '26GBIMPGHAQTG', '26GBIMPSTYHNO', '26GBIMPSTYXH1', '26GBIMPUVWOFM',
+  '26GBIMPWX0N12', '26GBIMPYZOPGY'
 ]
 router.get('/public/documents/:permitRef.pdf', (req, res) => {
   const ref = req.params.permitRef
@@ -51,7 +52,7 @@ require('./views/alpha-24-02-26/routes')(router)
 // Beta 16-04-26 – iteration 2 single + batch flows, iteration 1 combined search, prototype search entry points
 require('./views/beta-16-04-26/routes')(router)
 
-// Beta 28-05-26 – scaffolded interaction (currently redirects to Beta 16-04-26)
+// Beta 28-05-26 – Beta 02 iteration (3 load-test permits; own routes and views)
 require('./views/beta-28-05-26/routes')(router)
 
 // Alpha 18-03-26 – Design iteration 3, single permit view

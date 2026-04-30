@@ -13,7 +13,7 @@
 {% block beforeContent %}
   {{ govukBackLink({
     text: "Back to permit results",
-    href: "/beta-16-04-26/batch-search-results/permit-results"
+    href: "/beta-28-05-26/batch-search-results/permit-results"
   }) }}
 {% endblock %}
 
@@ -28,7 +28,7 @@
 
 <h1 class="govuk-heading-l">{{ title }}</h1>
 
-<form method="post" action="/beta-16-04-26/batch-search-results/batch-endorse" autocomplete="off" id="batch-endorse-form">
+<form method="post" action="/beta-28-05-26/batch-search-results/batch-endorse" autocomplete="off" id="batch-endorse-form">
   {% for p in selectedList %}
   <input type="hidden" name="selectedPermits" value="{{ p.ref }}" />
   {% endfor %}
@@ -107,7 +107,7 @@
       value: "1",
       type: "submit"
     }) }}
-    <a href="/beta-16-04-26/batch-search-results/permit-results" class="govuk-link govuk-!-margin-left-3 govuk-!-padding-top-2 govuk-!-padding-bottom-2">Cancel</a>
+    <a href="/beta-28-05-26/batch-search-results/permit-results" class="govuk-link govuk-!-margin-left-3 govuk-!-padding-top-2 govuk-!-padding-bottom-2">Cancel</a>
   </div>
 </form>
 

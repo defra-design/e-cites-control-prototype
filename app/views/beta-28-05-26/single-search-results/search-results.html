@@ -31,11 +31,11 @@
         name: "permitReferences",
         id: "permitReferences",
         label: {
-          text: "Enter the permit references you want to process",
+          text: "Enter the permit number you want to process",
           classes: "govuk-label--m"
         },
         hint: {
-          text: "Each reference must be on a new line."
+          text: "Each number must be on a new line."
         },
         rows: 10,
         value: data.permitReferences,
@@ -74,7 +74,7 @@
   function updateCount() {
     if (!countEl) return
     var n = countPermits()
-    countEl.textContent = n > 0 ? 'You have entered ' + n + ' permit reference' + (n === 1 ? '' : 's') : ''
+    countEl.textContent = n > 0 ? 'You have entered ' + n + ' permit number' + (n === 1 ? '' : 's') : ''
   }
 
   textarea.addEventListener('input', updateCount)

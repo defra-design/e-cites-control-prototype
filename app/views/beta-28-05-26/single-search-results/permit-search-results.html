@@ -14,20 +14,18 @@
 
     {% set invalidList = data.invalidSearchedPermits or [] %}
     {% if invalidList.length %}
-      {% set nInv = invalidList.length %}
-      {% set summaryWording = "1 permit could not be found" if nInv == 1 else (nInv ~ " permits could not be found") %}
       {% set notFoundBannerHtml %}
-        <p class="govuk-body govuk-!-margin-bottom-2">{{ "Permit reference:" if nInv == 1 else "Permit references:" }}</p>
+        <p class="govuk-body govuk-!-margin-bottom-2">We could not find these permit numbers:</p>
         <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-3">
           {% for ref in invalidList %}
           <li><strong>{{ ref }}</strong></li>
           {% endfor %}
         </ul>
-        <p class="govuk-body govuk-!-margin-bottom-0"><a href="/beta-16-04-26/single-search-results/search-results" class="govuk-link govuk-link--no-visited-state">Change your search</a></p>
+        <p class="govuk-body govuk-!-margin-bottom-0"><a href="/beta-28-05-26/single-search-results/search-results" class="govuk-link govuk-link--no-visited-state">Change your search</a></p>
       {% endset %}
       <div class="govuk-!-margin-bottom-6">
         {{ govukNotificationBanner({
-          titleText: summaryWording,
+          titleText: "Permit numbers not found",
           titleHeadingLevel: 2,
           html: notFoundBannerHtml | trim,
           classes: "govuk-!-margin-top-0 permit-notification-banner--error",
@@ -39,12 +37,13 @@
 
     {% set permitSearchResults = data.permitSearchResults or [] %}
     {% set permitSearchRows = data.permitSearchRows or [] %}
-    {% if permitSearchResults.length %}
-    <p class="govuk-body">Showing {{ permitSearchResults.length }} permit{% if permitSearchResults.length != 1 %}s{% endif %} that matched your search.</p>
+    {% set matchedCount = permitSearchRows.length %}
+    {% if matchedCount %}
+    <p class="govuk-body">Showing {{ matchedCount }} permit{% if matchedCount != 1 %}s{% endif %} that matched your search.</p>
     {% elif invalidList.length %}
     <p class="govuk-body">No permits could be matched from your search in this prototype.</p>
     {% else %}
-    <p class="govuk-body">Showing {{ permitSearchResults.length }} permit{% if permitSearchResults.length != 1 %}s{% endif %} that matched your search.</p>
+    <p class="govuk-body">Showing {{ matchedCount }} permit{% if matchedCount != 1 %}s{% endif %} that matched your search.</p>
     {% endif %}
 
     {% if permitSearchRows and permitSearchRows.length %}
@@ -55,7 +54,7 @@
         { text: "Permit number" },
         { text: "Type" },
         { text: "Scientific name" },
-        { text: "Quantity" },
+        { html: "Quantity or<br>net mass" },
         { text: "Valid until" },
         { text: "Status" },
         { text: "Action" }
@@ -65,7 +64,7 @@
     {% endif %}
 
     <p class="govuk-body">
-      <a href="/beta-16-04-26/single-search-results/search-results" class="govuk-link govuk-link--no-visited-state">Back to search</a>
+      <a href="/beta-28-05-26/single-search-results/search-results" class="govuk-link govuk-link--no-visited-state">Back to search</a>
     </p>
 
   </div>

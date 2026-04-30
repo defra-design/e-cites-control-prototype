@@ -30,7 +30,7 @@
         return
       }
       if (hint) hint.textContent = 'Applying…'
-      var base = '/beta-16-04-26/batch-search-results/check-permit-details'
+      var base = '/beta-28-05-26/batch-search-results/check-permit-details'
       var permit = applyLink.getAttribute('data-permit') || ''
       var url = base + '?permit=' + encodeURIComponent(permit) + '&applyReference=1&mrnReference=' + encodeURIComponent(value)
       fetch(url, { redirect: 'manual' }).then(function () {

@@ -6,7 +6,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% set pageName = "Why are you not endorsing this permit?" %}
 {% set title = "Why are you not endorsing this permit?" %}
-{% set permit = data.permit or "25GBIMPABS719" %}
+{% set permit = data.permit or "26GBIMPABS719" %}
 {% set currentPermit = data.currentPermit or {} %}
 {% set permitQuantity = currentPermit.quantity or "80" %}
 {% set permitDetails = currentPermit.description or currentPermit.commonName or "American alligator watch straps" %}
@@ -14,7 +14,7 @@
 {% block beforeContent %}
   {{ govukBackLink({
     text: "Back to permit",
-    href: "/beta-16-04-26/single-search-results/check-permit-details?permit=" + permit + "#endorsement-section"
+    href: "/beta-28-05-26/single-search-results/check-permit-details?permit=" + permit + "#endorsement-section"
   }) }}
 {% endblock %}
 
@@ -46,7 +46,7 @@
   </dl>
 </div>
 
-<form method="post" action="/beta-16-04-26/single-search-results/refuse-permit" autocomplete="off">
+<form method="post" action="/beta-28-05-26/single-search-results/refuse-permit" autocomplete="off">
   <input type="hidden" name="permit" value="{{ permit }}" />
 
   {% set refusalReasonError = data.errors and data.errors.refusalReason %}
@@ -113,7 +113,7 @@
       value: "Confirm refusal",
       type: "submit"
     }) }}
-    <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-link govuk-!-margin-left-3 govuk-!-padding-top-2 govuk-!-padding-bottom-2">Cancel and return to permit</a>
+    <a href="/beta-28-05-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-link govuk-!-margin-left-3 govuk-!-padding-top-2 govuk-!-padding-bottom-2">Cancel and return to permit</a>
   </div>
 </form>
 

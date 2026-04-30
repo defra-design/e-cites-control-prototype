@@ -3,25 +3,26 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% set pageName = "Check permit details" %}
 {% set title = "Check permit details" %}
-{% set permit = "25GBIMPABS719" %}
-{% set expires = "8 March 2026" %}
-{% set validityTag = "Expired" %}
-{% set validityTagClass = "govuk-tag--red" %}
-{% set species = "Alligator mississippiensis" %}
-{% set commonName = "American alligator" %}
-{% set description = "Watch straps made of alligator skin" %}
-{% set quantity = "20" %}
+{% set permit = "26GBIMPABS719" %}
+{% set expires = "30 October 2026" %}
+{% set validityTag = "Valid" %}
+{% set validityTagClass = "govuk-tag--blue" %}
+{% set species = "Python bivittatus" %}
+{% set commonName = "Burmese python" %}
+{% set description = "Live Burmese python (Female, microchip 12345678912345)" %}
+{% set quantity = "1" %}
+{% set issueDate = "30 April 2026" %}
 {% set prevHref = "" %}
 {% set prevRef = "" %}
-{% set nextHref = "/beta-16-04-26/single-search-results/check-permit-2" %}
-{% set nextRef = "25GBIMPEFPJOB" %}
+{% set nextHref = "/beta-28-05-26/single-search-results/check-permit-2" %}
+{% set nextRef = "26GBIMPSTYXH1" %}
 {% set currentIndex = 1 %}
-{% set totalCount = 10 %}
+{% set totalCount = 3 %}
 {% block beforeContent %}
   <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
     {{ govukBackLink({
       text: "Back to search results",
-      href: "/beta-16-04-26/single-search-results/permit-search-results"
+      href: "/beta-28-05-26/single-search-results/permit-search-results"
     }) }}
     <div class="permit-pagination-inline">
       {{ govukPagination({
@@ -35,8 +36,8 @@
   </div>
 {% endblock %}
 {% block content %}
-  {% include "beta-16-04-26/single-search-results/_check-permit-page.njk" %}
+  {% include "beta-28-05-26/single-search-results/_check-permit-page.njk" %}
 {% endblock %}
 {% block pageScripts %}
-  {% include "beta-16-04-26/single-search-results/_customs-reference-script.njk" %}
+  {% include "beta-28-05-26/single-search-results/_customs-reference-script.njk" %}
 {% endblock %}

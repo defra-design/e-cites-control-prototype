@@ -28,7 +28,7 @@
     {% if data.noPermitsFound %}
     <p class="govuk-body">No permits found for these reference numbers. Check the reference numbers and try again.</p>
     <p class="govuk-body">
-      <a href="/beta-16-04-26/batch-search-results/search-results" class="govuk-link">Search again</a>
+      <a href="/beta-28-05-26/batch-search-results/search-results" class="govuk-link">Search again</a>
     </p>
     {% else %}
     {% set selectableCount = (data.selectablePermits or []) | length %}
@@ -38,14 +38,14 @@
     {% set summaryPermitList = permitList %}
     {% set hideStatusAndType = true %}
     {% set showFullDetails = true %}
-    {% include "beta-16-04-26/components/_consignment-summary.njk" %}
+    {% include "beta-28-05-26/components/_consignment-summary.njk" %}
     {% endif %}
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
     <h2 class="govuk-heading-m govuk-!-margin-top-6 govuk-!-margin-bottom-2">Permit list</h2>
     <p class="govuk-body govuk-!-margin-bottom-4">{{ permitList.length }} permit{% if permitList.length != 1 %}s{% endif %} included in this consignment</p>
     <p class="govuk-body govuk-!-margin-bottom-4">You can only select permits with status Valid.</p>
     {% set headerCheckbox = '<span class="batch-permit-checkbox"><input type="checkbox" id="select-all" class="batch-permit-checkbox__input" aria-label="Select all permits"></span>' if selectableCount > 0 else '' %}
-    <form method="post" action="/beta-16-04-26/batch-search-results/select-action" id="batch-form">
+    <form method="post" action="/beta-28-05-26/batch-search-results/select-action" id="batch-form">
       {{ govukTable({
         classes: "govuk-body-s permit-search-results-table permit-search-results-table--striped",
         head: [

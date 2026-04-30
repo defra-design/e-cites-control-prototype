@@ -8,13 +8,13 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 
-{% set basePath = "/beta-16-04-26/batch-search-results" %}
+{% set basePath = "/beta-28-05-26/batch-search-results" %}
 {% set pageName = "Check permit details" %}
 {% set title = "Check permit details" %}
-{% set permit = data.permit or "25GBIMPABS719" %}
+{% set permit = data.permit or "26GBIMPABS719" %}
 {% set currentPermit = data.currentPermit or {} %}
 {% set currentIndex = data.checkPermitIndex or 1 %}
-{% set totalCount = data.checkPermitTotal or 10 %}
+{% set totalCount = data.checkPermitTotal or 3 %}
 {% set permitList = data.checkPermitList or data.permitSearchResults or [] %}
 {% set endorsedDetails = data.endorsedDetails and data.endorsedDetails[permit] or {} %}
 {% set validityTag = "Valid" %}
@@ -38,6 +38,49 @@
       text: "Back to batch results",
       href: basePath + "/permit-results"
     }) }}
+
+    {% if data.endorsed %}
+      <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" data-dismissable>
+        <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
+          <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+            Permit endorsed
+          </h2>
+          <a href="{{ basePath }}/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
+        </div>
+        <div class="govuk-notification-banner__content">
+          <p class="govuk-body">This permit has been successfully endorsed.</p>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if data.updated %}
+      <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title-updated" data-module="govuk-notification-banner" data-dismissable>
+        <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
+          <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-updated">
+            Changes saved
+          </h2>
+          <a href="{{ basePath }}/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
+        </div>
+        <div class="govuk-notification-banner__content">
+          <p class="govuk-body">This permit has been successfully endorsed.</p>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if data.refused %}
+      <div class="govuk-notification-banner" role="alert" aria-labelledby="govuk-notification-banner-title-refused" data-module="govuk-notification-banner" data-dismissable>
+        <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
+          <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-refused">
+            Permit not endorsed
+          </h2>
+          <a href="{{ basePath }}/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
+        </div>
+        <div class="govuk-notification-banner__content">
+          <p class="govuk-body">This permit has not been endorsed.</p>
+        </div>
+      </div>
+    {% endif %}
+
     {% if totalCount > 1 %}
     <div class="permit-pagination-inline">
       {{ govukPagination({
@@ -52,6 +95,9 @@
           text: "Next permit",
           labelText: permitList[currentIndex].ref,
           href: basePath + "/check-permit-details?permit=" + permitList[currentIndex].ref
+        } or (currentIndex === totalCount) and {
+          text: "Back to batch results",
+          href: basePath + "/permit-results"
         }
       }) }}
       <span class="permit-pagination-inline__position govuk-body-s govuk-!-font-weight-bold">Permit {{ currentIndex }} of {{ totalCount }}</span>
@@ -70,48 +116,6 @@
 {% endif %}
 
 {% set permitList = data.checkPermitList or data.permitSearchResults or [] %}
-
-{% if data.endorsed %}
-  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" data-dismissable>
-    <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
-      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-        Permit endorsed
-      </h2>
-      <a href="{{ basePath }}/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
-    </div>
-    <div class="govuk-notification-banner__content">
-      <p class="govuk-body">This permit has been successfully endorsed.</p>
-    </div>
-  </div>
-{% endif %}
-
-{% if data.updated %}
-  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title-updated" data-module="govuk-notification-banner" data-dismissable>
-    <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
-      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-updated">
-        Changes saved
-      </h2>
-      <a href="{{ basePath }}/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
-    </div>
-    <div class="govuk-notification-banner__content">
-      <p class="govuk-body">This permit has been successfully endorsed.</p>
-    </div>
-  </div>
-{% endif %}
-
-{% if data.refused %}
-  <div class="govuk-notification-banner" role="alert" aria-labelledby="govuk-notification-banner-title-refused" data-module="govuk-notification-banner" data-dismissable>
-    <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
-      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-refused">
-        Permit not endorsed
-      </h2>
-      <a href="{{ basePath }}/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
-    </div>
-    <div class="govuk-notification-banner__content">
-      <p class="govuk-body">This permit has not been endorsed.</p>
-    </div>
-  </div>
-{% endif %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
@@ -152,6 +156,25 @@
         }) }}
       </div>
     </div>
+
+    {% if data.permitStatuses and data.permitStatuses[permit] === "endorsed" %}
+    <h2 class="govuk-heading-s">Endorsement details</h2>
+    {% set isLeechPermit = currentPermit.commonName == "Southern medicinal leech" %}
+    <div class="govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list">
+      {{ govukSummaryList({
+        rows: [
+          isLeechPermit
+            ? { key: { text: "Net mass, in kilograms" }, value: { text: (endorsedDetails.netMassKg ? (endorsedDetails.netMassKg ~ "kg") : "–") } }
+            : { key: { text: "Actual imported quantity" }, value: { text: endorsedDetails.actualQuantity or "–" } },
+          (not isLeechPermit) and { key: { text: "Number of animals dead on arrival" }, value: { text: endorsedDetails.deadOnArrival or "–" } } or null,
+          { key: { text: "Customs document reference" }, value: { text: endorsedDetails.mrnReference or "–" } },
+          { key: { text: "Endorsement date" }, value: { text: endorsedDetails.dateOfEndorsement or "–" } },
+          { key: { text: "Port" }, value: { text: endorsedDetails.port or currentPermit.port or "Dover" } },
+          { key: { text: "Officer ID" }, value: { text: endorsedDetails.officerId or "–" } }
+        ] | reject("equalto", null)
+      }) }}
+    </div>
+    {% endif %}
 
     {% set moreDetailsContent %}
     <div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px summary-list-stacked">
@@ -282,27 +305,6 @@
       <a href="{{ basePath }}/check-permit-details?permit={{ permit }}&edit=1#endorsement-section" class="govuk-button">Amend details</a>
     </div>
     {% elif data.permitStatuses[permit] === "endorsed" %}
-    <h2 class="govuk-heading-s">Endorsement</h2>
-    <div class="govuk-grid-row govuk-!-margin-bottom-3 permit-summary-16px permit-info-compare summary-list-stacked">
-      <div class="govuk-grid-column-one-half">
-        {{ govukSummaryList({
-          rows: [
-            { key: { text: "Quantity" }, value: { text: endorsedDetails.actualQuantity or "–" } },
-            { key: { text: "Endorsement date" }, value: { text: endorsedDetails.dateOfEndorsement or "–" } },
-            { key: { text: "Port" }, value: { text: endorsedDetails.port or currentPermit.port or "Dover" } }
-          ]
-        }) }}
-      </div>
-      <div class="govuk-grid-column-one-half">
-        {{ govukSummaryList({
-          rows: [
-            { key: { text: "Customs document reference" }, value: { text: endorsedDetails.mrnReference or "–" } },
-            { key: { text: "Bill of Lading or Air waybill (AWB) reference" }, value: { text: endorsedDetails.billOfLadingReference or "–" } },
-            { key: { text: "Officer ID" }, value: { text: endorsedDetails.officerId or "–" } }
-          ]
-        }) }}
-      </div>
-    </div>
     <div class="govuk-button-group govuk-!-margin-top-4">
       <a href="{{ basePath }}/check-permit-details?permit={{ permit }}&edit=1#endorsement-section" class="govuk-button">Amend details</a>
     </div>
@@ -489,6 +491,6 @@
 {% endblock %}
 
 {% block pageScripts %}
-  {% include "beta-16-04-26/batch-search-results/_customs-reference-script-batch.njk" %}
-  {% include "beta-16-04-26/single-search-results/_notification-banner-close-script.njk" %}
+  {% include "beta-28-05-26/batch-search-results/_customs-reference-script-batch.njk" %}
+  {% include "beta-28-05-26/single-search-results/_notification-banner-close-script.njk" %}
 {% endblock %}

@@ -14,10 +14,8 @@
 
     {% set invalidList = data.invalidSearchedPermits or [] %}
     {% if invalidList.length %}
-      {% set nInv = invalidList.length %}
-      {% set summaryWording = "1 permit could not be found" if nInv == 1 else (nInv ~ " permits could not be found") %}
       {% set notFoundBannerHtml %}
-        <p class="govuk-body govuk-!-margin-bottom-2">{{ "Permit reference:" if nInv == 1 else "Permit references:" }}</p>
+        <p class="govuk-body govuk-!-margin-bottom-2">We could not find these permit numbers:</p>
         <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-3">
           {% for ref in invalidList %}
           <li><strong>{{ ref }}</strong></li>
@@ -27,7 +25,7 @@
       {% endset %}
       <div class="govuk-!-margin-bottom-6">
         {{ govukNotificationBanner({
-          titleText: summaryWording,
+          titleText: "Permit numbers not found",
           titleHeadingLevel: 2,
           html: notFoundBannerHtml | trim,
           classes: "govuk-!-margin-top-0 permit-notification-banner--error",

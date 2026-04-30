@@ -7,10 +7,10 @@
 
 {% set pageName = "Check permit details" %}
 {% set title = "Check permit details" %}
-{% set permit = data.permit or "25GBIMPABS719" %}
+{% set permit = data.permit or "26GBIMPABS719" %}
 {% set currentPermit = data.currentPermit or {} %}
 {% set currentIndex = data.checkPermitIndex or 1 %}
-{% set totalCount = data.checkPermitTotal or 10 %}
+{% set totalCount = data.checkPermitTotal or 3 %}
 {% set permitList = data.checkPermitList or data.permitSearchResults or [] %}
 {% set endorsedDetails = data.endorsedDetails and data.endorsedDetails[permit] or {} %}
 {% set validityTag = "Valid" %}
@@ -27,45 +27,86 @@
     {% set validityTagClass = "govuk-tag--red" %}
   {% endif %}
 {% endif %}
-{% set mvpPermit = permit and permit.startsWith("25GBIMP") %}
-{% if currentPermit.exporterHtml %}
-  {% set exporterHtml = currentPermit.exporterHtml %}
-{% elif mvpPermit %}
-  {% set exporterHtml %}Serpentis Logistik GmbH<br>Gewerbepark Süd 14a<br>DE-64546 Mörfelden-Walldorf<br>Germany{% endset %}
+{% set exporterName = currentPermit.exporterName or "Montreval Cuir SA" %}
+{% if currentPermit.exporterAddressHtml %}
+  {% set exporterAddressHtml = currentPermit.exporterAddressHtml %}
 {% else %}
-  {% set exporterHtml %}Montreval Cuir SA<br>Rue du Marché 18<br>1204 Geneva<br>Switzerland{% endset %}
+  {% set exporterAddressHtml %}Rue du Marché 18<br>1204 Geneva<br>Switzerland{% endset %}
 {% endif %}
-{% set countryReexport = currentPermit.countryOfReexport or ("Germany" if mvpPermit else "Switzerland") %}
-{% if currentPermit.importerHtml %}
-  {% set importerHtml = currentPermit.importerHtml %}
-{% elif mvpPermit %}
-  {% set importerHtml %}UK Exotic Reptile Imports Ltd<br>Unit 7, Riverside Business Park<br>Essex<br>IG11 0HZ<br>United Kingdom{% endset %}
+{% set countryReexport = currentPermit.countryOfReexport or "Switzerland" %}
+
+{% set importerName = currentPermit.importerName or "Stratford & Hale Watch Company Ltd" %}
+{% if currentPermit.importerAddressHtml %}
+  {% set importerAddressHtml = currentPermit.importerAddressHtml %}
 {% else %}
-  {% set importerHtml %}Stratford & Hale Watch Company Ltd<br>Unit 14 Hatton Garden Business Centre<br>London<br>EC1N 8DL{% endset %}
+  {% set importerAddressHtml %}Unit 14 Hatton Garden Business Centre<br>London<br>EC1N 8DL{% endset %}
 {% endif %}
 {% set countryImport = currentPermit.countryOfImport or "United Kingdom" %}
 {% set sourceLabel = currentPermit.source or "W: Wild" %}
 {% set purposeLabel = currentPermit.purpose or "T: Commercial trade" %}
 {% set netMass = currentPermit.netMass | default("") | trim %}
-{% set reexportCountry = currentPermit.reexportCountry or ("Germany" if mvpPermit else "Italy") %}
-{% set reexportIssueDate = currentPermit.reexportIssueDate or ("20 Mar 2026" if mvpPermit else (currentPermit.issueDate or "8 September 2025")) %}
-{% set reexportCert = currentPermit.reexportCertNumber or ("DE-W 00045/01" if mvpPermit else "–") %}
-{% set originCountry = currentPermit.originCountry or ("Vietnam" if mvpPermit else "–") %}
-{% set originIssueDate = currentPermit.originIssueDate or ("31 July 2018" if mvpPermit else "–") %}
-{% set originPermitNo = currentPermit.originPermitNumber or ("18VN39735/CT-KL" if mvpPermit else "–") %}
+{% set reexportCountry = currentPermit.reexportCountry or "–" %}
+{% set reexportIssueDate = currentPermit.reexportIssueDate or "–" %}
+{% set reexportCert = currentPermit.reexportCertNumber or "–" %}
+{% set originCountry = currentPermit.originCountry or "–" %}
+{% set originIssueDate = currentPermit.originIssueDate or "–" %}
+{% set originPermitNo = currentPermit.originPermitNumber or "–" %}
 {% set remarksHtml %}
 <p class="govuk-body-s govuk-!-margin-bottom-0">This permit is valid only for the specimens and quantities stated. Transport of live animals must follow the current edition of the IATA Live Animals Regulations. A copy of this permit must travel with the consignment. Endorsement by Border Force confirms import clearance against the customs declaration you enter in this service.</p>
 {% endset %}
 {% set specimenDescriptionHtml %}
-Live Burmese python<br>Microchip number 12345678912345
+Ten kilograms of live leeches<br>LIV
 {% endset %}
 
 {% block beforeContent %}
   <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
     {{ govukBackLink({
       text: totalCount > 1 and "Back to search results" or "Back to search",
-      href: totalCount > 1 and "/beta-16-04-26/single-search-results/permit-search-results" or "/beta-16-04-26/single-search-results/search-results"
+      href: totalCount > 1 and "/beta-28-05-26/single-search-results/permit-search-results" or "/beta-28-05-26/single-search-results/search-results"
     }) }}
+
+    {% if data.endorsed %}
+      <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" data-dismissable>
+        <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
+          <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+            Permit endorsed
+          </h2>
+          <a href="/beta-28-05-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
+        </div>
+        <div class="govuk-notification-banner__content">
+          <p class="govuk-body">This permit has been successfully endorsed.</p>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if data.updated %}
+      <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title-updated" data-module="govuk-notification-banner" data-dismissable>
+        <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
+          <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-updated">
+            Changes saved
+          </h2>
+          <a href="/beta-28-05-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
+        </div>
+        <div class="govuk-notification-banner__content">
+          <p class="govuk-body">This permit has been successfully endorsed.</p>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if data.refused %}
+      <div class="govuk-notification-banner" role="alert" aria-labelledby="govuk-notification-banner-title-refused" data-module="govuk-notification-banner" data-dismissable>
+        <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
+          <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-refused">
+            Permit not endorsed
+          </h2>
+          <a href="/beta-28-05-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
+        </div>
+        <div class="govuk-notification-banner__content">
+          <p class="govuk-body">This permit has not been endorsed.</p>
+        </div>
+      </div>
+    {% endif %}
+
     {% if totalCount > 1 %}
     <div class="permit-pagination-inline">
       {{ govukPagination({
@@ -74,12 +115,15 @@ Live Burmese python<br>Microchip number 12345678912345
         previous: (currentIndex > 1) and {
           text: "Previous permit",
           labelText: permitList[currentIndex - 2].ref,
-          href: "/beta-16-04-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex - 2].ref
+          href: "/beta-28-05-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex - 2].ref
         },
         next: (currentIndex < totalCount) and {
           text: "Next permit",
           labelText: permitList[currentIndex].ref,
-          href: "/beta-16-04-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex].ref
+          href: "/beta-28-05-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex].ref
+        } or (currentIndex === totalCount) and {
+          text: "Back to search results",
+          href: "/beta-28-05-26/single-search-results/permit-search-results"
         }
       }) }}
       <span class="permit-pagination-inline__position govuk-body-s govuk-!-font-weight-bold">Permit {{ currentIndex }} of {{ totalCount }}</span>
@@ -97,69 +141,81 @@ Live Burmese python<br>Microchip number 12345678912345
   }) }}
 {% endif %}
 
-{% if data.endorsed %}
-  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" data-dismissable>
-    <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
-      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-        Permit endorsed
-      </h2>
-      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
-    </div>
-    <div class="govuk-notification-banner__content">
-      <p class="govuk-body">This permit has been successfully endorsed.</p>
-    </div>
-  </div>
-{% endif %}
-
-{% if data.updated %}
-  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title-updated" data-module="govuk-notification-banner" data-dismissable>
-    <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
-      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-updated">
-        Changes saved
-      </h2>
-      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
-    </div>
-    <div class="govuk-notification-banner__content">
-      <p class="govuk-body">This permit has been successfully endorsed.</p>
-    </div>
-  </div>
-{% endif %}
-
-{% if data.refused %}
-  <div class="govuk-notification-banner" role="alert" aria-labelledby="govuk-notification-banner-title-refused" data-module="govuk-notification-banner" data-dismissable>
-    <div class="govuk-notification-banner__header govuk-notification-banner__header--with-close">
-      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-refused">
-        Permit not endorsed
-      </h2>
-      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-notification-banner__close govuk-link govuk-link--no-visited-state" data-close-banner>Close</a>
-    </div>
-    <div class="govuk-notification-banner__content">
-      <p class="govuk-body">This permit has not been endorsed.</p>
-    </div>
-  </div>
-{% endif %}
-
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
 
     <h1 class="govuk-heading-l govuk-!-margin-bottom-6">Check permit details</h1>
 
     <h2 class="govuk-heading-s">Permit overview</h2>
-    {{ govukSummaryList({
-      classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
-      rows: [
-        { key: { text: "Permit number" }, value: { text: permit } },
-        { key: { text: "Type" }, value: { text: "Import" } },
-        { key: { text: "Valid until" }, value: { text: currentPermit.expires or "30 October 2026" } },
-        { key: { text: "Status" }, value: { html: "<strong class=\"govuk-tag " ~ validityTagClass ~ "\">" ~ validityTag ~ "</strong>" } }
-      ]
-    }) }}
+    <dl class="govuk-summary-list govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Permit number</dt>
+        <dd class="govuk-summary-list__value">{{ permit }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Type</dt>
+        <dd class="govuk-summary-list__value">Import</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Valid until</dt>
+        <dd class="govuk-summary-list__value">{{ currentPermit.expires or "24 June 2026" }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Status</dt>
+        <dd class="govuk-summary-list__value"><strong class="govuk-tag {{ validityTagClass }}">{{ validityTag }}</strong></dd>
+      </div>
+    </dl>
+
+    {% if data.permitStatuses and data.permitStatuses[permit] === "endorsed" %}
+    <h2 class="govuk-heading-s">Endorsement details</h2>
+    {% set isLeechPermit = currentPermit.commonName == "Southern medicinal leech" %}
+    <dl class="govuk-summary-list govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list">
+      {% if isLeechPermit %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Net mass, in kilograms</dt>
+        <dd class="govuk-summary-list__value">
+          {% if endorsedDetails.netMassKg %}
+            {{ endorsedDetails.netMassKg }}kg
+          {% else %}
+            –
+          {% endif %}
+        </dd>
+      </div>
+      {% else %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Actual imported quantity</dt>
+        <dd class="govuk-summary-list__value">{{ endorsedDetails.actualQuantity or "–" }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Number of animals dead on arrival</dt>
+        <dd class="govuk-summary-list__value">{{ endorsedDetails.deadOnArrival or "–" }}</dd>
+      </div>
+      {% endif %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Customs document reference</dt>
+        <dd class="govuk-summary-list__value">{{ endorsedDetails.mrnReference or "–" }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Endorsement date</dt>
+        <dd class="govuk-summary-list__value">{{ endorsedDetails.dateOfEndorsement or "–" }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Port</dt>
+        <dd class="govuk-summary-list__value">{{ endorsedDetails.port or currentPermit.port or "Dover" }}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Officer ID</dt>
+        <dd class="govuk-summary-list__value">{{ endorsedDetails.officerId or "–" }}</dd>
+      </div>
+    </dl>
+    {% endif %}
 
     <h2 class="govuk-heading-s">Exporter/Re-exporter</h2>
     {{ govukSummaryList({
       classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
       rows: [
-        { key: { text: "Name and address" }, value: { html: exporterHtml } },
+        { key: { text: "Name" }, value: { text: exporterName } },
+        { key: { text: "Address" }, value: { html: exporterAddressHtml } },
         { key: { text: "Country of re-export" }, value: { text: countryReexport } }
       ]
     }) }}
@@ -168,7 +224,8 @@ Live Burmese python<br>Microchip number 12345678912345
     {{ govukSummaryList({
       classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
       rows: [
-        { key: { text: "Name and address" }, value: { html: importerHtml } },
+        { key: { text: "Name" }, value: { text: importerName } },
+        { key: { text: "Address" }, value: { html: importerAddressHtml } },
         { key: { text: "Country of import" }, value: { text: countryImport } }
       ]
     }) }}
@@ -177,18 +234,19 @@ Live Burmese python<br>Microchip number 12345678912345
     {{ govukSummaryList({
       classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
       rows: [
-        { key: { text: "Scientific name of species" }, value: { text: currentPermit.species or "Python bivittatus" } },
-        { key: { text: "Common name of species" }, value: { text: currentPermit.commonName or "Burmese python" } },
+        { key: { text: "Scientific name of species" }, value: { text: currentPermit.species or "Hirudo verbana" } },
+        { key: { text: "Common name of species" }, value: { text: currentPermit.commonName or "Southern medicinal leech" } },
         { key: { text: "Description of specimens" }, value: { html: currentPermit.description or specimenDescriptionHtml } },
         { key: { text: "CITES Appendix" }, value: { text: currentPermit.citesAppendix or "II" } },
         { key: { text: "GB Annex" }, value: { text: currentPermit.gbAnnex or "B" } },
         { key: { text: "Source" }, value: { text: sourceLabel } },
         { key: { text: "Purpose" }, value: { text: purposeLabel } },
-        { key: { text: "Quantity" }, value: { text: currentPermit.quantity or "1" } },
-        { key: { text: "Net mass (KG)" }, value: { text: netMass } }
+        { key: { text: "Net mass" }, value: { text: currentPermit.netMass or netMass } }
       ]
     }) }}
 
+    {% set hasReexportHistory = reexportCountry != "–" or reexportIssueDate != "–" or reexportCert != "–" %}
+    {% if hasReexportHistory %}
     <h2 class="govuk-heading-s">Re-export history</h2>
     {{ govukSummaryList({
       classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
@@ -198,6 +256,7 @@ Live Burmese python<br>Microchip number 12345678912345
         { key: { text: "Certificate number" }, value: { text: reexportCert } }
       ]
     }) }}
+    {% endif %}
 
     <h2 class="govuk-heading-s">Origin history</h2>
     {{ govukSummaryList({
@@ -215,9 +274,9 @@ Live Burmese python<br>Microchip number 12345678912345
       rows: [
         { key: { text: "Special conditions" }, value: { html: remarksHtml } },
         { key: { text: "Management Authority" }, value: { text: "Animal and Plant Health Agency (APHA)" } },
-        { key: { text: "Signature and official stamp" }, value: { text: "Emma Biggs, Head of International Trade and Customer Service" } },
+        { key: { text: "Signature" }, value: { text: "Emma Biggs, Head of International Trade and Customer Service" } },
         { key: { text: "Issuing official" }, value: { text: "J. Smith" } },
-        { key: { text: "Place and date of issue" }, value: { text: "Bristol, 30 April 2026" } }
+        { key: { text: "Place and date of issue" }, value: { text: currentPermit.remarksPlaceAndDateOfIssue or "Bristol, 30 April 2026" } }
       ]
     }) }}
 
@@ -237,29 +296,17 @@ Live Burmese python<br>Microchip number 12345678912345
       }) }}
     </div>
     <div class="govuk-button-group govuk-!-margin-top-4">
-      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}&edit=1#endorsement-section" class="govuk-button">Amend details</a>
+      <a href="/beta-28-05-26/single-search-results/check-permit-details?permit={{ permit }}&edit=1#endorsement-section" class="govuk-button">Amend details</a>
     </div>
     {% elif data.permitStatuses[permit] === "endorsed" %}
-    <h2 class="govuk-heading-s govuk-!-margin-top-8">Endorsement</h2>
-    <div class="govuk-!-margin-bottom-3 permit-summary-16px permit-details-summary-list">
-      {{ govukSummaryList({
-        rows: [
-          { key: { text: "Actual imported quantity" }, value: { text: endorsedDetails.actualQuantity or "–" } },
-          { key: { text: "Number of animals dead on arrival" }, value: { text: endorsedDetails.deadOnArrival or "–" } },
-          { key: { text: "Customs document reference" }, value: { text: endorsedDetails.mrnReference or "–" } },
-          { key: { text: "Endorsement date" }, value: { text: endorsedDetails.dateOfEndorsement or "–" } },
-          { key: { text: "Port" }, value: { text: endorsedDetails.port or currentPermit.port or "Dover" } },
-          { key: { text: "Officer ID" }, value: { text: endorsedDetails.officerId or "–" } }
-        ]
-      }) }}
-    </div>
     <div class="govuk-button-group govuk-!-margin-top-4">
-      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}&edit=1#endorsement-section" class="govuk-button">Amend details</a>
+      <a href="/beta-28-05-26/single-search-results/check-permit-details?permit={{ permit }}&edit=1#endorsement-section" class="govuk-button">Amend details</a>
     </div>
     {% else %}
-    <form method="post" action="/beta-16-04-26/single-search-results/check-permit-details" autocomplete="off" id="endorsement-form">
+    <form method="post" action="/beta-28-05-26/single-search-results/check-permit-details" autocomplete="off" id="endorsement-form">
       <input type="hidden" name="permit" value="{{ permit }}" />
-      {% include "beta-16-04-26/single-search-results/_endorsement-form-fields.njk" %}
+      {% set endorsementFormDetails = (data.endorsementDrafts and data.endorsementDrafts[permit]) or endorsedDetails %}
+      {% include "beta-28-05-26/single-search-results/_endorsement-form-fields.njk" %}
       <div class="govuk-button-group govuk-!-margin-top-4">
         {{ govukButton({
           text: "Endorse permit",
@@ -267,17 +314,17 @@ Live Burmese python<br>Microchip number 12345678912345
           value: "Endorse permit",
           type: "submit"
         }) }}
-        <a href="/beta-16-04-26/single-search-results/refuse-permit?permit={{ permit }}" class="govuk-button govuk-button--secondary">Refuse endorsement</a>
       </div>
     </form>
     {% endif %}
     </div>
     {% elif data.editEndorsement %}
     <div id="endorsement-section">
-    <form method="post" action="/beta-16-04-26/single-search-results/check-permit-details" autocomplete="off">
+    <form method="post" action="/beta-28-05-26/single-search-results/check-permit-details" autocomplete="off">
       <input type="hidden" name="permit" value="{{ permit }}" />
       {% if data.permitStatuses and data.permitStatuses[permit] === "endorsed" %}<input type="hidden" name="update" value="1" />{% endif %}
-      {% include "beta-16-04-26/single-search-results/_endorsement-form-fields.njk" %}
+      {% set endorsementFormDetails = (data.endorsementDrafts and data.endorsementDrafts[permit]) or endorsedDetails %}
+      {% include "beta-28-05-26/single-search-results/_endorsement-form-fields.njk" %}
       <div class="govuk-button-group govuk-!-margin-top-4">
         {% if data.permitStatuses and data.permitStatuses[permit] === "endorsed" %}
         {{ govukButton({
@@ -293,19 +340,19 @@ Live Burmese python<br>Microchip number 12345678912345
           value: "Endorse permit",
           type: "submit"
         }) }}
-        <a href="/beta-16-04-26/single-search-results/refuse-permit?permit={{ permit }}" class="govuk-button govuk-button--secondary">Refuse endorsement</a>
         {% endif %}
       </div>
     </form>
     <p class="govuk-body govuk-!-margin-top-4">
-      <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-link">Cancel amend</a>
+      <a href="/beta-28-05-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-link">Cancel amend</a>
     </p>
     </div>
     {% else %}
     <div id="endorsement-section">
-    <form method="post" action="/beta-16-04-26/single-search-results/check-permit-details" autocomplete="off">
+    <form method="post" action="/beta-28-05-26/single-search-results/check-permit-details" autocomplete="off">
       <input type="hidden" name="permit" value="{{ permit }}" />
-      {% include "beta-16-04-26/single-search-results/_endorsement-form-fields.njk" %}
+      {% set endorsementFormDetails = (data.endorsementDrafts and data.endorsementDrafts[permit]) or endorsedDetails %}
+      {% include "beta-28-05-26/single-search-results/_endorsement-form-fields.njk" %}
       <div class="govuk-button-group govuk-!-margin-top-4">
         {% if data.editEndorsement %}
         {{ govukButton({
@@ -314,7 +361,7 @@ Live Burmese python<br>Microchip number 12345678912345
           value: "Save changes",
           type: "submit"
         }) }}
-        <a href="/beta-16-04-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-link govuk-!-margin-left-3 govuk-!-padding-top-2 govuk-!-padding-bottom-2">Cancel amend</a>
+        <a href="/beta-28-05-26/single-search-results/check-permit-details?permit={{ permit }}#endorsement-section" class="govuk-link govuk-!-margin-left-3 govuk-!-padding-top-2 govuk-!-padding-bottom-2">Cancel amend</a>
         {% else %}
         {{ govukButton({
           text: "Endorse permit",
@@ -322,7 +369,6 @@ Live Burmese python<br>Microchip number 12345678912345
           value: "Endorse permit",
           type: "submit"
         }) }}
-        <a href="/beta-16-04-26/single-search-results/refuse-permit?permit={{ permit }}" class="govuk-button govuk-button--secondary">Refuse endorsement</a>
         {% endif %}
       </div>
     </form>
@@ -335,6 +381,6 @@ Live Burmese python<br>Microchip number 12345678912345
 {% endblock %}
 
 {% block pageScripts %}
-  {% include "beta-16-04-26/single-search-results/_customs-reference-script.njk" %}
-  {% include "beta-16-04-26/single-search-results/_notification-banner-close-script.njk" %}
+  {% include "beta-28-05-26/single-search-results/_customs-reference-script.njk" %}
+  {% include "beta-28-05-26/single-search-results/_notification-banner-close-script.njk" %}
 {% endblock %}

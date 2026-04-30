@@ -5,10 +5,10 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% set basePath = "/beta-16-04-26/batch-search-results" %}
+{% set basePath = "/beta-28-05-26/batch-search-results" %}
 {% set pageName = "Why are you not endorsing this permit?" %}
 {% set title = "Why are you not endorsing this permit?" %}
-{% set permit = data.permit or "25GBIMPABS719" %}
+{% set permit = data.permit or "26GBIMPABS719" %}
 {% set currentPermit = data.currentPermit or {} %}
 {% set permitQuantity = currentPermit.quantity or "80" %}
 {% set permitDetails = currentPermit.description or currentPermit.commonName or "American alligator watch straps" %}

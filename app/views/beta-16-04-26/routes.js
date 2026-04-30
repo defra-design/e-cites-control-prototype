@@ -8,8 +8,8 @@ const { consumeSessionValidationErrors } = require('../../lib/consume-session-va
 
 module.exports = (router) => {
   const DEFAULT_PERMIT_REFS = [
-    '25GBIMPABS719', '25GBIMPSTYXH1', '25GBIMPSTYHNO', '25GBIMPUVWOFM', '25GBIMPWX0N12',
-    '25GBIMPYZOPGY', '25GBIMPABZPMT', '25GBIMPCDO2DA', '25GBIMPEFPJOB', '25GBIMPGHAQTG'
+    '26GBIMPABS719', '26GBIMPSTYXH1', '26GBIMPSTYHNO', '26GBIMPUVWOFM', '26GBIMPWX0N12',
+    '26GBIMPYZOPGY', '26GBIMPABZPMT', '26GBIMPCDO2DA', '26GBIMPEFPJOB', '26GBIMPGHAQTG'
   ]
 
   function issueDateFromExpiry (expires) {
@@ -110,7 +110,7 @@ module.exports = (router) => {
     if (req.query.errors9valid === '1') {
       consumeSessionValidationErrors(req)
       const nineValid = DEFAULT_PERMIT_REFS.slice(0, 9).join('\n')
-      const incorrectRef = '25GBIMPGHAQTP'
+      const incorrectRef = '26GBIMPGHAQTP'
       const prefillValue = `${nineValid}\n${incorrectRef}`
       data.permitReferences = prefillValue
       delete data.errors
@@ -145,16 +145,16 @@ module.exports = (router) => {
   })
 
   const PERMIT_SEARCH_DATA = {
-    '25GBIMPABS719': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912345', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B' },
-    '25GBIMPSTYXH1': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912346', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/02' },
-    '25GBIMPSTYHNO': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Male<br>Microchip number 12345678912347', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/03' },
-    '25GBIMPUVWOFM': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Male<br>Microchip number 12345678912321', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/04' },
-    '25GBIMPWX0N12': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912323', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/05' },
-    '25GBIMPYZOPGY': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912354', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/06' },
-    '25GBIMPABZPMT': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912346', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/07' },
-    '25GBIMPCDO2DA': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Male<br>Microchip number 12345678912357', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/08' },
-    '25GBIMPEFPJOB': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912358', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/09' },
-    '25GBIMPGHAQTG': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912366', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/10' },
+    '26GBIMPABS719': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912345', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B' },
+    '26GBIMPSTYXH1': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912346', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/02' },
+    '26GBIMPSTYHNO': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Male<br>Microchip number 12345678912347', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/03' },
+    '26GBIMPUVWOFM': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Male<br>Microchip number 12345678912321', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/04' },
+    '26GBIMPWX0N12': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912323', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/05' },
+    '26GBIMPYZOPGY': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912354', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/06' },
+    '26GBIMPABZPMT': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912346', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/07' },
+    '26GBIMPCDO2DA': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Male<br>Microchip number 12345678912357', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/08' },
+    '26GBIMPEFPJOB': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912358', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/09' },
+    '26GBIMPGHAQTG': { species: 'Python bivittatus', commonName: 'Burmese python', description: 'Live Burmese python<br>Female<br>Microchip number 12345678912366', expires: '30 October 2026', quantity: '1', citesAppendix: 'II', gbAnnex: 'B', reexportCertNumber: 'DE-W 00045/10' },
     '26GBIMP12344X': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '9 March 2026', quantity: '20', citesAppendix: 'II', gbAnnex: 'B' },
     '26GBIMP7GH45R': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '9 March 2026', quantity: '100', citesAppendix: 'II', gbAnnex: 'B' },
     '26GBIMPHG453Y': { species: 'Alligator mississippiensis', commonName: 'American alligator', description: 'Watch straps made of alligator skin', expires: '10 March 2026', quantity: '80', citesAppendix: 'II', gbAnnex: 'B' },
@@ -285,7 +285,7 @@ module.exports = (router) => {
     consumeSessionValidationErrors(req)
     const data = req.session.data || {}
     const permitList = buildSingleSearchPermitList(data)
-    const permitRef = (req.query.permit || '').trim() || data.permit || '25GBIMPABS719'
+    const permitRef = (req.query.permit || '').trim() || data.permit || '26GBIMPABS719'
     let currentIndex = permitList.findIndex(p => p.ref === permitRef) + 1
     if (currentIndex < 1) currentIndex = 1
     if (currentIndex > permitList.length) currentIndex = permitList.length
@@ -299,7 +299,7 @@ module.exports = (router) => {
 
   router.post(`${BASE}/single-search-results/refuse-permit`, (req, res) => {
     const data = req.session.data || {}
-    const permitId = (req.body.permit || '').trim() || data.permit || '25GBIMPABS719'
+    const permitId = (req.body.permit || '').trim() || data.permit || '26GBIMPABS719'
     const refusalReason = (req.body.refusalReason || '').trim()
     const additionalDetails = (req.body.additionalDetails || req.body.additionalDetailsAlt || '').trim().slice(0, 200)
 
@@ -438,7 +438,7 @@ module.exports = (router) => {
 
   router.post(`${BASE}/single-search-results/check-permit-details`, (req, res) => {
     const data = req.session.data || {}
-    const permitId = (req.body.permit || '').trim() || data.permit || '25GBIMPABS719'
+    const permitId = (req.body.permit || '').trim() || data.permit || '26GBIMPABS719'
     const permitList = buildSingleSearchPermitList(data)
     const totalCount = permitList.length || 10
     let currentIndex = permitList.findIndex(p => p.ref === permitId) + 1
@@ -611,7 +611,7 @@ module.exports = (router) => {
     delete data.batchSuccess
     delete data.batchCount
     data.permitStatuses = { ...DEFAULT_PERMIT_STATUSES, ...(data.permitStatuses || {}) }
-    if (data.permitStatuses['25GBIMPABS719'] === 'expired') delete data.permitStatuses['25GBIMPABS719']
+    if (data.permitStatuses['26GBIMPABS719'] === 'expired') delete data.permitStatuses['26GBIMPABS719']
     let refs = data.batchSearchedPermits || DEFAULT_PERMIT_REFS
     if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
     const noPermitsFound = refs.length > 0 && refs.every(r => !PERMIT_SEARCH_DATA[r])
@@ -660,7 +660,7 @@ module.exports = (router) => {
     let refs = data.batchSearchedPermits || DEFAULT_PERMIT_REFS
     if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
     const permitList = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
-    const permitRef = (req.query.permit || '').trim() || data.permit || '25GBIMPABS719'
+    const permitRef = (req.query.permit || '').trim() || data.permit || '26GBIMPABS719'
     let currentIndex = permitList.findIndex(p => p.ref === permitRef) + 1
     if (currentIndex < 1) currentIndex = 1
     if (currentIndex > permitList.length) currentIndex = permitList.length
@@ -674,7 +674,7 @@ module.exports = (router) => {
 
   router.post(`${BASE}/batch-search-results/refuse-permit`, (req, res) => {
     const data = req.session.data || {}
-    const permitId = (req.body.permit || '').trim() || data.permit || '25GBIMPABS719'
+    const permitId = (req.body.permit || '').trim() || data.permit || '26GBIMPABS719'
     const refusalReason = (req.body.refusalReason || '').trim()
     const additionalDetails = (req.body.additionalDetails || req.body.additionalDetailsAlt || '').trim().slice(0, 200)
 
@@ -813,7 +813,7 @@ module.exports = (router) => {
 
   router.post(`${BASE}/batch-search-results/check-permit-details`, (req, res) => {
     const data = req.session.data || {}
-    const permitId = (req.body.permit || '').trim() || data.permit || '25GBIMPABS719'
+    const permitId = (req.body.permit || '').trim() || data.permit || '26GBIMPABS719'
     let refs = data.batchSearchedPermits || DEFAULT_PERMIT_REFS
     if (refs.length === 0) refs = DEFAULT_PERMIT_REFS
     const permitList = buildAndSortPermitList(refs, PERMIT_SEARCH_DATA)
