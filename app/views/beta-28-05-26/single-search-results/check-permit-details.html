@@ -60,10 +60,12 @@ Ten kilograms of live leeches<br>LIV
 
 {% block beforeContent %}
   <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
-    {{ govukBackLink({
-      text: totalCount > 1 and "Back to search results" or "Back to search",
-      href: totalCount > 1 and "/beta-28-05-26/single-search-results/permit-search-results" or "/beta-28-05-26/single-search-results/search-results"
-    }) }}
+    {% if totalCount > 1 %}
+      {{ govukBackLink({
+        text: "Back to search results",
+        href: "/beta-28-05-26/single-search-results/permit-search-results"
+      }) }}
+    {% endif %}
 
     {% if data.endorsed %}
       <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" data-dismissable>
@@ -210,7 +212,7 @@ Ten kilograms of live leeches<br>LIV
     </dl>
     {% endif %}
 
-    <h2 class="govuk-heading-s">Exporter/Re-exporter</h2>
+    <h2 class="govuk-heading-s">Exporter/re-exporter</h2>
     {{ govukSummaryList({
       classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
       rows: [
@@ -273,7 +275,7 @@ Ten kilograms of live leeches<br>LIV
       classes: "govuk-!-margin-bottom-6 permit-summary-16px permit-details-summary-list",
       rows: [
         { key: { text: "Special conditions" }, value: { html: remarksHtml } },
-        { key: { text: "Management Authority" }, value: { text: "Animal and Plant Health Agency (APHA)" } },
+        { key: { text: "Management authority" }, value: { text: "Animal and Plant Health Agency (APHA)" } },
         { key: { text: "Signature" }, value: { text: "Emma Biggs, Head of International Trade and Customer Service" } },
         { key: { text: "Issuing official" }, value: { text: "J. Smith" } },
         { key: { text: "Place and date of issue" }, value: { text: currentPermit.remarksPlaceAndDateOfIssue or "Bristol, 30 April 2026" } }

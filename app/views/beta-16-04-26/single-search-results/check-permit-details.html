@@ -62,10 +62,12 @@ Live Burmese python<br>Microchip number 12345678912345
 
 {% block beforeContent %}
   <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
-    {{ govukBackLink({
-      text: totalCount > 1 and "Back to search results" or "Back to search",
-      href: totalCount > 1 and "/beta-16-04-26/single-search-results/permit-search-results" or "/beta-16-04-26/single-search-results/search-results"
-    }) }}
+    {% if totalCount > 1 %}
+      {{ govukBackLink({
+        text: "Back to search results",
+        href: "/beta-16-04-26/single-search-results/permit-search-results"
+      }) }}
+    {% endif %}
     {% if totalCount > 1 %}
     <div class="permit-pagination-inline">
       {{ govukPagination({
