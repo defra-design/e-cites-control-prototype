@@ -79,8 +79,19 @@
 
   textarea.addEventListener('input', updateCount)
   textarea.addEventListener('paste', function (e) {
+    var clipboardData = e.clipboardData || window.clipboardData
+    // If we cannot read clipboard contents, fall back to the browser's default paste.
+    if (!clipboardData || typeof clipboardData.getData !== 'function') {
+      setTimeout(updateCount, 0)
+      return
+    }
+    var pasted = clipboardData.getData('text')
+    if (!pasted) {
+      setTimeout(updateCount, 0)
+      return
+    }
+
     e.preventDefault()
-    var pasted = (e.clipboardData || window.clipboardData).getData('text')
     var refs = pasted.split(/[\s,]+/).map(function (r) { return r.trim() }).filter(Boolean)
     var formatted = refs.join('\n')
     if (formatted.length > 0 && formatted.slice(-1) !== '\n') {

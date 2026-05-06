@@ -123,9 +123,6 @@ Ten kilograms of live leeches<br>LIV
           text: "Next permit",
           labelText: permitList[currentIndex].ref,
           href: "/beta-28-05-26/single-search-results/check-permit-details?permit=" + permitList[currentIndex].ref
-        } or (currentIndex === totalCount) and {
-          text: "Back to search results",
-          href: "/beta-28-05-26/single-search-results/permit-search-results"
         }
       }) }}
       <span class="permit-pagination-inline__position govuk-body-s govuk-!-font-weight-bold">Permit {{ currentIndex }} of {{ totalCount }}</span>
@@ -218,7 +215,7 @@ Ten kilograms of live leeches<br>LIV
       rows: [
         { key: { text: "Name" }, value: { text: exporterName } },
         { key: { text: "Address" }, value: { html: exporterAddressHtml } },
-        { key: { text: "Country of re-export" }, value: { text: countryReexport } }
+        { key: { text: "Country of export" }, value: { text: countryReexport } }
       ]
     }) }}
 
