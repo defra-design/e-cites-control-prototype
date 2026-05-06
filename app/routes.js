@@ -7,9 +7,18 @@ const path = require('path')
 const govukPrototypeKit = require('govuk-prototype-kit')
 const router = govukPrototypeKit.requests.setupRouter()
 
-// Set active nav state for header (Search menu item – active only on search form page)
+// Header nav helpers (shared across all versions)
 router.use((req, res, next) => {
+  // "Search" tab should be active only on the search form page
   res.locals.activeNavSearch = req.path.endsWith('/single-search-results/search-results')
+
+  // Default search href goes to the current version (first path segment)
+  // e.g. /beta-28-05-26/... -> /beta-28-05-26/single-search-results/search-results
+  const parts = (req.path || '/').split('/').filter(Boolean)
+  const base = parts.length > 0 ? `/${parts[0]}` : ''
+  res.locals.searchHref = base
+    ? `${base}/single-search-results/search-results`
+    : '/beta-28-05-26/single-search-results/search-results'
   next()
 })
 

@@ -17,10 +17,10 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
   {{ govukServiceNavigation({
     serviceName: serviceName,
     serviceUrl: serviceUrl | default("/"),
-    navigation: [
+    navigation: (pageName == "Home") and [] or [
       {
         text: "Search",
-        href: "/beta-16-04-26/single-search-results/search-results",
+        href: searchHref | default("/beta-28-05-26/single-search-results/search-results"),
         current: activeNavSearch | default(false)
       }
     ]
